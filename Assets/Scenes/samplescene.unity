@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2035111234}
-  m_IndirectSpecularColor: {r: 131.15134, g: 162.54797, b: 215.19327, a: 1}
+  m_IndirectSpecularColor: {r: 131.16855, g: 162.52502, b: 215.10977, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -152,7 +152,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 168218571}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.019999983, y: 1.196, z: 1.8100834}
+  m_LocalPosition: {x: 0.019999983, y: 1.196, z: 1.8100858}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 405591765}
@@ -732,7 +732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Profile: {fileID: 11400000, guid: a123fc0ac58cb774e8592c925f167e7c, type: 2}
   m_StaticLightingSkyUniqueID: 1
-  m_SkySettings: {fileID: 823081121}
+  m_SkySettings: {fileID: 769756631}
   m_SkySettingsFromProfile: {fileID: -1658960478407648048, guid: a123fc0ac58cb774e8592c925f167e7c,
     type: 2}
 --- !u!4 &313761475
@@ -796,7 +796,6 @@ GameObject:
   - component: {fileID: 504392335}
   - component: {fileID: 504392334}
   - component: {fileID: 504392333}
-  - component: {fileID: 504392332}
   - component: {fileID: 504392336}
   m_Layer: 0
   m_Name: Sticky Pad
@@ -813,25 +812,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 504392330}
   m_LocalRotation: {x: -0.000000104308114, y: 0.00000008940696, z: -0.35843667, w: 0.93355405}
-  m_LocalPosition: {x: -8.27, y: 9.08, z: 0}
+  m_LocalPosition: {x: -9.12, y: 9.85, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1275443620}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -42.008003}
---- !u!114 &504392332
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 504392330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc67195cccc4b514d9bae3f2310e0794, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 3
 --- !u!65 &504392333
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -954,7 +940,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &823081121
+--- !u!114 &769756631
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1085,7 +1071,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037846703}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.019999983, y: 1.196, z: -0.6870204}
+  m_LocalPosition: {x: 0.019999983, y: 1.196, z: -0.687021}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 405591765}
@@ -1546,7 +1532,6 @@ GameObject:
   - component: {fileID: 1193627200}
   - component: {fileID: 1193627199}
   - component: {fileID: 1193627198}
-  - component: {fileID: 1193627197}
   m_Layer: 0
   m_Name: Bounce Pad
   m_TagString: BounceSurface
@@ -1568,19 +1553,6 @@ Transform:
   m_Father: {fileID: 1275443620}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 17.249}
---- !u!114 &1193627197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1193627195}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc67195cccc4b514d9bae3f2310e0794, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 500
 --- !u!65 &1193627198
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2372,7 +2344,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2059789766}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.5100832, y: 1.196, z: 1.1760417}
+  m_LocalPosition: {x: 2.5100856, y: 1.196, z: 1.1760429}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 405591765}
