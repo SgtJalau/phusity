@@ -30,16 +30,16 @@ public class MovingPlatform : MonoBehaviour
         CalculateTargetPoint();
     }
 
-    // Update is called once per frame
-    void Update()
+    // Update is called once per fixed frame (framerate independent)
+    void FixedUpdate()
     {
         PlatformPoint currentPoint = GETCurrentPlatformPoint();
 
         //If we are currently reversing reverse direction
         float reverse = _inReverse ? -1 : 1;
 
-        //Move Platform using speed and reverse direction
-        _transform.Translate(Vector3.Normalize(currentPoint.vector3) * ((currentPoint.speed / 100) * reverse));
+        //Move Platform using speed and reverse direction, speed in meter/s
+        _transform.Translate(Vector3.Normalize(currentPoint.vector3) * ((currentPoint.speed * Time.deltaTime) * reverse));
         
         //Check if we are moving away from target if so we reached the target position
         if (Vector3.Distance(_transform.localPosition, _currentAbsoluteTargetPoint) > _lastDistance)
