@@ -23,6 +23,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool dashready;
     private bool dashactive;
     private float currentSpeed;
+    private float dashspeed;
 
     void Start() 
     {
@@ -31,6 +32,7 @@ public class ThirdPersonMovement : MonoBehaviour
         doubleJump = false;
         dashready = true;
         dashactive = false;
+        dashspeed = 1f;
     }
     void Update()
     {
@@ -41,7 +43,7 @@ public class ThirdPersonMovement : MonoBehaviour
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
         Vector3 moveDir = new Vector3(0f, 0f, 0f);
 
-        if(direction.magnitude >= 0.1f && !dashactive)
+        if(direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
@@ -50,26 +52,26 @@ public class ThirdPersonMovement : MonoBehaviour
             moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             velocity.x = moveDir.normalized.x * currentSpeed;
             velocity.z = moveDir.normalized.z * currentSpeed;
-        }else{
+        }else if(!dashactive){
             velocity.x = 0f;
             velocity.z = 0f;
         }
 
-        if(dashready && !dashactive){
+        if(dashready && !dashactive && direction.magnitude >= 0.1f){
             if(Input.GetKeyDown(KeyCode.LeftShift)){
-                velocity.x *= 10f;
-                velocity.z *= 10f;
+                dashspeed = 8f;
                 dashready = false;
                 dashactive = true;
             }
         }
-        if(dashactive &&  new Vector2(velocity.x, velocity.z).magnitude > 0.1f){
-            velocity.x =  Mathf.SmoothDamp(velocity.x, 0f, ref dashSmoothVelocity, 0.3f);
-            velocity.z =  Mathf.SmoothDamp(velocity.z, 0f,ref dashSmoothVelocity, 0.3f);
-        }
-        else if(dashactive){
-            dashactive = false;
-            dashready = true;
+        if(!dashready && dashactive){
+            dashspeed = Mathf.SmoothDamp(dashspeed, 1f, ref dashSmoothVelocity, 0.15f);
+            if (dashspeed <= 1.1f)
+            {
+                dashspeed = 1f;
+                dashready = true;
+                dashactive = false;
+            }
         }
         
         if(doubleJump)
@@ -102,6 +104,6 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
 
-        controller.Move(velocity * Time.deltaTime);
+        controller.Move(new Vector3(velocity.x * dashspeed, velocity.y, velocity.z * dashspeed) * Time.deltaTime);
     }
 }
