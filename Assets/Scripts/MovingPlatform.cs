@@ -31,9 +31,9 @@ public class MovingPlatform : MonoBehaviour
     }
 
     // Update is called once per fixed frame (framerate independent)
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        PlatformPoint currentPoint = GETCurrentPlatformPoint();
+        var currentPoint = GETCurrentPlatformPoint();
 
         //If we are currently reversing reverse direction
         float reverse = _inReverse ? -1 : 1;
@@ -109,10 +109,10 @@ public class MovingPlatform : MonoBehaviour
     private void CalculateTargetPoint()
     {
         //Clone so we don't modify initial point
-        Vector3 initialPoint = new Vector3(_startPosition.x, _startPosition.y, _startPosition.z);
+        var initialPoint = new Vector3(_startPosition.x, _startPosition.y, _startPosition.z);
 
         //Add all points up to the current index for absolute position
-        for (int x = 0; x <= _currentIndex; x++)
+        for (var x = 0; x <= _currentIndex; x++)
         {
             initialPoint += vectors[x].vector3;
         }
