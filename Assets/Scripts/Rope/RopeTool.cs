@@ -14,6 +14,7 @@ public class RopeTool : MonoBehaviour
     public Camera cam;
     public Material mat;
     public GameObject ropePrefab;
+    public float linkSize = 0.05f;
 
     GameObject debugSphere = null;
 
@@ -21,7 +22,9 @@ public class RopeTool : MonoBehaviour
     ROPE_STATE state = ROPE_STATE.NONE;
     RaycastHit hit1;
     RaycastHit hit2;
-    SpringJoint activeJoint = null;
+
+    SoftJointLimitSpring limSpring;
+    SoftJointLimit limLin;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +36,17 @@ public class RopeTool : MonoBehaviour
         debugSphere.transform.localScale = new Vector3(0.3f,0.3f,0.3f);
         debugSphere.GetComponent<Renderer>().material = mat;
         debugSphere.SetActive(false);
+
+        limSpring = new SoftJointLimitSpring
+        {
+            damper = 1.0f,
+            spring = 1000f
+        };
+        limLin = new SoftJointLimit
+        {
+            limit = 0.01f,
+            bounciness = 0.0f
+        };
     }
 
     // Update is called once per frame
@@ -94,19 +108,67 @@ public class RopeTool : MonoBehaviour
 
     void createDynamicRope()
     {
-        if (activeJoint != null) //destroy currently active connection
+        var emptyForStorage = new GameObject("Link Empty");
+
+        Vector3 staticPoint = hit1.transform.position;
+        Vector3 dynamicPoint = hit2.transform.GetChild(2).position; //TODO: dont rely on GetChild(2) to check if the target empty exists
+        Vector3 directionNorm = (dynamicPoint - staticPoint).normalized;
+        
+        int amountOfLinks = Mathf.RoundToInt((staticPoint - dynamicPoint).magnitude / (2*linkSize));
+        float trueLength = (staticPoint - dynamicPoint).magnitude / amountOfLinks;
+
+        Rigidbody[] links = new Rigidbody[amountOfLinks];
+
+        //connections between links
+        for (int i = 0; i < amountOfLinks; i++)
         {
-            Destroy(activeJoint);
+            GameObject link = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            link.GetComponent<MeshRenderer>().lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off; //TODO: no real fix but hides annoying widget in UI
+            link.transform.localScale = new Vector3(linkSize, trueLength*0.5f, linkSize); //*0.5f since base capsule is 2 unity high
+            link.transform.position = staticPoint + (i+0.5f)*trueLength*directionNorm;
+            link.transform.rotation = Quaternion.FromToRotation(Vector3.up, directionNorm);
+            
+            link.transform.parent = emptyForStorage.transform; //hide in hierarchy by parenting to empty
+            link.layer = LayerMask.NameToLayer("RopeLink");
+
+            var rb = link.AddComponent<Rigidbody>();
+            rb.mass = 0.1f;
+            links[i] = rb;
+            if (i != 0)
+            {
+                var joint = link.AddComponent<ConfigurableJoint>();
+                joint.connectedBody = links[i - 1];
+                joint.anchor = -1f*Vector3.up;
+                //joint.autoConfigureConnectedAnchor = false; //enabling both lines should result in the same behaviour
+                //joint.connectedAnchor = Vector3.up;
+                applyJointPreset(ref joint);
+            }
         }
-        GameObject dynamicObjectRoot = hit2.transform.gameObject;
-        activeJoint = dynamicObjectRoot.AddComponent<SpringJoint>();
-        activeJoint.connectedBody = hit1.rigidbody; //TODO: could be null (although all rope targets should have a rigidbody)
-        activeJoint.autoConfigureConnectedAnchor = false;
-        activeJoint.connectedAnchor = Vector3.zero;
-        activeJoint.anchor = dynamicObjectRoot.transform.GetChild(2).localPosition; //TODO: Dont just refernce by hierarchy index
-        activeJoint.spring = 100;
-        activeJoint.damper = 1.0f;
-        activeJoint.minDistance = 0.0f;
-        activeJoint.maxDistance = (hit1.point - hit2.point).magnitude+1; //TODO: offset as parameter?
+        //connection to static target
+        var joint0 = links[0].gameObject.AddComponent<ConfigurableJoint>();
+        joint0.connectedBody = hit1.rigidbody;
+        joint0.anchor = -1f * Vector3.up;
+        //joint0.autoConfigureConnectedAnchor = false;
+        //joint0.connectedAnchor = Vector3.zero;
+        applyJointPreset(ref joint0);
+
+        //connection to dynamic target
+        var jointN = hit2.transform.gameObject.AddComponent<ConfigurableJoint>();
+        jointN.connectedBody = links[amountOfLinks-1];
+        jointN.anchor = jointN.transform.GetChild(2).localPosition;
+        applyJointPreset(ref jointN);
+    }
+
+    //Sets all joint properties excluding anchor properties
+    void applyJointPreset(ref ConfigurableJoint joint)
+    {
+        joint.xMotion = ConfigurableJointMotion.Locked;
+        joint.yMotion = ConfigurableJointMotion.Locked;
+        joint.zMotion = ConfigurableJointMotion.Locked;
+        //joint.xMotion = ConfigurableJointMotion.Limited;
+        //joint.yMotion = ConfigurableJointMotion.Limited;
+        //joint.zMotion = ConfigurableJointMotion.Limited;
+        //joint.linearLimitSpring = limSpring;
+        //joint.linearLimit = limLin;
     }
 }
