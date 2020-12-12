@@ -3,7 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags: [BounceSurface, DynamicRopeTarget]
   layers:
   - Default
   - TransparentFX
@@ -14,8 +14,9 @@ TagManager:
   - 
   - 
   - PostProcessing
+  - RopeTarget
+  - RopeLink
   - Ground
-  - 
   - 
   - 
   - 
