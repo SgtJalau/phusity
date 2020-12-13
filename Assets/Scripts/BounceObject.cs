@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,12 +32,12 @@ public class BounceObject : MonoBehaviour
     
     void OnCollisionEnter (Collision c) {
         //Only bounce on surfaces that are tagged as such
-        if (c.gameObject.CompareTag("BounceSurface"))
+        if (c.gameObject.CompareTag("BounceSurface") && rigibody != null)
         {
             ContactPoint cp = c.contacts[0];
 
             // calculate with Vector3.Reflect
-            rigibody.velocity = Vector3.Reflect(previousVelocity,cp.normal);
+            rigibody.velocity = Vector3.Reflect(previousVelocity, cp.normal);
         }
     }
 }

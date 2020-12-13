@@ -25,12 +25,15 @@
             <e p="GameStateComponent.cs" t="Include" />
             <e p="GameStateHandler.cs" t="Include" />
           </e>
+          <e p="LockCursor.cs" t="Include" />
           <e p="MovingPlatform.cs" t="Include" />
           <e p="Rope" t="Include">
             <e p="RopeTool.cs" t="Include" />
           </e>
           <e p="SimpleCameraController.cs" t="Include" />
           <e p="StickyPad.cs" t="Include" />
+          <e p="TestController.cs" t="Include" />
+          <e p="ThirdPersonMovement.cs" t="Include" />
         </e>
         <e p="TutorialInfo" t="Include">
           <e p="Scripts" t="Include">
@@ -41,10 +44,20 @@
           </e>
         </e>
       </e>
+      <e p="LocalPackages" t="Include">
+        <e p="com.unity.render-pipelines.high-definition-config" t="Include">
+          <e p="Runtime" t="Include">
+            <e p="ShaderConfig.cs" t="Include" />
+            <e p="ShaderConfig.cs.hlsl" t="Include" />
+            <e p="Unity.RenderPipelines.HighDefinition.Config.Runtime.asmdef" t="Include" />
+          </e>
+        </e>
+      </e>
       <e p="obj" t="ExcludeRecursive" />
       <e p="Packages" t="ExcludeRecursive" />
       <e p="Phusity.sln" t="IncludeFlat" />
       <e p="Temp\Bin" t="ExcludeRecursive" />
+      <e p="Unity.RenderPipelines.HighDefinition.Config.Runtime.csproj" t="IncludeRecursive" />
     </e>
   </component>
 </project>

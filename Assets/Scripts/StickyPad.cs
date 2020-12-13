@@ -21,10 +21,10 @@ public class StickyPad : MonoBehaviour
     {
 
         Rigidbody rigidbody = other.gameObject.GetComponent<Rigidbody>();
+        
         //Check if rigidbody exists
         if (rigidbody != null)
         {
-
             rigidbody.useGravity = false;
             rigidbody.velocity = Vector3.zero;
             

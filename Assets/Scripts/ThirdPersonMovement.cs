@@ -106,4 +106,38 @@ public class ThirdPersonMovement : MonoBehaviour
 
         controller.Move(new Vector3(velocity.x * dashspeed, velocity.y, velocity.z * dashspeed) * Time.deltaTime);
     }
+    
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        //TODO: Trigger push animation
+
+        //Don't allow to push any objects without the pushable tag
+        if (!hit.gameObject.CompareTag("Pushable"))
+        {
+            return;
+        }
+
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        //No rigibidy
+        if (body == null || body.GetComponent<Rigidbody>() == null)
+        {
+            return;
+        }
+
+        // We dont want to push objects below us
+        if (hit.moveDirection.y < -0.3)
+        {
+            return;
+        }
+
+        // Calculate push direction from move direction, we only push objects to the sides never up and down
+        Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+
+        //Normalize for length of 1
+        pushDir.Normalize();
+        
+        // Apply the push
+        body.velocity = pushDir * speed / 3;
+    }
 }

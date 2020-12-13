@@ -22,13 +22,30 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a577d5cd-9f4b-4b99-81f0-be54506be802" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/HDRPProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/HDRPProjectSettings.asset" afterDir="false" />
+    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Git ignore update">
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/TestController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/TestController.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/riderModule.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/riderModule.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/BounceObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/BounceObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/StickyPad.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/StickyPad.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="develop" />
+  </component>
+  <component name="Git.Pull.Settings">
+    <option name="BRANCH" value="testing" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,12 +56,13 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/06/a79d3dc0/Component.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/b1/068d6219/GameObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/6b/fda82a82/Single.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GameState/GameStateHandler.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/33/4d20b5e3/Collision.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/cd/a7eca8ed/Rigidbody.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/BouncePad.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/46/39b07108/Physics.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/1f/c2b58311/IEquatable`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/cd/ac5cea97/Time.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/24/f6e35e99/KeyCode.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/43/85405a58/CharacterController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/be/665c30a9/List`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/de/8a972345/Guid.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -53,14 +71,16 @@
       <list>
         <option value="$PROJECT_DIR$/Assets/Scripts/SimpleCameraController.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/BouncePad.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/BounceObject.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/StickyPad.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/SaveComponent.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/SaveScript.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MovingPlatform.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/SaveUtil.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateHandler.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateComponent.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/StickyPad.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/TestController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/BounceObject.cs" />
       </list>
     </option>
   </component>
@@ -100,7 +120,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a577d5cd-9f4b-4b99-81f0-be54506be802" name="Default Changelist" comment="" />
+      <changelist id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Git ignore update" />
       <created>1606060326365</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -112,7 +132,16 @@
       <workItem from="1606824543711" duration="8629000" />
       <workItem from="1606909532913" duration="736000" />
       <workItem from="1607438493889" duration="3617000" />
+      <workItem from="1607865863707" duration="5655000" />
     </task>
+    <task id="LOCAL-00001" summary="Git ignore update">
+      <created>1607786819413</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1607786819413</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,20 +163,46 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Git ignore update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Git ignore update" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="184" y="90" key="MergeDialog" timestamp="1607786963921">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="184" y="90" key="MergeDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607786963921" />
+    <state x="598" y="301" key="MultipleFileMergeDialog" timestamp="1607786963928">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="598" y="301" key="MultipleFileMergeDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607786963928" />
     <state x="670" y="230" key="RiderGenerateDialog" timestamp="1607440009758">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="670" y="230" key="RiderGenerateDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607440009758" />
+    <state x="806" y="250" key="RollbackChangesDialog" timestamp="1607871184022">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="806" y="250" key="RollbackChangesDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607871184022" />
     <state x="518" y="128" width="998" height="742" key="SettingsEditor" timestamp="1606076473481">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="518" y="128" width="998" height="742" key="SettingsEditor/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1606076473481" />
+    <state x="552" y="273" key="Vcs.Push.Dialog.v2" timestamp="1607786973699">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="552" y="273" key="Vcs.Push.Dialog.v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607786973699" />
     <state x="777" y="454" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1606077041413">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="777" y="454" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1606077041413" />
+    <state x="774" y="434" key="git4idea.ui.GitResetDialog" timestamp="1607868224917">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="774" y="434" key="git4idea.ui.GitResetDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607868224917" />
+    <state x="720" y="330" key="git4idea.ui.GitUnstashDialog" timestamp="1607868211208">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="720" y="330" key="git4idea.ui.GitUnstashDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607868211208" />
     <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1606826178284">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
