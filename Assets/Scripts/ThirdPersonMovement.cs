@@ -25,6 +25,8 @@ public class ThirdPersonMovement : MonoBehaviour
     private float currentSpeed;
     private float dashspeed;
 
+    private GameStateHandler _gameStateHandler;
+    
     void Start() 
     {
         currentSpeed = speed;
@@ -33,9 +35,22 @@ public class ThirdPersonMovement : MonoBehaviour
         dashready = true;
         dashactive = false;
         dashspeed = 1f;
+        _gameStateHandler = new GameStateHandler();
     }
     void Update()
     {
+        //Quick save and load
+        if(Input.GetKeyDown(KeyCode.F1))
+        {
+            _gameStateHandler.SaveGameState();
+            Debug.Log("Quick saved state");
+        }
+        
+        if(Input.GetKeyDown(KeyCode.F2)){
+            _gameStateHandler.QuickLoadGameState();
+            Debug.Log("Quick loaded state");
+        }
+        
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");

@@ -13,6 +13,8 @@ public class GameStateHandler
     public static readonly string SaveFolder =
         Application.dataPath + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar;
 
+    private GameState latestGameState;
+
     public GameStateHandler()
     {
         //Create save directory if not exists
@@ -35,13 +37,29 @@ public class GameStateHandler
     public bool SaveGameState()
     {
         var objects = Object.FindObjectsOfType<GameStateComponent>();
+        
+        Debug.Log("Found " + objects.Length);
 
         //Turn game state components to GameObjectState List
         var states = objects.Select(g => new GameObjectState(g)).ToList();
 
+        Debug.Log("Found states" + states.Count);
+
+        latestGameState = new GameState(states);
+        Debug.Log(JsonUtility.ToJson(latestGameState));
         //Write json file
-        File.WriteAllText(SaveFolder + GenerateSaveFileName(), JsonUtility.ToJson(new GameState(states)));
+        //File.WriteAllText(SaveFolder + GenerateSaveFileName(), JsonUtility.ToJson(states));
         return true;
+    }
+    
+    public bool QuickLoadGameState()
+    {
+        if (latestGameState != null)
+        {
+            return latestGameState.RestoreState();
+        }
+        
+        return false;
     }
 
     private string ReadGameState(string saveFile)
@@ -64,9 +82,10 @@ public class GameStateHandler
         return JsonUtility.FromJson<GameState>(saveFile);
     }
 
+    [Serializable]
     public class GameState
     {
-        public List<GameObjectState> gameObjectStates;
+        [SerializeField] public List<GameObjectState> gameObjectStates;
 
         public GameState(List<GameObjectState> gameObjectStates)
         {
@@ -93,17 +112,19 @@ public class GameStateHandler
             return success;
         }
     }
-
+    
+    [Serializable]
     public class GameObjectState
     {
         private GameObject _gameObject;
 
-        public System.Guid guid;
-        public Vector3 localPosition;
-        public Vector3 position;
+        [SerializeField] public string guid;
+        
+        [SerializeField] private Vector3 localPosition;
+        [SerializeField] private Vector3 position;
 
-        public Quaternion localRotation;
-        public Quaternion rotation;
+        [SerializeField] private Quaternion localRotation;
+        [SerializeField] private Quaternion rotation;
 
         public GameObjectState(GameStateComponent gameStateComponent)
         {
