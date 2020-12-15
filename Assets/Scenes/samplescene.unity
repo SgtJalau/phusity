@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 403664655}
   - component: {fileID: 403664654}
   - component: {fileID: 403664653}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Moving Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,12 +208,13 @@ MonoBehaviour:
   vectors:
   - vector3: {x: 4, y: 0, z: 0}
     speed: 2
+    waitSecondsAfter: 0
   - vector3: {x: 0, y: 4, z: 0}
     speed: 2
+    waitSecondsAfter: 0
   - vector3: {x: 0, y: 0, z: 4}
     speed: 2
-  - vector3: {x: 0.01, y: 0, z: 0}
-    speed: 0.01
+    waitSecondsAfter: 3
   mirrorMovement: 1
 --- !u!65 &403664654
 BoxCollider:
@@ -495,7 +496,7 @@ GameObject:
   - component: {fileID: 504392334}
   - component: {fileID: 504392333}
   - component: {fileID: 504392336}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sticky Pad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1217,7 +1218,7 @@ GameObject:
   - component: {fileID: 1193627200}
   - component: {fileID: 1193627199}
   - component: {fileID: 1193627198}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bounce Pad
   m_TagString: BounceSurface
   m_Icon: {fileID: 0}
@@ -1996,7 +1997,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1767740118}
-  m_LocalRotation: {x: 0.17121495, y: -0, z: -0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121494, y: -0, z: -0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2061,7 +2062,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1855005932}
-  m_LocalRotation: {x: 0.17121497, y: 0, z: 0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121495, y: 0, z: 0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 17.43, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []

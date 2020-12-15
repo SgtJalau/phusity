@@ -23,6 +23,8 @@ public class MovingPlatform : MonoBehaviour
      */
     private bool _inReverse = false;
 
+    private float currentWait = 0;
+
     void Awake()
     {
         this._transform = transform;
@@ -33,6 +35,12 @@ public class MovingPlatform : MonoBehaviour
     // Update is called once per fixed frame (framerate independent)
     private void FixedUpdate()
     {
+        if (currentWait > 0)
+        {
+            currentWait -= Time.deltaTime;
+            return;
+        }
+        
         var currentPoint = GETCurrentPlatformPoint();
 
         //If we are currently reversing reverse direction
@@ -65,6 +73,8 @@ public class MovingPlatform : MonoBehaviour
 
     private void GoToNextPoint()
     {
+ 
+        
         if (_inReverse)
         {
             //Reset if we would go below start point
@@ -81,6 +91,8 @@ public class MovingPlatform : MonoBehaviour
         }
         else
         {
+            currentWait = GETCurrentPlatformPoint().waitSecondsAfter;
+            
             //Reset if we would go above index
             if (_currentIndex == vectors.Count - 1)
             {
@@ -102,7 +114,7 @@ public class MovingPlatform : MonoBehaviour
                 _currentIndex++;
             }
         }
-
+        
         CalculateTargetPoint();
     }
 
@@ -129,10 +141,12 @@ public class PlatformPoint
 {
     public Vector3 vector3;
     public float speed = 1f;
+    public int waitSecondsAfter = 0;
 
-    public PlatformPoint(float x, float y, float z, float speed)
+    public PlatformPoint(float x, float y, float z, float speed, int waitSecondsAfter)
     {
         this.vector3 = new Vector3(x, y, z);
         this.speed = speed;
+        this.waitSecondsAfter = waitSecondsAfter;
     }
 }

@@ -22,7 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Git ignore update" />
+    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Git ignore update">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MovingPlatform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MovingPlatform.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +64,6 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/BouncePad.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/SaveComponent.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/SaveScript.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/MovingPlatform.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/SaveUtil.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateHandler.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateComponent.cs" />
@@ -68,6 +71,7 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/TestController.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/BounceObject.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MovingPlatform.cs" />
       </list>
     </option>
   </component>
@@ -119,7 +123,8 @@
       <workItem from="1606824543711" duration="8629000" />
       <workItem from="1606909532913" duration="736000" />
       <workItem from="1607438493889" duration="3617000" />
-      <workItem from="1607865863707" duration="6053000" />
+      <workItem from="1607865863707" duration="6316000" />
+      <workItem from="1608046955252" duration="208000" />
     </task>
     <task id="LOCAL-00001" summary="Git ignore update">
       <created>1607786819413</created>
