@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//If performance problems come up then its probably better to refactor the whole code
+
 enum ROPE_STATE
 {
     NONE,
@@ -108,12 +110,37 @@ public class RopeTool : MonoBehaviour
 
     void createStaticRope()
     {
+
+        Vector3 p1 = hit1.transform.Find("TargetPosition").position;
+        Vector3 p2 = hit2.transform.Find("TargetPosition").position;
+
         //TODO: raycast not 100% reliable
-        if (!Physics.Raycast(hit1.point, hit2.point, Mathf.Infinity, ~layerMask)) //maybe SphereCast
+        if (!Physics.Raycast(p1, p2, Mathf.Infinity, ~layerMask)) //maybe SphereCast
         {
-            GameObject rope = Instantiate(ropePrefab, (hit1.point + hit2.point) * 0.5f, Quaternion.LookRotation(hit2.point - hit1.point, Vector3.up));
-            rope.transform.localScale = new Vector3(1, 1, (hit2.point - hit1.point).magnitude);
+            //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
+            RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
+            RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
+            if (target1.activeConnection != null)
+            {
+                target1.activeConnection.DestroyConnection();
+            }
+            if (target2.activeConnection != null)
+            {
+                target2.activeConnection.DestroyConnection();
+            }
+
+            StaticConnection newConnection = new StaticConnection();
+            
+            GameObject rope = Instantiate(ropePrefab, (p1+p2) * 0.5f, Quaternion.LookRotation(p2 - p1, Vector3.up));
+            rope.transform.localScale = new Vector3(1, 1, (p2-p1).magnitude);
+
+            newConnection.connection = rope;
+            newConnection.end1 = target1;
+            newConnection.end2 = target2;
+            target1.activeConnection = newConnection;
+            target2.activeConnection = newConnection;
         }
+
     }
 
     void createDynamicRope()
@@ -128,12 +155,24 @@ public class RopeTool : MonoBehaviour
         Vector3 dynamicPoint = dynamicTransform.position;
         Vector3 directionNorm = (dynamicPoint - staticPoint).normalized;
 
+        //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
+        RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
         RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
+        //delete existing connection
+        if (target1.activeConnection != null)
+        {
+            target1.activeConnection.DestroyConnection();
+        }
+        if (target2.activeConnection != null)
+        {
+            target2.activeConnection.DestroyConnection();
+        }
         ROPE_TYPE type = target2.type;
 
         if (type == ROPE_TYPE.DYNAMIC_DISTANCE)
         {
-            //TODO: visualization / drawing in scene
+            DistanceConnection newConnection = new DistanceConnection();
+
             SpringJoint joint = hit1.transform.gameObject.AddComponent<SpringJoint>();
             joint.connectedBody = hit2.rigidbody;
             joint.autoConfigureConnectedAnchor = false;
@@ -143,20 +182,37 @@ public class RopeTool : MonoBehaviour
             joint.damper = 1.0f;
             joint.enableCollision = true;
             joint.minDistance = 0.0f;
-            //TODO: unsure if the distance should be stored in the static or the dynamic target
             joint.maxDistance = target2.maxLength;
+
+            GameObject renderEmpty = new GameObject("DistanceConnectionRenderEmpty");
+            LineRenderer renderer = renderEmpty.AddComponent<LineRenderer>();
+            DistanceConnectionRenderer renderUpdater = renderEmpty.AddComponent<DistanceConnectionRenderer>();
+            renderUpdater.lineRenderer = renderer;
+            renderUpdater.t1 = staticTransform;
+            renderUpdater.t2 = dynamicTransform;
+
+            newConnection.end1 = target1;
+            newConnection.end2 = target2;
+            newConnection.springJoint = joint;
+            newConnection.rendererEmpty = renderEmpty;
+            target1.activeConnection = newConnection;
+            target2.activeConnection = newConnection;
         }
         else
         {
 
             var emptyForStorage = new GameObject("Link Empty");
+
+            LinkConnection newConnection = new LinkConnection();
+            newConnection.emptyWithLinks = emptyForStorage;
             
             float linkOffset = (linkSize.y-0.2f)*linkScale;
             int amountOfLinks = Mathf.RoundToInt((staticPoint - dynamicPoint).magnitude / linkOffset);
             float trueLength = (staticPoint - dynamicPoint).magnitude / amountOfLinks;
             float scale = trueLength / (linkSize.y-0.2f);
 
-            Rigidbody[] links = new Rigidbody[amountOfLinks];
+            Rigidbody[] links = new Rigidbody[amountOfLinks]; //TODO: dont actually need full array, only most recent, last & first link
+            GameObject lastLink = null;
 
             //connections between links
             for (int i = 0; i < amountOfLinks; i++)
@@ -181,25 +237,33 @@ public class RopeTool : MonoBehaviour
                 if (i != 0)
                 {
                     //var joint = link.AddComponent<CharacterJoint>();
-                    var joint = link.AddComponent<ConfigurableJoint>();
-                    joint.connectedBody = links[i - 1];
-                    joint.anchor = -0.1375f * Vector3.up; //-0.1375 is result of 'joint0.anchor = links[0].transform.InverseTransformPoint(staticPoint);' (check in inspector)
+                    var joint = lastLink.AddComponent<ConfigurableJoint>();
+                    joint.connectedBody = rb;
+                    joint.anchor = 0.1375f * Vector3.up; //0.1375 is result of 'joint0.anchor = links[0].transform.InverseTransformPoint(staticPoint);' (check in inspector)
                     applyJointPreset(ref joint);
                 }
+                lastLink = link;
             }
             //connection to static target
             //var joint0 = links[0].gameObject.AddComponent<CharacterJoint>();
-            var joint0 = links[0].gameObject.AddComponent<ConfigurableJoint>();
-            joint0.connectedBody = hit1.rigidbody;
-            joint0.anchor = links[0].transform.InverseTransformPoint(staticPoint);
+            var joint0 = hit1.transform.gameObject.AddComponent<ConfigurableJoint>();
+            joint0.connectedBody = links[0];
+            joint0.anchor = joint0.transform.Find("TargetPosition").localPosition;
             applyJointPreset(ref joint0);
+            newConnection.startJoint = joint0;
 
             //connection to dynamic target
             //var jointN = hit2.transform.gameObject.AddComponent<CharacterJoint>();
-            var jointN = hit2.transform.gameObject.AddComponent<ConfigurableJoint>();
-            jointN.connectedBody = links[amountOfLinks - 1];
-            jointN.anchor = jointN.transform.Find("TargetPosition").localPosition;
+            var jointN = links[amountOfLinks-1].gameObject.AddComponent<ConfigurableJoint>();
+            jointN.connectedBody = hit2.rigidbody;
+            jointN.anchor = links[amountOfLinks - 1].transform.InverseTransformPoint(dynamicPoint);
             applyJointPreset(ref jointN);
+            newConnection.endJoint = jointN;
+
+            newConnection.end1 = target1;
+            newConnection.end2 = target2;
+            target1.activeConnection = newConnection;
+            target2.activeConnection = newConnection;
         }
     }
 
