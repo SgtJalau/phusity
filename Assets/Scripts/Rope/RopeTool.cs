@@ -21,7 +21,6 @@ public class RopeTool : MonoBehaviour
 
     public GameObject linkPrefab;
     private Vector3 linkSize;
-    public float linkScale = 1.0f;
 
     GameObject debugSphere = null;
 
@@ -30,7 +29,9 @@ public class RopeTool : MonoBehaviour
     ROPE_STATE state = ROPE_STATE.NONE;
     
     RaycastHit hit1;
+    RopeTarget t1;
     RaycastHit hit2;
+    RopeTarget t2;
 
     SoftJointLimitSpring limSpring;
     SoftJointLimit limLin;
@@ -114,8 +115,7 @@ public class RopeTool : MonoBehaviour
         Vector3 p1 = hit1.transform.Find("TargetPosition").position;
         Vector3 p2 = hit2.transform.Find("TargetPosition").position;
 
-        //TODO: raycast not 100% reliable
-        if (!Physics.Raycast(p1, p2, Mathf.Infinity, ~layerMask)) //maybe SphereCast
+        if (!Physics.Linecast(p1, p2, ~layerMask)) //maybe SphereCast
         {
             //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
             RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
@@ -145,10 +145,6 @@ public class RopeTool : MonoBehaviour
 
     void createDynamicRope()
     {
-        //TODO: also raycast here to test if connection even possible
-        //TODO: either: snap to target when current distance > specified distance (currently)
-        //      or:     dont even allow connection
-
         Transform staticTransform = hit1.transform.Find("TargetPosition");
         Transform dynamicTransform = hit2.transform.Find("TargetPosition");
         Vector3 staticPoint = staticTransform.position;
@@ -157,7 +153,16 @@ public class RopeTool : MonoBehaviour
 
         //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
         RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
+        t1 = target1;
         RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
+        t2 = target2;
+        ROPE_TYPE type = target2.type;
+
+        if (Physics.Linecast(staticPoint, dynamicPoint, ~layerMask) && type != ROPE_TYPE.DYNAMIC_DISTANCE) //maybe SphereCast
+        {
+            return;
+        }
+        
         //delete existing connection
         if (target1.activeConnection != null)
         {
@@ -167,7 +172,6 @@ public class RopeTool : MonoBehaviour
         {
             target2.activeConnection.DestroyConnection();
         }
-        ROPE_TYPE type = target2.type;
 
         if (type == ROPE_TYPE.DYNAMIC_DISTANCE)
         {
@@ -206,7 +210,7 @@ public class RopeTool : MonoBehaviour
             LinkConnection newConnection = new LinkConnection();
             newConnection.emptyWithLinks = emptyForStorage;
             
-            float linkOffset = (linkSize.y-0.2f)*linkScale;
+            float linkOffset = (linkSize.y-0.2f)*target2.linkScale;
             int amountOfLinks = Mathf.RoundToInt((staticPoint - dynamicPoint).magnitude / linkOffset);
             float trueLength = (staticPoint - dynamicPoint).magnitude / amountOfLinks;
             float scale = trueLength / (linkSize.y-0.2f);
@@ -232,7 +236,8 @@ public class RopeTool : MonoBehaviour
                 link.layer = LayerMask.NameToLayer("RopeLink");
 
                 var rb = link.AddComponent<Rigidbody>();
-                rb.mass = 1f;
+                rb.collisionDetectionMode = t2.collisionMode;
+                rb.mass = t2.linkMass;
                 links[i] = rb;
                 if (i != 0)
                 {
@@ -260,6 +265,21 @@ public class RopeTool : MonoBehaviour
             applyJointPreset(ref jointN);
             newConnection.endJoint = jointN;
 
+            //avoid stretching by adding additional stiff spring joint from start to end
+            if (target2.addDistanceConstraint)
+            {
+                SpringJoint springJoint = hit1.transform.gameObject.AddComponent<SpringJoint>();
+                springJoint.connectedBody = hit2.rigidbody;
+                springJoint.autoConfigureConnectedAnchor = false;
+                springJoint.anchor = staticTransform.localPosition;
+                springJoint.connectedAnchor = dynamicTransform.localPosition;
+                springJoint.spring = 1000;
+                springJoint.damper = Mathf.Infinity;
+                springJoint.enableCollision = true;
+                springJoint.minDistance = 0.0f;
+                springJoint.maxDistance = (dynamicPoint - staticPoint).magnitude;
+            }
+
             newConnection.end1 = target1;
             newConnection.end2 = target2;
             target1.activeConnection = newConnection;
@@ -268,15 +288,13 @@ public class RopeTool : MonoBehaviour
     }
 
     void applyJointPreset(ref ConfigurableJoint joint)
-    { 
+    {
         joint.xMotion = ConfigurableJointMotion.Locked;
         joint.yMotion = ConfigurableJointMotion.Locked;
         joint.zMotion = ConfigurableJointMotion.Locked;
-        //joint.xMotion = ConfigurableJointMotion.Limited;
-        //joint.yMotion = ConfigurableJointMotion.Limited;
-        //joint.zMotion = ConfigurableJointMotion.Limited;
-        //joint.linearLimitSpring = limSpring; //TODO: rework for Links if needed -> less bounce and tolerance
-        //joint.linearLimit = limLin;
+        joint.enablePreprocessing = t2.enablePrePro;
+        joint.projectionMode = t2.enableProjection ? 
+            JointProjectionMode.PositionAndRotation : JointProjectionMode.None;
     }
 
     void applyJointPreset(ref CharacterJoint joint)

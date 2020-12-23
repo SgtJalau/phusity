@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public enum ROPE_TYPE
 {
@@ -15,18 +16,27 @@ public enum ROPE_TYPE
 [ExecuteInEditMode]
 public class RopeTarget : MonoBehaviour
 {
+    public GameObject targetGameObject;
 
-    [Header("GameObject defining Target Collider",order =0),Space(-10,order =1),Header("Tag and Layer will be overridden! Use child if necessary", order =2)]
-    public GameObject target;
-
-    [Header("Type of Target")]
     public ROPE_TYPE type;
 
-    [Header("Max length used for type 'Limit Distance'")]
     //TODO: some way to auto configure for convenience?
     public float maxLength = 1.0f;
 
-    [HideInInspector]
+    public bool addDistanceConstraint = false;
+
+    public float linkScale = 1.0f;
+
+    public float linkMass = 1.0f;
+
+    public CollisionDetectionMode collisionMode;
+
+    public bool enablePrePro = false;
+
+    public bool enableProjection = true;
+
+    /************************************************/
+
     public BaseConnection activeConnection = null;
 
     void Start()
@@ -38,26 +48,19 @@ public class RopeTarget : MonoBehaviour
             target.transform.localPosition = Vector3.zero;
             target.transform.localScale = Vector3.one;
         }
-        Debug.Assert(target.tag == "Untagged" || target.tag == "DynamicRopeTarget",
+        Debug.Assert(targetGameObject.tag == "Untagged" || targetGameObject.tag == "DynamicRopeTarget",
             "Target Collider already had a different Tag and was overridden: " + gameObject.name);
-        Debug.Assert(target.layer == 0 || target.layer == LayerMask.NameToLayer("RopeTarget"),
+        Debug.Assert(targetGameObject.layer == 0 || targetGameObject.layer == LayerMask.NameToLayer("RopeTarget"),
             "Target Collider already had a different Layer and was overridden: " + gameObject.name);
         if (type == ROPE_TYPE.DYNAMIC_DISTANCE || type == ROPE_TYPE.DYNAMIC_LINK)
         {
-            target.tag = "DynamicRopeTarget";
+            targetGameObject.tag = "DynamicRopeTarget";
         }
         else
         {
-            target.tag = "Untagged";
+            targetGameObject.tag = "Untagged";
         }
-        target.layer = LayerMask.NameToLayer("RopeTarget");
+        targetGameObject.layer = LayerMask.NameToLayer("RopeTarget");
 
-    }
-
-    void Update()
-    {
-        //TODO: remove
-        if (Input.GetKeyDown(KeyCode.X))
-            Debug.Log(activeConnection);
     }
 }
