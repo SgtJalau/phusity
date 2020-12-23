@@ -64,13 +64,14 @@ public class RopeTool : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.X))
         {
             Vector3 wPos = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth*0.5f, cam.pixelHeight*0.5f, 0));
             RaycastHit result;
             if (Physics.SphereCast(origin: wPos, 0.1f, transform.forward, out result, Mathf.Infinity, layerMask))
             {
                 bool hitDynamic = result.collider.CompareTag("DynamicRopeTarget");
+                //TODO: very ugly probably better to refactor
                 switch (state)
                 {
                     case ROPE_STATE.NONE:
@@ -79,6 +80,11 @@ public class RopeTool : MonoBehaviour
                         break;
                     case ROPE_STATE.ONE_STATIC:
                         hit2 = result;
+                        if (hit2.transform.gameObject == hit1.transform.gameObject)
+                        {
+                            state = ROPE_STATE.NONE;
+                            return;
+                        }
                         if (hitDynamic)
                         {
                             createDynamicRope();
@@ -98,6 +104,11 @@ public class RopeTool : MonoBehaviour
                         {
                             hit2 = hit1;
                             hit1 = result;
+                            if (hit2.transform.gameObject == hit1.transform.gameObject)
+                            {
+                                state = ROPE_STATE.NONE;
+                                return;
+                            }
                             createDynamicRope();
                         }
                         state = ROPE_STATE.NONE;
@@ -186,7 +197,7 @@ public class RopeTool : MonoBehaviour
             joint.damper = 1.0f;
             joint.enableCollision = true;
             joint.minDistance = 0.0f;
-            joint.maxDistance = target2.maxLength;
+            joint.maxDistance = target2.autoConfigureMaxLength ? (staticPoint-dynamicPoint).magnitude : target2.maxLength;
 
             GameObject renderEmpty = new GameObject("DistanceConnectionRenderEmpty");
             LineRenderer renderer = renderEmpty.AddComponent<LineRenderer>();

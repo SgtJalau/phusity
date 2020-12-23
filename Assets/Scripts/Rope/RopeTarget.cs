@@ -20,7 +20,7 @@ public class RopeTarget : MonoBehaviour
 
     public ROPE_TYPE type;
 
-    //TODO: some way to auto configure for convenience?
+    public bool autoConfigureMaxLength = true;
     public float maxLength = 1.0f;
 
     public bool addDistanceConstraint = false;

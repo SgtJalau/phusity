@@ -8,6 +8,7 @@ public class RopeTargetEditor : Editor
     SerializedProperty targetGameObject;
     SerializedProperty type;
     bool showConnectionSettings = false;
+    SerializedProperty autoConfigureMaxLength;
     SerializedProperty maxLength;
     SerializedProperty addDistanceConstraint;
     SerializedProperty linkScale;
@@ -20,6 +21,7 @@ public class RopeTargetEditor : Editor
     {
         targetGameObject = serializedObject.FindProperty("targetGameObject");
         type = serializedObject.FindProperty("type");
+        autoConfigureMaxLength = serializedObject.FindProperty("autoConfigureMaxLength");
         maxLength = serializedObject.FindProperty("maxLength");
         addDistanceConstraint = serializedObject.FindProperty("addDistanceConstraint");
         linkScale = serializedObject.FindProperty("linkScale");
@@ -33,8 +35,8 @@ public class RopeTargetEditor : Editor
     {
         serializedObject.Update();
         EditorGUILayout.LabelField("How to use / recommended setup:",EditorStyles.boldLabel);
-        EditorGUILayout.LabelField("The topmost GameObject in the hierarchy should contain this script and" +
-            " a Rigidbody. You can add more children that contain meshes and colliders" +
+        EditorGUILayout.LabelField("The topmost GameObject in the hierarchy should contain this script (and" +
+            " potentially a Rigidbody). You can add more children that contain meshes and colliders" +
             " (with their tags and layers)",EditorStyles.wordWrappedLabel);
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("GameObject containing the collider used as a target for the RopeTool", EditorStyles.boldLabel);
@@ -50,7 +52,7 @@ public class RopeTargetEditor : Editor
             switch ((target as RopeTarget).type)
             {
                 case ROPE_TYPE.DYNAMIC_DISTANCE:
-                    EditorGUILayout.LabelField("Max length of the connection", EditorStyles.boldLabel);
+                    EditorGUILayout.PropertyField(autoConfigureMaxLength);
                     EditorGUILayout.PropertyField(maxLength);
                     break;
                 case ROPE_TYPE.DYNAMIC_LINK:
