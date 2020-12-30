@@ -4,58 +4,50 @@ using UnityEngine;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
-    public CharacterController controller;
+    public Rigidbody rb;
     public Transform camTransform;
     public float speed = 6f;
-    public float jumpHeight = 3f;
-    public float gravity = -9.81f;
-
     public float turnSmoothTime = 0.1f;
-    public Transform groundCheck;
-    public float groundDistance = 0.4f;
-    public LayerMask groundMask;
 
+    private bool jump;
+    private bool dash;
     private float turnSmoothVelocity;
-    private float dashSmoothVelocity;
     private Vector3 velocity;
     private bool isGrounded;
-    private bool doubleJump;
-    private bool dashready;
-    private bool dashactive;
+    private Vector3 direction;
     private float currentSpeed;
-    private float dashspeed;
 
-    private GameStateHandler _gameStateHandler;
+    private float lastDash;
     
     void Start() 
     {
+        velocity = new Vector3(0f, 0f, 0f);
+        direction = new Vector3(0f, 0f, 0f);
+        jump = true;
+        dash = true;
+        isGrounded = false;
+        lastDash = Time.realtimeSinceStartup;
         currentSpeed = speed;
-        velocity = new Vector3(0f, -9.81f, 0f);
-        doubleJump = false;
-        dashready = true;
-        dashactive = false;
-        dashspeed = 1f;
-        _gameStateHandler = new GameStateHandler();
     }
-    void Update()
-    {
-        //Quick save and load
-        if(Input.GetKeyDown(KeyCode.F1))
-        {
-            _gameStateHandler.SaveGameState();
-            Debug.Log("Quick saved state");
-        }
-        
-        if(Input.GetKeyDown(KeyCode.F2)){
-            _gameStateHandler.QuickLoadGameState();
-            Debug.Log("Quick loaded state");
-        }
-        
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+    void OnCollisionEnter(Collision collision){
+        jump = true;
+        isGrounded = true;
+    }
+
+    void OnCollisionExit(Collision collision){
+        isGrounded = false;
+    }
+
+    void Update(){
+
+    }
+
+    void FixedUpdate() {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+        direction = new Vector3(horizontal, 0f, vertical).normalized;
         Vector3 moveDir = new Vector3(0f, 0f, 0f);
 
         if(direction.magnitude >= 0.1f)
@@ -63,96 +55,31 @@ public class ThirdPersonMovement : MonoBehaviour
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
-
             moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+
             velocity.x = moveDir.normalized.x * currentSpeed;
             velocity.z = moveDir.normalized.z * currentSpeed;
-        }else if(!dashactive){
+        }else{
             velocity.x = 0f;
             velocity.z = 0f;
         }
+        if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
+        {
+            rb.AddForce(Vector3.up * 10.0f, ForceMode.Impulse);
+            jump = false;
+        }
+        velocity.y = rb.velocity.y;
 
-        if(dashready && !dashactive && direction.magnitude >= 0.1f){
-            if(Input.GetKeyDown(KeyCode.LeftShift)){
-                dashspeed = 8f;
-                dashready = false;
-                dashactive = true;
-            }
-        }
-        if(!dashready && dashactive){
-            dashspeed = Mathf.SmoothDamp(dashspeed, 1f, ref dashSmoothVelocity, 0.15f);
-            if (dashspeed <= 1.1f)
-            {
-                dashspeed = 1f;
-                dashready = true;
-                dashactive = false;
-            }
-        }
-        
-        if(doubleJump)
-        {
-            if(Input.GetButtonDown("Jump"))
-            {
-                doubleJump = false;
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            }
-        }
-        if (isGrounded)
-        {
+        if(Time.realtimeSinceStartup - lastDash > 0.3){
+            dash = true;
             currentSpeed = speed;
-            doubleJump = false;
-            if(velocity.y < 0)
-            {
-                velocity.y = -9.81f;
-            }
-            if(Input.GetButtonDown("Jump"))
-            {
-                doubleJump = true;
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            }
-        }
-        else
-        {
-            if(currentSpeed > (speed/2.0f))
-                currentSpeed -= (speed/2.0f) * Time.deltaTime;
-            velocity.y += gravity * Time.deltaTime;
         }
 
-
-        controller.Move(new Vector3(velocity.x * dashspeed, velocity.y, velocity.z * dashspeed) * Time.deltaTime);
-    }
-    
-    void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        //TODO: Trigger push animation
-
-        //Don't allow to push any objects without the pushable tag
-        if (!hit.gameObject.CompareTag("Pushable"))
-        {
-            return;
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dash){
+            dash = false;
+            lastDash = Time.realtimeSinceStartup;
+            currentSpeed = 20.0f;
         }
-
-        Rigidbody body = hit.collider.attachedRigidbody;
-
-        //No rigibidy
-        if (body == null || body.GetComponent<Rigidbody>() == null)
-        {
-            return;
-        }
-
-        // We dont want to push objects below us
-        if (hit.moveDirection.y < -0.3)
-        {
-            return;
-        }
-
-        // Calculate push direction from move direction, we only push objects to the sides never up and down
-        Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
-
-        //Normalize for length of 1
-        pushDir.Normalize();
-        
-        // Apply the push
-        body.velocity = pushDir * speed / 3;
+        rb.velocity = velocity;
     }
 }
