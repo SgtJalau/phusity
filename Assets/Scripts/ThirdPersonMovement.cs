@@ -33,7 +33,7 @@ public class ThirdPersonMovement : MonoBehaviour
         isGrounded = false;
         lastDash = Time.realtimeSinceStartup;
         currentSpeed = speed;
-        doublejumpTimeout = 0.2f;
+        doublejumpTimeout = 0.5f;
     }
 
     void OnCollisionEnter(Collision collision){
@@ -58,7 +58,7 @@ public class ThirdPersonMovement : MonoBehaviour
         Vector3 moveDir = new Vector3(0f, 0f, 0f);
 
         if(doublejumpTimeout > 0.0f){
-            doublejumpTimeout -= Time.deltaTime;
+            doublejumpTimeout -= Time.fixedDeltaTime;
         }
 
         rb.AddForce(Physics.gravity * gravityMultiplyer, ForceMode.Acceleration);
@@ -80,7 +80,7 @@ public class ThirdPersonMovement : MonoBehaviour
             rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f *  Physics.gravity.y * gravityMultiplyer), ForceMode.Impulse);
             jump = false;
             doubleJump = true;
-            doublejumpTimeout = 0.2f;
+            doublejumpTimeout = 0.5f;
         }else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
             rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f *  Physics.gravity.y * gravityMultiplyer), ForceMode.Impulse);
