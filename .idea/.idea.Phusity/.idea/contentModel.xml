@@ -28,7 +28,15 @@
           <e p="LockCursor.cs" t="Include" />
           <e p="MovingPlatform.cs" t="Include" />
           <e p="Rope" t="Include">
+            <e p="BaseConnection.cs" t="Include" />
+            <e p="DistanceConnection.cs" t="Include" />
+            <e p="DistanceConnectionRenderer.cs" t="Include" />
+            <e p="DistanceJoint3D.cs" t="Include" />
+            <e p="LinkConnection.cs" t="Include" />
+            <e p="RopeTarget.cs" t="Include" />
+            <e p="RopeTargetEditor.cs" t="Include" />
             <e p="RopeTool.cs" t="Include" />
+            <e p="StaticConnection.cs" t="Include" />
           </e>
           <e p="SimpleCameraController.cs" t="Include" />
           <e p="StickyPad.cs" t="Include" />

@@ -21,6 +21,8 @@ public class ThirdPersonMovement : MonoBehaviour
     private float currentSpeed;
     private float doublejumpTimeout;
 
+    
+    private GameStateHandler _gameStateHandler;
     private float lastDash;
     
     void Start() 
@@ -34,6 +36,8 @@ public class ThirdPersonMovement : MonoBehaviour
         lastDash = Time.realtimeSinceStartup;
         currentSpeed = speed;
         doublejumpTimeout = 0.5f;
+        
+        _gameStateHandler = new GameStateHandler();
     }
 
     void OnCollisionEnter(Collision collision){
@@ -51,6 +55,19 @@ public class ThirdPersonMovement : MonoBehaviour
     }
 
     void FixedUpdate() {
+        
+        //Quick save and load
+        if(Input.GetKeyDown(KeyCode.F1))
+        {
+            _gameStateHandler.SaveGameState();
+            Debug.Log("Quick saved state");
+        }
+        
+        if(Input.GetKeyDown(KeyCode.F2)){
+            _gameStateHandler.QuickLoadGameState();
+            Debug.Log("Quick loaded state");
+        }
+        
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
