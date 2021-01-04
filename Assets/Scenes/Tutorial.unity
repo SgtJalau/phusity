@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 226802485}
   - component: {fileID: 226802484}
   - component: {fileID: 226802483}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Gras (3)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -267,6 +267,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &312918422
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 312918423}
+  m_Layer: 0
+  m_Name: TargetPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &312918423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312918422}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 383833922}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &383833921
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,6 +309,7 @@ GameObject:
   - component: {fileID: 383833925}
   - component: {fileID: 383833924}
   - component: {fileID: 383833923}
+  - component: {fileID: 383833926}
   m_Layer: 9
   m_Name: Seilpfosten
   m_TagString: Untagged
@@ -296,7 +327,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2.1091614, y: 8.97, z: 102.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 312918423}
   m_Father: {fileID: 297194544}
   m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -361,6 +393,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 383833921}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &383833926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383833921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969405d521cd1a941958ae7d2a13cd21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetGameObject: {fileID: 383833921}
+  type: 0
+  autoConfigureMaxLength: 1
+  maxLength: 1
+  addDistanceConstraint: 0
+  linkScale: 1
+  linkMass: 1
+  collisionMode: 0
+  enablePrePro: 0
+  enableProjection: 1
 --- !u!1 &414735267
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,7 +632,7 @@ GameObject:
   - component: {fileID: 579238124}
   - component: {fileID: 579238123}
   - component: {fileID: 579238122}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Wasser (2)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -738,7 +792,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 2.165725, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -848,7 +902,7 @@ GameObject:
   - component: {fileID: 727350676}
   - component: {fileID: 727350675}
   - component: {fileID: 727350674}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -941,7 +995,7 @@ GameObject:
   - component: {fileID: 787965956}
   - component: {fileID: 787965955}
   - component: {fileID: 787965954}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Wand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1160,7 +1214,7 @@ GameObject:
   - component: {fileID: 816538867}
   - component: {fileID: 816538866}
   - component: {fileID: 816538865}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Wasser (1)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -1254,6 +1308,7 @@ GameObject:
   - component: {fileID: 848329675}
   - component: {fileID: 848329674}
   - component: {fileID: 848329673}
+  - component: {fileID: 848329676}
   m_Layer: 9
   m_Name: Seilpfosten (1)
   m_TagString: Untagged
@@ -1271,7 +1326,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2.1091614, y: 8.97, z: 126.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1270276616}
   m_Father: {fileID: 297194544}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1336,6 +1392,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 848329671}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &848329676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848329671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 969405d521cd1a941958ae7d2a13cd21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetGameObject: {fileID: 848329671}
+  type: 0
+  autoConfigureMaxLength: 1
+  maxLength: 1
+  addDistanceConstraint: 0
+  linkScale: 1
+  linkMass: 1
+  collisionMode: 0
+  enablePrePro: 0
+  enableProjection: 1
 --- !u!1 &881200172
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,7 +1428,7 @@ GameObject:
   - component: {fileID: 881200175}
   - component: {fileID: 881200174}
   - component: {fileID: 881200173}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Cube
   m_TagString: Pushable
   m_Icon: {fileID: 0}
@@ -1370,6 +1448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: c71a94d8-4b7a-4a13-97cc-d19b2bebcc2c
+  respawnOnCollide: 0
 --- !u!54 &881200174
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1472,7 +1551,7 @@ GameObject:
   - component: {fileID: 883954929}
   - component: {fileID: 883954928}
   - component: {fileID: 883954927}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1691,7 +1770,7 @@ GameObject:
   - component: {fileID: 960355840}
   - component: {fileID: 960355839}
   - component: {fileID: 960355838}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1820,6 +1899,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: c71a94d8-4b7a-4a13-97cc-d19b2bebcc2c
+  respawnOnCollide: 0
 --- !u!54 &975569526
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1908,7 +1988,7 @@ GameObject:
   - component: {fileID: 992208974}
   - component: {fileID: 992208973}
   - component: {fileID: 992208972}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Gras(1)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -2038,6 +2118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: c71a94d8-4b7a-4a13-97cc-d19b2bebcc2c
+  respawnOnCollide: 0
 --- !u!54 &1034507734
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2221,7 +2302,7 @@ GameObject:
   - component: {fileID: 1102651834}
   - component: {fileID: 1102651833}
   - component: {fileID: 1102651832}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2314,7 +2395,7 @@ GameObject:
   - component: {fileID: 1112514307}
   - component: {fileID: 1112514306}
   - component: {fileID: 1112514305}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1 (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2395,6 +2476,36 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1112514303}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1270276615
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1270276616}
+  m_Layer: 0
+  m_Name: TargetPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1270276616
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270276615}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 848329672}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1311604069
 GameObject:
   m_ObjectHideFlags: 0
@@ -2452,7 +2563,7 @@ GameObject:
   - component: {fileID: 1437696791}
   - component: {fileID: 1437696790}
   - component: {fileID: 1437696789}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2600,6 +2711,8 @@ MonoBehaviour:
   camTransform: {fileID: 1855005933}
   speed: 6
   turnSmoothTime: 0.1
+  gravityMultiplyer: 1
+  jumpHeight: 6
 --- !u!54 &1527774922
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2669,7 +2782,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 2.165725, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -2712,7 +2825,7 @@ GameObject:
   - component: {fileID: 1610642185}
   - component: {fileID: 1610642184}
   - component: {fileID: 1610642183}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2805,7 +2918,7 @@ GameObject:
   - component: {fileID: 1616538563}
   - component: {fileID: 1616538562}
   - component: {fileID: 1616538561}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Wand (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2898,7 +3011,7 @@ GameObject:
   - component: {fileID: 1656723804}
   - component: {fileID: 1656723803}
   - component: {fileID: 1656723802}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Gras(2)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -3236,7 +3349,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 2.165725, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -3259,8 +3372,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1700095832}
-  m_LocalRotation: {x: 0.18910751, y: -0.0000000084479606, z: 0.0000000016269286,
-    w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: 0.000000008447955, z: -0.0000000016269276, w: 0.9819564}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3280,7 +3392,7 @@ GameObject:
   - component: {fileID: 1727408819}
   - component: {fileID: 1727408818}
   - component: {fileID: 1727408817}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Wand (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3414,7 +3526,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 2.165725, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -3437,7 +3549,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1767740118}
-  m_LocalRotation: {x: 0.17121494, y: 1e-45, z: -0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121495, y: 1e-45, z: -0, w: 0.9852337}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3487,7 +3599,7 @@ GameObject:
   - component: {fileID: 1804275841}
   - component: {fileID: 1804275840}
   - component: {fileID: 1804275839}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Gras (2)
   m_TagString: Floor
   m_Icon: {fileID: 0}
@@ -3618,6 +3730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: c71a94d8-4b7a-4a13-97cc-d19b2bebcc2c
+  respawnOnCollide: 0
 --- !u!54 &1805831539
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3722,7 +3835,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1855005932}
-  m_LocalRotation: {x: 0.17121495, y: 0, z: 0, w: 0.9852337}
+  m_LocalRotation: {x: 0.17121497, y: 0, z: 0, w: 0.9852337}
   m_LocalPosition: {x: 3.69, y: 5.29, z: 2.8599997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3948,7 +4061,7 @@ GameObject:
   - component: {fileID: 1880998794}
   - component: {fileID: 1880998793}
   - component: {fileID: 1880998792}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Plattform 1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
