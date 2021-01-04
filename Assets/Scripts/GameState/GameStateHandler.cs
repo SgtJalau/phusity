@@ -37,7 +37,7 @@ public class GameStateHandler
     public bool SaveGameState()
     {
         var objects = Object.FindObjectsOfType<GameStateComponent>();
-        
+
         Debug.Log("Found " + objects.Length);
 
         //Turn game state components to GameObjectState List
@@ -51,14 +51,14 @@ public class GameStateHandler
         //File.WriteAllText(SaveFolder + GenerateSaveFileName(), JsonUtility.ToJson(states));
         return true;
     }
-    
+
     public bool QuickLoadGameState()
     {
         if (latestGameState != null)
         {
             return latestGameState.RestoreState();
         }
-        
+
         return false;
     }
 
@@ -67,7 +67,7 @@ public class GameStateHandler
         var objects = Object.FindObjectsOfType<GameStateComponent>();
 
         var states = objects.Select(g => new GameObjectState(g)).ToList();
-        
+
         if (File.Exists(SaveFolder + GetFullSaveFileName(saveFile)))
         {
             return File.ReadAllText(SaveFolder + GenerateSaveFileName());
@@ -96,7 +96,7 @@ public class GameStateHandler
         public bool RestoreState()
         {
             var success = true;
-            
+
             //Fetch all relevant components here so we don't call it once per game object
             var objects = Object.FindObjectsOfType<GameStateComponent>();
 
@@ -112,14 +112,14 @@ public class GameStateHandler
             return success;
         }
     }
-    
+
     [Serializable]
     public class GameObjectState
     {
         private GameObject _gameObject;
 
         [SerializeField] public string guid;
-        
+
         [SerializeField] private Vector3 localPosition;
         [SerializeField] private Vector3 position;
 
@@ -145,16 +145,21 @@ public class GameStateHandler
                     continue;
                 }
 
-                var gameObject = gameStateComponent.gameObject;
-                gameObject.transform.localPosition = localPosition;
-                gameObject.transform.position = position;
-
-                gameObject.transform.localRotation = localRotation;
-                gameObject.transform.rotation = rotation;
-                return true;
+                return RestoreState(gameStateComponent);
             }
 
             return false;
+        }
+
+        public bool RestoreState(GameStateComponent gameStateComponent)
+        {
+            var gameObject = gameStateComponent.gameObject;
+            gameObject.transform.localPosition = localPosition;
+            gameObject.transform.position = position;
+
+            gameObject.transform.localRotation = localRotation;
+            gameObject.transform.rotation = rotation;
+            return true;
         }
     }
 }
