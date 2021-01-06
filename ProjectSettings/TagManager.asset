@@ -8,6 +8,7 @@ TagManager:
   - DynamicRopeTarget
   - Pushable
   - Floor
+  - Magnet
   layers:
   - Default
   - TransparentFX
