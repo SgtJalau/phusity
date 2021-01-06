@@ -23,9 +23,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Added quick save and load for testing purposes back">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,12 +72,12 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/TestController.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/BounceObject.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/MovingPlatform.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Object/ObjectRespawnCollider.cs" />
         <option value="$PROJECT_DIR$/LocalPackages/com.unity.render-pipelines.high-definition-config/Runtime/ShaderConfig.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateHandler.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Object/RespawnCollider.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateComponent.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" />
       </list>
     </option>
@@ -131,6 +133,7 @@
       <workItem from="1607865863707" duration="6316000" />
       <workItem from="1608046955252" duration="1370000" />
       <workItem from="1609785494321" duration="4229000" />
+      <workItem from="1609932070393" duration="1444000" />
     </task>
     <task id="LOCAL-00001" summary="Git ignore update">
       <created>1607786819413</created>
@@ -197,10 +200,10 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="724" y="245" key="VCS.ChangeListViewerDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1609786512734" />
-    <state x="552" y="273" key="Vcs.Push.Dialog.v2" timestamp="1609785778742">
+    <state x="552" y="273" key="Vcs.Push.Dialog.v2" timestamp="1609932086801">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="552" y="273" key="Vcs.Push.Dialog.v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1609785778742" />
+    <state x="552" y="273" key="Vcs.Push.Dialog.v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1609932086801" />
     <state x="2697" y="454" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1609787507190">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>

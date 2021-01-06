@@ -11,6 +11,9 @@ public class ThirdPersonMovement : MonoBehaviour
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
 
+    public bool glidingEnabled = false;
+    public bool gliding = false;
+
     private bool jump;
     private bool doubleJump;
     private bool dash;
@@ -78,7 +81,22 @@ public class ThirdPersonMovement : MonoBehaviour
             doublejumpTimeout -= Time.fixedDeltaTime;
         }
 
-        rb.AddForce(Physics.gravity * gravityMultiplyer, ForceMode.Acceleration);
+        float gravity = gravityMultiplyer;
+        if (gliding)
+        {
+            if (isGrounded)
+            {
+                gliding = false;
+            }
+            else
+            {
+                gravity /= 3; 
+                Debug.Log("Changed gravity enabled");
+            }
+        }
+        
+        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+
         if(direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
@@ -103,7 +121,13 @@ public class ThirdPersonMovement : MonoBehaviour
             rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f *  Physics.gravity.y * gravityMultiplyer), ForceMode.Impulse);
             jump = false;
             doubleJump = false;
+        } else if (Input.GetKey(KeyCode.LeftShift) && glidingEnabled && direction.y <= 0)
+        {
+            gliding = true;
+            glidingEnabled = false;
+            Debug.Log("Gliding enabled");
         }
+        
         velocity.y = rb.velocity.y;
 
         if(Time.realtimeSinceStartup - lastDash > 0.3){

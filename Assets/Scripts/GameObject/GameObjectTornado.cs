@@ -75,7 +75,7 @@ public class GameObjectTornado : MonoBehaviour
     {
         Rigidbody caught = other.GetComponent<Rigidbody>();
 
-        //Release caught object
+
         if (!caught)
         {
             return;
@@ -86,8 +86,18 @@ public class GameObjectTornado : MonoBehaviour
             return;
         }
             
+        //Release caught object
         _caughtObjects.Remove(caught);
-        Debug.Log("collide5");
+
+        ThirdPersonMovement third = other.GetComponent<ThirdPersonMovement>();
+        
+        if (!third)
+        {
+            return;
+        }
+
+        third.glidingEnabled = true;
+        Debug.Log("Gliding enabled");
     }
 
     void UpdateCaughtObject(Rigidbody rigidbody)
