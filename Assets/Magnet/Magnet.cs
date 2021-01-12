@@ -12,11 +12,13 @@ public class Magnet : MonoBehaviour
 
    
     public float m_magnetStrength;
+    public float m_maxMagnetStrength = 15;
     protected List<Collider> m_otherMagnets;
     protected SphereCollider m_trigger;
 
     void Awake() {
         gameObject.tag = "Magnet";
+        gameObject.layer = LayerMask.NameToLayer("Magnet");
     }
     
     void Start() {
@@ -76,7 +78,7 @@ public class Magnet : MonoBehaviour
     }
     
     void Update() {
-         foreach (Collider other in m_otherMagnets)
+        foreach (Collider other in m_otherMagnets)
         {
             Debug.DrawLine(transform.position ,other.transform.position, Color.white);    
         }

@@ -8,6 +8,7 @@ TagManager:
   - DynamicRopeTarget
   - Pushable
   - Floor
+  - Menu
   - Magnet
   layers:
   - Default
@@ -22,7 +23,7 @@ TagManager:
   - RopeTarget
   - RopeLink
   - Ground
-  - 
+  - Magnet
   - 
   - 
   - 
