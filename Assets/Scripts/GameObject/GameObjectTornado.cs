@@ -16,7 +16,7 @@ public class GameObjectTornado : MonoBehaviour
     [Tooltip("The force that will drive the caught objects around the tornado's center")]
     public float rotationStrength = 50;
 
-    [Tooltip("Tornado pull force")] public float tornadoStrength = 2;
+    //[Tooltip("Tornado pull force")] public float tornadoStrength = 2;
     
     [Tooltip("Vector applied to objects leaving tornado")] public Vector3 exitVector;
 
@@ -42,7 +42,7 @@ public class GameObjectTornado : MonoBehaviour
             Vector3 pull = transform.position - _caughtObjects[i].transform.position;
             if (pull.magnitude > maxDistance)
             {
-                _caughtObjects[i].AddForce(pull.normalized * pull.magnitude, ForceMode.Force);
+                _caughtObjects[i].AddForce(pull.normalized * pull.magnitude, ForceMode.VelocityChange);
             }
             else
             {
@@ -70,6 +70,15 @@ public class GameObjectTornado : MonoBehaviour
         {
             _caughtObjects.Add(caught);
         }
+        
+        ThirdPersonMovement third = other.GetComponent<ThirdPersonMovement>();
+        
+        if (!third)
+        {
+            return;
+        }
+        
+        //third.DisableMovement = true;
     }
 
     void OnTriggerExit(Collider other)
@@ -89,8 +98,10 @@ public class GameObjectTornado : MonoBehaviour
             
         //Release caught object
         _caughtObjects.Remove(caught);
+
+        Vector3 vector3 = exitVector + caught.velocity;
         
-        caught.AddForce(exitVector);
+        caught.AddForce(exitVector, ForceMode.VelocityChange);
 
         ThirdPersonMovement third = other.GetComponent<ThirdPersonMovement>();
         
@@ -100,6 +111,7 @@ public class GameObjectTornado : MonoBehaviour
         }
 
         third.GlidingEnabled = true;
+        //third.DisableMovement = false;
         Debug.Log("Gliding enabled");
     }
 
@@ -111,8 +123,9 @@ public class GameObjectTornado : MonoBehaviour
         //Project
         Vector3 projection = Vector3.ProjectOnPlane(direction, rotationAxis);
         projection.Normalize();
+        
         Vector3 normal = Quaternion.AngleAxis(130, rotationAxis) * projection;
         normal = Quaternion.AngleAxis(lift, projection) * normal;
-        rigidbody.AddForce(normal * rotationStrength, ForceMode.Force);
+        rigidbody.AddForce(normal * rotationStrength, ForceMode.VelocityChange);
     }
 }

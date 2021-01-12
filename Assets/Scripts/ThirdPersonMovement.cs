@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class ThirdPersonMovement : MonoBehaviour
         set => _glidingEnabled = value;
     }
 
-    private bool _gliding = false;
+    private bool _gliding;
 
     private bool jump;
     private bool doubleJump;
@@ -37,7 +38,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private GameStateHandler _gameStateHandler;
     private float lastDash;
-    
+
 
     void Start()
     {
@@ -52,7 +53,6 @@ public class ThirdPersonMovement : MonoBehaviour
         doublejumpTimeout = 0.5f;
 
         _gameStateHandler = new GameStateHandler();
-
     }
 
     void OnCollisionEnter(Collision collision)
@@ -112,22 +112,43 @@ public class ThirdPersonMovement : MonoBehaviour
 
         rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
 
-        if (direction.magnitude >= 0.1f)
+        //Check if player movement should be applied
+        if (direction.magnitude >= 0.1F)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
                 turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
 
-            velocity.x = moveDir.normalized.x * currentSpeed;
-            velocity.z = moveDir.normalized.z * currentSpeed;
-        }
-        else
+            //Vector3 movementVector = new Vector3();
+            float maxVelocityChange = speed;
+            //float movementX = moveDir.x;
+            //float movementZ = moveDir.z;
+            //velocity.x = Math.Max(velocity.x, movementX);
+            //velocity.z = Math.Max(velocity.z, movementZ);
+            //velocity.x = moveDir.normalized.x * currentSpeed;
+            //velocity.z = moveDir.normalized.z * currentSpeed;
+
+            // Apply a force that attempts to reach our target velocity
+            var velocityChange = (moveDir - rb.velocity);
+
+            velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
+            velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
+            velocityChange.y = 0;
+            
+            //Add it (without the function, since the function seems to be messy)
+            rb.velocity += velocityChange;
+        } else if (isGrounded)
         {
-            velocity.x = 0f;
-            velocity.z = 0f;
+            //Player is on ground and not moving, so we can set velocity to zero
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
+
+
+        //rb.AddForce(velocityChange, ForceMode.VelocityChange);
+        //rb.AddForce(_addedForce, ForceMode.Force);
+
 
         if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
         {
@@ -144,7 +165,7 @@ public class ThirdPersonMovement : MonoBehaviour
             jump = false;
             doubleJump = false;
         }
-        else if (Input.GetKey(KeyCode.LeftShift) && _glidingEnabled && direction.y <= 0)
+        else if (Input.GetKey(KeyCode.LeftControl) && _glidingEnabled && direction.y <= 0)
         {
             _gliding = true;
             _glidingEnabled = false;
@@ -166,6 +187,6 @@ public class ThirdPersonMovement : MonoBehaviour
             currentSpeed = 20.0f;
         }
 
-        rb.velocity = velocity;
+        //rb.AddForce(velocity, ForceMode.VelocityChange);
     }
 }

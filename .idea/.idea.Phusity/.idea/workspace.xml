@@ -22,13 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Added quick save and load for testing purposes back">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/indexLayout.xml" afterDir="false" />
+    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateComponent.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/QualitySettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/QualitySettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +46,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/76/93a907a7/Vector3.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/62/8969cb5b/Transform.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Maurice/Phusity/Assets/Scripts/GameObject/GameObjectTornado.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/06/a79d3dc0/Component.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/b1/068d6219/GameObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/6b/fda82a82/Single.cs" root0="SKIP_HIGHLIGHTING" />
@@ -54,12 +54,15 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/cd/a7eca8ed/Rigidbody.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/46/39b07108/Physics.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Maurice/Phusity/Assets/Scenes/samplescene.unity" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/1f/c2b58311/IEquatable`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/cd/ac5cea97/Time.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/24/f6e35e99/KeyCode.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/0f/853d1973/ForceMode.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9B956647-017D-4DC1-B8D3-D25EEF012467/43/85405a58/CharacterController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/be/665c30a9/List`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D6D3AC03-BF86-4882-89C2-EBF3A45CE0A1/de/8a972345/Guid.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/E5B75411-C8CD-4BFA-A9E7-60BE20206F29/3d/9ef38adb/Mathf.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -77,8 +80,8 @@
         <option value="$PROJECT_DIR$/LocalPackages/com.unity.render-pipelines.high-definition-config/Runtime/ShaderConfig.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateHandler.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Object/RespawnCollider.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameState/GameStateComponent.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" />
       </list>
     </option>
@@ -135,7 +138,7 @@
       <workItem from="1608046955252" duration="1370000" />
       <workItem from="1609785494321" duration="4229000" />
       <workItem from="1609932070393" duration="2580000" />
-      <workItem from="1610457281782" duration="1611000" />
+      <workItem from="1610457281782" duration="8336000" />
     </task>
     <task id="LOCAL-00001" summary="Git ignore update">
       <created>1607786819413</created>
@@ -151,7 +154,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609785777042</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component">
+      <created>1610458947280</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1610458947280</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -175,7 +185,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Git ignore update" />
     <MESSAGE value="Added quick save and load for testing purposes back" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added quick save and load for testing purposes back" />
+    <MESSAGE value="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component" />
+    <option name="LAST_COMMIT_MESSAGE" value="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component" />
   </component>
   <component name="WindowStateProjectService">
     <state x="184" y="90" key="MergeDialog" timestamp="1607786963921">
@@ -211,10 +222,10 @@
     </state>
     <state x="777" y="454" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1606077041413" />
     <state x="2697" y="454" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1609787507190" />
-    <state x="550" y="139" width="819" height="801" key="find.popup" timestamp="1610457836186">
+    <state x="550" y="139" width="819" height="801" key="find.popup" timestamp="1610465957936">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="550" y="139" width="819" height="801" key="find.popup/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1610457836186" />
+    <state x="550" y="139" width="819" height="801" key="find.popup/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1610465957936" />
     <state x="774" y="434" key="git4idea.ui.GitResetDialog" timestamp="1609786513438">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -223,9 +234,9 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="720" y="330" key="git4idea.ui.GitUnstashDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1607868211208" />
-    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1606826178284">
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1610463052981">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1606826178284" />
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1610463052981" />
   </component>
 </project>
