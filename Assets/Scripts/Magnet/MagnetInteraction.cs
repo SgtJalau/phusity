@@ -18,33 +18,37 @@ public class MagnetInteraction : MonoBehaviour
     }
     private void Update() {
         selectMagnetByRay();
-
         if (m_currentMagnet != null)
         {
+            //Debug.Log(m_currentMagnet);
             m_magnetStrengthUIRoot.gameObject.SetActive(true);
             m_magnetStrengthUI.fillAmount = m_currentMagnet.m_magnetStrength / m_currentMagnet.m_maxMagnetStrength ;
         }
         else
         {
-            //m_magnetStrengthUIRoot.gameObject.SetActive(false);
+            m_magnetStrengthUIRoot.gameObject.SetActive(false);
         }
     }
     private void selectMagnetByRay()
     {
-        Ray ray = m_camera.ViewportPointToRay(Vector3.one / 2f);
-        Debug.DrawLine(ray.origin, ray.origin + ray.direction * m_maxRayDistance, Color.red);
+        Ray ray = m_camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+        Ray playerRay = new Ray(transform.position, ray.direction);
+        Debug.DrawRay(playerRay.origin, ray.direction * m_maxRayDistance, Color.red);
         RaycastHit hitInfo;
-        if (Physics.Raycast(ray, out hitInfo, m_maxRayDistance, layerMask))
+        if (Physics.Raycast(playerRay, out hitInfo, layerMask))
         {
             var hitItem = hitInfo.collider.GetComponent<Magnet>();
-            Debug.Log(hitItem);
+
             if (hitItem == null)
             {
                 m_currentMagnet = null;
             }
             else if (hitItem != null)
             {
-                m_currentMagnet = hitItem;
+                if (Vector3.Distance(hitItem.transform.position, transform.position) <= m_maxRayDistance)
+                {
+                    m_currentMagnet = hitItem;
+                }
             }
         }
         else
