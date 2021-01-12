@@ -17,6 +17,8 @@ public class GameObjectTornado : MonoBehaviour
     public float rotationStrength = 50;
 
     [Tooltip("Tornado pull force")] public float tornadoStrength = 2;
+    
+    [Tooltip("Vector applied to objects leaving tornado")] public Vector3 exitVector;
 
     private Rigidbody _rigibody;
 
@@ -66,7 +68,6 @@ public class GameObjectTornado : MonoBehaviour
 
         if (!_caughtObjects.Contains(caught))
         {
-            Debug.Log("collide4");
             _caughtObjects.Add(caught);
         }
     }
@@ -88,6 +89,8 @@ public class GameObjectTornado : MonoBehaviour
             
         //Release caught object
         _caughtObjects.Remove(caught);
+        
+        caught.AddForce(exitVector);
 
         ThirdPersonMovement third = other.GetComponent<ThirdPersonMovement>();
         
@@ -96,7 +99,7 @@ public class GameObjectTornado : MonoBehaviour
             return;
         }
 
-        third.glidingEnabled = true;
+        third.GlidingEnabled = true;
         Debug.Log("Gliding enabled");
     }
 

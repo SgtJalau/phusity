@@ -1588,6 +1588,7 @@ MonoBehaviour:
   lift: 45
   rotationStrength: 50
   tornadoStrength: 200
+  exitVector: {x: 2, y: 0, z: 3}
 --- !u!65 &1271238306
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1730,6 +1731,7 @@ MonoBehaviour:
   m_redMaterial: {fileID: 2100000, guid: be2b944e35187b64bb7d75a67d4e240f, type: 2}
   m_blueMaterial: {fileID: 2100000, guid: fe0468446936a0f428dfce0c7c1daf75, type: 2}
   m_magnetStrength: 10
+  m_maxMagnetStrength: 15
 --- !u!54 &1421028390
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1857,6 +1859,7 @@ MonoBehaviour:
   m_redMaterial: {fileID: 2100000, guid: be2b944e35187b64bb7d75a67d4e240f, type: 2}
   m_blueMaterial: {fileID: 2100000, guid: fe0468446936a0f428dfce0c7c1daf75, type: 2}
   m_magnetStrength: 10
+  m_maxMagnetStrength: 15
 --- !u!54 &1426347777
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2114,6 +2117,7 @@ GameObject:
   - component: {fileID: 1527774922}
   - component: {fileID: 1527774920}
   - component: {fileID: 1527774919}
+  - component: {fileID: 1527774921}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2169,8 +2173,20 @@ MonoBehaviour:
   turnSmoothTime: 0.1
   gravityMultiplyer: 1
   jumpHeight: 3
-  glidingEnabled: 0
-  gliding: 0
+--- !u!114 &1527774921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527774917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c010263e6f51b654cba713c910424e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 45aced50-dea5-414a-8f49-13673c3a8ea0
+  respawnOnCollide: 1
 --- !u!54 &1527774922
 Rigidbody:
   m_ObjectHideFlags: 0
