@@ -1585,9 +1585,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDistance: 20
   rotationAxis: {x: 0, y: 1, z: 0}
-  lift: 15
-  rotationStrength: 2
-  exitVector: {x: 2, y: 0, z: 2}
+  lift: 12
+  rotationStrength: 10
+  exitVector: {x: 5, y: 5, z: 2}
 --- !u!65 &1271238306
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2278,7 +2278,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1583521661}
-  m_LocalRotation: {x: 0.15331319, y: -0.000000008501481, z: 0.0000000013189826, w: 0.98817766}
+  m_LocalRotation: {x: 0.15331319, y: 0.000000008501481, z: -0.0000000013189826, w: 0.98817766}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2565,8 +2565,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1700095832}
-  m_LocalRotation: {x: 0.18910751, y: -0.0000000084479606, z: 0.0000000016269286,
-    w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: 0.000000008447955, z: -0.0000000016269276, w: 0.9819564}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

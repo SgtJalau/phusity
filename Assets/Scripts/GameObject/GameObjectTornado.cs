@@ -34,6 +34,11 @@ public class GameObjectTornado : MonoBehaviour
         //_rigibody.isKinematic = true;
     }
 
+    void Update()
+    {
+        transform.Rotate(0,100*Time.deltaTime,0);
+    }
+
     void FixedUpdate()
     {
         //Apply force to caught objects
@@ -99,9 +104,10 @@ public class GameObjectTornado : MonoBehaviour
         //Release caught object
         _caughtObjects.Remove(caught);
 
-        Vector3 vector3 = exitVector + caught.velocity;
+        //Vector3 vector3 = exitVector;
         
-        caught.AddForce(exitVector, ForceMode.VelocityChange);
+        //caught.AddForce(exitVector, ForceMode.VelocityChange);
+        caught.velocity = exitVector;
 
         ThirdPersonMovement third = other.GetComponent<ThirdPersonMovement>();
         
@@ -118,7 +124,7 @@ public class GameObjectTornado : MonoBehaviour
     void UpdateCaughtObject(Rigidbody rigidbody)
     {
         //Rotate object around tornado center
-        Vector3 direction = rigidbody.transform.position - transform.position;
+        /*Vector3 direction = rigidbody.transform.position - transform.position;
 
         //Project
         Vector3 projection = Vector3.ProjectOnPlane(direction, rotationAxis);
@@ -126,6 +132,9 @@ public class GameObjectTornado : MonoBehaviour
         
         Vector3 normal = Quaternion.AngleAxis(130, rotationAxis) * projection;
         normal = Quaternion.AngleAxis(lift, projection) * normal;
-        rigidbody.AddForce(normal * rotationStrength, ForceMode.VelocityChange);
+        rigidbody.AddForce(normal * rotationStrength, ForceMode.VelocityChange);*/
+        Vector3 direction = transform.position - rigidbody.transform.position;
+        direction.y = 0;
+        rigidbody.AddForce(direction.normalized*rotationStrength + new Vector3(0, lift, 0));
     }
 }
