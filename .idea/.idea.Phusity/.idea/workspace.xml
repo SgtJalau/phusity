@@ -22,13 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Phusity/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/samplescene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GameObject/GameObjectTornado.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ThirdPersonMovement.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/QualitySettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/QualitySettings.asset" afterDir="false" />
-    </list>
+    <list default="true" id="5b356d81-8e92-4eee-8875-ed6cb7b81714" name="Default Changelist" comment="Fixed third person movement to allow for velocity change from other stuff" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -138,7 +132,7 @@
       <workItem from="1608046955252" duration="1370000" />
       <workItem from="1609785494321" duration="4229000" />
       <workItem from="1609932070393" duration="2580000" />
-      <workItem from="1610457281782" duration="8336000" />
+      <workItem from="1610457281782" duration="8794000" />
     </task>
     <task id="LOCAL-00001" summary="Git ignore update">
       <created>1607786819413</created>
@@ -161,7 +155,14 @@
       <option name="project" value="LOCAL" />
       <updated>1610458947280</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Fixed third person movement to allow for velocity change from other stuff">
+      <created>1610466931075</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1610466931075</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -186,7 +187,8 @@
     <MESSAGE value="Git ignore update" />
     <MESSAGE value="Added quick save and load for testing purposes back" />
     <MESSAGE value="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component" />
-    <option name="LAST_COMMIT_MESSAGE" value="Objects now move along with platforms if they have the game state component&#10;Player object can now be restored / saved via game state component" />
+    <MESSAGE value="Fixed third person movement to allow for velocity change from other stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed third person movement to allow for velocity change from other stuff" />
   </component>
   <component name="WindowStateProjectService">
     <state x="184" y="90" key="MergeDialog" timestamp="1607786963921">
@@ -213,10 +215,10 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="724" y="245" key="VCS.ChangeListViewerDialog/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1609786512734" />
-    <state x="552" y="273" key="Vcs.Push.Dialog.v2" timestamp="1609932086801">
+    <state x="552" y="273" key="Vcs.Push.Dialog.v2" timestamp="1610466952053">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="552" y="273" key="Vcs.Push.Dialog.v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1609932086801" />
+    <state x="552" y="273" key="Vcs.Push.Dialog.v2/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1610466952053" />
     <state x="2697" y="454" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1609787507190">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
