@@ -11,6 +11,7 @@ public class ThirdPersonMovement : MonoBehaviour
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
+    public LayerMask groundMask;
 
     /**
      * If gliding is enabled we can press a key to start gliding
@@ -34,6 +35,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private Vector3 direction;
     private float currentSpeed;
     private float doublejumpTimeout;
+    private Vector3 cachedVelocity;
 
 
     private GameStateHandler _gameStateHandler;
@@ -43,6 +45,7 @@ public class ThirdPersonMovement : MonoBehaviour
     void Start()
     {
         velocity = new Vector3(0f, 0f, 0f);
+        cachedVelocity =  new Vector3(0f, 0f, 0f);
         direction = new Vector3(0f, 0f, 0f);
         jump = true;
         doubleJump = false;
@@ -57,14 +60,24 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        jump = true;
-        doubleJump = false;
-        isGrounded = true;
+        if ((groundMask & 1 << collision.gameObject.layer) == 1 << collision.gameObject.layer){
+            jump = true;
+            doubleJump = false;
+            isGrounded = true;
+        }else{
+            rb.velocity = cachedVelocity;
+            rb.AddForce(Physics.gravity * gravityMultiplyer, ForceMode.Acceleration);
+        }
     }
 
     void OnCollisionExit(Collision collision)
     {
-        isGrounded = false;
+        if ((groundMask & 1 << collision.gameObject.layer) == 1 << collision.gameObject.layer){
+            isGrounded = false;
+        }else{
+            rb.velocity = cachedVelocity;
+            rb.AddForce(Physics.gravity * gravityMultiplyer, ForceMode.Acceleration);
+        }
     }
 
     void Update()
@@ -160,6 +173,7 @@ public class ThirdPersonMovement : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer),
                 ForceMode.Impulse);
             jump = false;
@@ -186,7 +200,7 @@ public class ThirdPersonMovement : MonoBehaviour
             lastDash = Time.realtimeSinceStartup;
             currentSpeed = 20.0f;
         }
-
+        cachedVelocity = rb.velocity;
         //rb.AddForce(velocity, ForceMode.VelocityChange);
     }
 }
