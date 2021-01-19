@@ -224,7 +224,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 297194544}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -277,7 +277,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 312918423}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TargetPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -793,7 +793,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 1.7471265, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -1880,7 +1880,7 @@ GameObject:
   - component: {fileID: 975569527}
   - component: {fileID: 975569526}
   - component: {fileID: 975569525}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Cube (2)
   m_TagString: Pushable
   m_Icon: {fileID: 0}
@@ -2099,7 +2099,7 @@ GameObject:
   - component: {fileID: 1034507735}
   - component: {fileID: 1034507734}
   - component: {fileID: 1034507733}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2222,7 +2222,7 @@ GameObject:
   - component: {fileID: 1071892258}
   - component: {fileID: 1071892257}
   - component: {fileID: 1071892256}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Baum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2500,7 +2500,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1270276616}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TargetPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2672,6 +2672,7 @@ GameObject:
   - component: {fileID: 1527774920}
   - component: {fileID: 1527774922}
   - component: {fileID: 1527774919}
+  - component: {fileID: 1527774921}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2728,8 +2729,24 @@ MonoBehaviour:
   turnSmoothTime: 0.1
   gravityMultiplyer: 1
   jumpHeight: 6
-  glidingEnabled: 0
-  gliding: 0
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  _virtualCamera: {fileID: 1855005934}
+--- !u!114 &1527774921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527774917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c010263e6f51b654cba713c910424e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: f6f9c0d7-840c-4676-bb46-26edc201dc2c
+  respawnOnCollide: 1
 --- !u!54 &1527774922
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2799,7 +2816,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 1.7471265, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -3366,7 +3383,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 1.7471265, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -3389,8 +3406,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1700095832}
-  m_LocalRotation: {x: 0.18910751, y: 0.0000000084679215, z: -0.0000000016307727,
-    w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: -0.000000008447955, z: 0.0000000016269276, w: 0.9819564}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3544,7 +3560,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8150944, y: 1}
+    m_SensorSize: {x: 1.7471265, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -3713,7 +3729,7 @@ GameObject:
   - component: {fileID: 1805831540}
   - component: {fileID: 1805831539}
   - component: {fileID: 1805831538}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Cube (1)
   m_TagString: Pushable
   m_Icon: {fileID: 0}
@@ -4173,7 +4189,7 @@ GameObject:
   - component: {fileID: 1926410772}
   - component: {fileID: 1926410771}
   - component: {fileID: 1926410770}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Moving Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
