@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameObjectTornado : MonoBehaviour
+public class GameObjectTornado : Activatable
 {
     [Tooltip("Distance after which the rotation physics starts")]
     public float maxDistance = 20;
@@ -24,6 +24,8 @@ public class GameObjectTornado : MonoBehaviour
 
     private readonly List<Rigidbody> _caughtObjects = new List<Rigidbody>();
 
+    public bool active = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +38,10 @@ public class GameObjectTornado : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(0,100*Time.deltaTime,0);
+        if (active)
+        {
+            transform.Rotate(0,100*Time.deltaTime,0);
+        }
     }
 
     void FixedUpdate()
@@ -136,5 +141,18 @@ public class GameObjectTornado : MonoBehaviour
         Vector3 direction = transform.position - rigidbody.transform.position;
         direction.y = 0;
         rigidbody.AddForce(direction.normalized*rotationStrength + new Vector3(0, lift, 0));
+    }
+
+    public override void activate()
+    {
+        active = true;
+        
+        //Look at the object after 1 second for 2 seconds
+        StartCoroutine(LookAtObject(500, 2000));
+    }
+
+    public override void deactivate()
+    {
+        active = false;
     }
 }

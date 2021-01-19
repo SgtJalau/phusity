@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class ThirdPersonMovement : MonoBehaviour
      * If gliding is enabled we can press a key to start gliding
      */
     private bool _glidingEnabled = false;
+
+    public CinemachineBrain _virtualCamera;
 
     public bool GlidingEnabled
     {
@@ -202,5 +205,22 @@ public class ThirdPersonMovement : MonoBehaviour
         }
         cachedVelocity = rb.velocity;
         //rb.AddForce(velocity, ForceMode.VelocityChange);
+    }
+
+    public IEnumerator LookAtLocation(Transform vector3, long millis)
+    {
+        Transform previousFollow = _virtualCamera.ActiveVirtualCamera.Follow;
+        Transform previousLookAt = _virtualCamera.ActiveVirtualCamera.LookAt;
+        
+        //_virtualCamera.OutputCamera.transform.LookAt(vector3);
+        _virtualCamera.ActiveVirtualCamera.Follow = vector3;
+        _virtualCamera.ActiveVirtualCamera.LookAt = vector3;
+
+      
+        
+        yield return new WaitForSeconds(millis/1000F);
+        
+        _virtualCamera.ActiveVirtualCamera.Follow = previousFollow;
+        _virtualCamera.ActiveVirtualCamera.LookAt = previousLookAt;
     }
 }
