@@ -23,11 +23,20 @@ public class MagnetInteraction : MonoBehaviour
             //Debug.Log(m_currentMagnet);
             m_magnetStrengthUIRoot.gameObject.SetActive(true);
             m_magnetStrengthUI.fillAmount = m_currentMagnet.m_magnetStrength / m_currentMagnet.m_maxMagnetStrength ;
+             if (Input.GetKeyDown(KeyCode.O))
+            {
+                m_currentMagnet.DecrementMagnetStrength();
+            }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                m_currentMagnet.IncrementMagnetStrength();
+            }
         }
         else
         {
             m_magnetStrengthUIRoot.gameObject.SetActive(false);
         }
+       
     }
     private void selectMagnetByRay()
     {
@@ -56,5 +65,4 @@ public class MagnetInteraction : MonoBehaviour
             m_currentMagnet = null;
         }
     }
-
 }
