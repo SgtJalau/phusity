@@ -48,19 +48,29 @@ public class Magnet : MonoBehaviour
         }
     }
 
+    public void IncrementMagnetStrength(){
+        m_magnetStrength++;
+        m_magnetStrength = Mathf.Clamp(m_magnetStrength, 0, m_maxMagnetStrength);
+    }
+    public void DecrementMagnetStrength(){
+        m_magnetStrength--;
+        m_magnetStrength = Mathf.Clamp(m_magnetStrength, 0, m_maxMagnetStrength);
+    }
     void FixedUpdate()
     {
         foreach (GameObject other in m_otherMagnets)
         {
             if (Vector3.Distance(other.transform.position, transform.position) <= m_magnetStrength )
             {
+                float factor = m_maxMagnetStrength / (Vector3.Distance(transform.position , other.transform.position) + 1);
+                float combinedStrength = Mathf.Sqrt(Mathf.Abs(m_magnetStrength) * Mathf.Abs(m_magnetStrength) + Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength) * Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength)) ;
                 if (other.GetComponent<Magnet>().m_magnetColor == m_magnetColor)
                 {
-                    other.GetComponent<Rigidbody>().AddForce(Vector3.Normalize( transform.position - other.transform.position) * (Vector3.Distance(transform.position , other.transform.position)) * - Mathf.Abs(m_magnetStrength));
+                    other.GetComponent<Rigidbody>().AddForce(Vector3.Normalize( transform.position - other.transform.position) * factor * -combinedStrength);
                 }
                 else
                 {
-                    other.GetComponent<Rigidbody>().AddForce(Vector3.Normalize( transform.position - other.transform.position)  * (Vector3.Distance(transform.position , other.transform.position)) * Mathf.Abs(m_magnetStrength));
+                    other.GetComponent<Rigidbody>().AddForce(Vector3.Normalize( transform.position - other.transform.position) * factor * combinedStrength);
                 }
             }
             
