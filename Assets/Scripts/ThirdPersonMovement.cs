@@ -12,7 +12,8 @@ public class ThirdPersonMovement : MonoBehaviour
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
-    public LayerMask groundMask;
+    public Transform groundCheck;
+    public float groundDistance = 0.5f;
 
     /**
      * If gliding is enabled we can press a key to start gliding
@@ -61,30 +62,45 @@ public class ThirdPersonMovement : MonoBehaviour
         _gameStateHandler = new GameStateHandler();
     }
 
-    void OnCollisionEnter(Collision collision)
+    void Update()
     {
-        if ((groundMask & 1 << collision.gameObject.layer) == 1 << collision.gameObject.layer){
+        RaycastHit hit;
+        Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
+        Debug.Log("Distance: "+System.Math.Round(hit.distance,2)+", isGrounded: "+isGrounded);
+        if(hit.distance > 1.05)
+        {
+            isGrounded = false;
+        }
+        else if(hit.distance <= 1.05)
+        {
             jump = true;
             doubleJump = false;
             isGrounded = true;
-        }else{
-            rb.velocity = cachedVelocity;
-            rb.AddForce(Physics.gravity * gravityMultiplyer, ForceMode.Acceleration);
         }
-    }
 
-    void OnCollisionExit(Collision collision)
-    {
-        if ((groundMask & 1 << collision.gameObject.layer) == 1 << collision.gameObject.layer){
-            isGrounded = false;
-        }else{
-            rb.velocity = cachedVelocity;
-            rb.AddForce(Physics.gravity * gravityMultiplyer, ForceMode.Acceleration);
-        }
-    }
+        // if(isGrounded && !Physics.CheckSphere(groundCheck.position, groundDistance))
+        // {
+        //     isGrounded = false;
+        // }
+        // else if(!isGrounded && Physics.CheckSphere(groundCheck.position, groundDistance))
+        // {
+        //     jump = true;
+        //     doubleJump = false;
+        //     isGrounded = true;
+        // }
+        // else if(!isGrounded && !Physics.CheckSphere(groundCheck.position, groundDistance))
+        // {
+        //     isGrounded = false;
+        // }
+        // else if(isGrounded && Physics.CheckSphere(groundCheck.position, groundDistance))
+        // {
+        //     isGrounded = true;
+        // }
 
-    void Update()
-    {
+
+        
+
         //Quick save and load (inside frame update, because key press can be ignored by fixed update)
         if (Input.GetKeyDown(KeyCode.F1))
         {
@@ -101,6 +117,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -177,8 +194,7 @@ public class ThirdPersonMovement : MonoBehaviour
         else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer),
-                ForceMode.Impulse);
+            rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), ForceMode.Impulse);
             jump = false;
             doubleJump = false;
         }
