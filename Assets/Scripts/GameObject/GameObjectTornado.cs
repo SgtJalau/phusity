@@ -140,7 +140,7 @@ public class GameObjectTornado : Activatable
         rigidbody.AddForce(normal * rotationStrength, ForceMode.VelocityChange);*/
         Vector3 direction = transform.position - rigidbody.transform.position;
         direction.y = 0;
-        rigidbody.AddForce(direction.normalized*rotationStrength + new Vector3(0, lift, 0));
+        rigidbody.AddForce(direction.normalized*rotationStrength + new Vector3(0, lift, 0), ForceMode.Acceleration);
     }
 
     public override void activate()

@@ -276,7 +276,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 80
@@ -931,7 +931,7 @@ Transform:
   m_LocalScale: {x: 0.4, y: 5, z: 0.4}
   m_Children: []
   m_Father: {fileID: 1388107139}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &277178190
 MonoBehaviour:
@@ -1793,7 +1793,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_Children:
-  - {fileID: 1463047538}
   - {fileID: 277178189}
   m_Father: {fileID: 392703345}
   m_RootOrder: 0
@@ -1887,10 +1886,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463047537}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.234, y: 0.82, z: 0.176}
-  m_LocalScale: {x: 0.1, y: 1, z: 0.1}
+  m_LocalPosition: {x: 138.95, y: 0.94, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1388107139}
+  m_Father: {fileID: 1679013610}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1463047539
@@ -2019,7 +2018,7 @@ MonoBehaviour:
   rotationAxis: {x: 0, y: 1, z: 0}
   lift: 45
   rotationStrength: 50
-  exitVector: {x: -40, y: 25, z: 0}
+  exitVector: {x: -30, y: 25, z: 0}
   active: 0
 --- !u!65 &1480409150
 BoxCollider:
@@ -2406,6 +2405,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1463047538}
   - {fileID: 1782047108}
   - {fileID: 1999119348}
   m_Father: {fileID: 392703345}
@@ -2569,7 +2569,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1679013610}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1782047109
 Rigidbody:
@@ -3011,7 +3011,7 @@ Transform:
   - {fileID: 1983798294}
   - {fileID: 1480409148}
   m_Father: {fileID: 1679013610}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &1999119349
 MeshCollider:

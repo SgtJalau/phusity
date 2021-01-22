@@ -60,6 +60,9 @@ public class ThirdPersonMovement : MonoBehaviour
         doublejumpTimeout = 0.5f;
 
         _gameStateHandler = new GameStateHandler();
+
+        //Deactivate gravity since we handle it here in our own way
+        rb.useGravity = false;
     }
 
     void Update()
