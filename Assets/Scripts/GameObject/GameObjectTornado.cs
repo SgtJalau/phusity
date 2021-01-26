@@ -34,6 +34,13 @@ public class GameObjectTornado : Activatable
 
         _rigibody = GetComponent<Rigidbody>();
         //_rigibody.isKinematic = true;
+
+        if (!active)
+        {
+            MeshRenderer render = gameObject.GetComponentInChildren<MeshRenderer>();
+     
+            render.enabled = false;
+        }
     }
 
     void Update()
@@ -149,10 +156,18 @@ public class GameObjectTornado : Activatable
         
         //Look at the object after 1 second for 2 seconds
         StartCoroutine(LookAtObject(500, 2000));
+        
+        MeshRenderer render = gameObject.GetComponentInChildren<MeshRenderer>();
+     
+        render.enabled = true;
     }
 
     public override void deactivate()
     {
         active = false;
+        
+        MeshRenderer render = gameObject.GetComponentInChildren<MeshRenderer>();
+     
+        render.enabled = false;
     }
 }
