@@ -686,7 +686,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3274f4e66326356418652993ccf6a9ca, type: 2}
+  - {fileID: 2100000, guid: 0f3955a56c0af824ea3bd91c88adac16, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -793,7 +793,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.7471265, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -1269,7 +1269,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3274f4e66326356418652993ccf6a9ca, type: 2}
+  - {fileID: 2100000, guid: 0f3955a56c0af824ea3bd91c88adac16, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2729,9 +2729,8 @@ MonoBehaviour:
   turnSmoothTime: 0.1
   gravityMultiplyer: 1
   jumpHeight: 6
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 2048
+  groundCheck: {fileID: 0}
+  groundDistance: 0.5
   _virtualCamera: {fileID: 1855005934}
 --- !u!114 &1527774921
 MonoBehaviour:
@@ -2816,7 +2815,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.7471265, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -2839,7 +2838,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1583521661}
-  m_LocalRotation: {x: 0.15331319, y: -0.000000008501481, z: 0.0000000013189826, w: 0.98817766}
+  m_LocalRotation: {x: 0.15331319, y: 0.000000008501481, z: -0.0000000013189826, w: 0.98817766}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3383,7 +3382,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.7471265, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -3560,7 +3559,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.7471265, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
