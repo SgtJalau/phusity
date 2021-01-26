@@ -70,7 +70,7 @@ public class ThirdPersonMovement : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
         Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
-        Debug.Log("Distance: "+System.Math.Round(hit.distance,2)+", isGrounded: "+isGrounded);
+        //Debug.Log("Distance: "+System.Math.Round(hit.distance,2)+", isGrounded: "+isGrounded);
         
         if(hit.distance > 1.05 || !hit.collider || hit.collider.isTrigger)
         {

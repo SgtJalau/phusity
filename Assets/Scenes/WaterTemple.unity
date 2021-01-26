@@ -267,7 +267,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 2.0272374, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -4565,7 +4565,7 @@ GameObject:
   - component: {fileID: 1434094837}
   - component: {fileID: 1434094836}
   m_Layer: 0
-  m_Name: Plane (1)
+  m_Name: Water Riddle Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4603,7 +4603,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 42453eee960944b458fff9858424db08, type: 2}
+  - {fileID: 2100000, guid: 0f3955a56c0af824ea3bd91c88adac16, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5644,7 +5644,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 2.0272374, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -6013,7 +6013,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 2.0272374, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -6123,7 +6123,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 2.0272374, y: 1}
+    m_SensorSize: {x: 1.7774343, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
