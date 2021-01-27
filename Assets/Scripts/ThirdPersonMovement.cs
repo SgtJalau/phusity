@@ -15,6 +15,10 @@ public class ThirdPersonMovement : MonoBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.5f;
 
+    public float maxStepHeight = 0.25f;
+    public int stairDetail = 10;
+    public LayerMask stepMask;
+
     /**
      * If gliding is enabled we can press a key to start gliding
      */
@@ -39,7 +43,6 @@ public class ThirdPersonMovement : MonoBehaviour
     private Vector3 direction;
     private float currentSpeed;
     private float doublejumpTimeout;
-    private Vector3 cachedVelocity;
 
 
     private GameStateHandler _gameStateHandler;
@@ -49,7 +52,6 @@ public class ThirdPersonMovement : MonoBehaviour
     void Start()
     {
         velocity = new Vector3(0f, 0f, 0f);
-        cachedVelocity =  new Vector3(0f, 0f, 0f);
         direction = new Vector3(0f, 0f, 0f);
         jump = true;
         doubleJump = false;
@@ -69,8 +71,6 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
-        //Debug.Log("Distance: "+System.Math.Round(hit.distance,2)+", isGrounded: "+isGrounded);
         
         if(hit.distance > 1.05 || !hit.collider || hit.collider.isTrigger)
         {
@@ -82,28 +82,7 @@ public class ThirdPersonMovement : MonoBehaviour
             doubleJump = false;
             isGrounded = true;
         }
-
-        // if(isGrounded && !Physics.CheckSphere(groundCheck.position, groundDistance))
-        // {
-        //     isGrounded = false;
-        // }
-        // else if(!isGrounded && Physics.CheckSphere(groundCheck.position, groundDistance))
-        // {
-        //     jump = true;
-        //     doubleJump = false;
-        //     isGrounded = true;
-        // }
-        // else if(!isGrounded && !Physics.CheckSphere(groundCheck.position, groundDistance))
-        // {
-        //     isGrounded = false;
-        // }
-        // else if(isGrounded && Physics.CheckSphere(groundCheck.position, groundDistance))
-        // {
-        //     isGrounded = true;
-        // }
-
-
-        
+    
 
         //Quick save and load (inside frame update, because key press can be ignored by fixed update)
         if (Input.GetKeyDown(KeyCode.F1))
@@ -153,38 +132,54 @@ public class ThirdPersonMovement : MonoBehaviour
         if (direction.magnitude >= 0.1F)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
-                turnSmoothTime);
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
             moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
 
-            //Vector3 movementVector = new Vector3();
             float maxVelocityChange = speed;
-            //float movementX = moveDir.x;
-            //float movementZ = moveDir.z;
-            //velocity.x = Math.Max(velocity.x, movementX);
-            //velocity.z = Math.Max(velocity.z, movementZ);
-            //velocity.x = moveDir.normalized.x * currentSpeed;
-            //velocity.z = moveDir.normalized.z * currentSpeed;
-
-            // Apply a force that attempts to reach our target velocity
             var velocityChange = (moveDir - rb.velocity);
 
             velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
             velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
             velocityChange.y = 0;
             
-            //Add it (without the function, since the function seems to be messy)
-            rb.velocity += velocityChange;
+            //stair handling
+            bool isFirstCheck = false;
+            bool canMove = true;
+            for (int i = stairDetail; i >= 1; i--)
+            {
+                Collider[] c = Physics.OverlapBox(transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0), new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
+                if(new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero){
+                    if(c.Length > 0 && i == stairDetail){
+                        isFirstCheck = true;
+                        if(!isGrounded){
+                            canMove = false;
+                        }
+                    }
+                    if(c.Length > 0 && !isFirstCheck){
+                        transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0); 
+                        break;
+                    }
+                }
+
+            }
+
+            // handeling walls
+            RaycastHit hitWall;
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
+            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall)){
+                if(hitWall.distance < 1.0f && !isGrounded){
+                    canMove = false;
+                    Debug.Log("Can Move "+canMove);
+                }
+            }
+
+            if(canMove)
+                rb.velocity += velocityChange;
         } else if (isGrounded)
         {
-            //Player is on ground and not moving, so we can set velocity to zero
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
-
-
-        //rb.AddForce(velocityChange, ForceMode.VelocityChange);
-        //rb.AddForce(_addedForce, ForceMode.Force);
 
 
         if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
@@ -223,8 +218,7 @@ public class ThirdPersonMovement : MonoBehaviour
             lastDash = Time.realtimeSinceStartup;
             currentSpeed = 20.0f;
         }
-        cachedVelocity = rb.velocity;
-        //rb.AddForce(velocity, ForceMode.VelocityChange);
+
     }
 
     public IEnumerator LookAtLocation(Transform vector3, long millis)
