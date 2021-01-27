@@ -12,18 +12,23 @@ public class MagnetInteraction : MonoBehaviour
     public RectTransform m_magnetStrengthUIRoot;
     public Camera m_camera;
 
+    public GameObject m_strengthIndicator;
+
     public float m_maxRayDistance = 2f;
     private void Awake() {
         layerMask = LayerMask.NameToLayer("Magnet");
+        m_magnetStrengthUIRoot.gameObject.SetActive(false);
     }
     private void Update() {
         selectMagnetByRay();
         if (m_currentMagnet != null)
         {
-            //Debug.Log(m_currentMagnet);
+            m_strengthIndicator.transform.position = m_currentMagnet.transform.position;
+            m_strengthIndicator.transform.localScale = new Vector3(m_currentMagnet.m_magnetStrength,m_currentMagnet.m_magnetStrength,m_currentMagnet.m_magnetStrength);
+            m_strengthIndicator.SetActive(true);
             m_magnetStrengthUIRoot.gameObject.SetActive(true);
             m_magnetStrengthUI.fillAmount = m_currentMagnet.m_magnetStrength / m_currentMagnet.m_maxMagnetStrength ;
-             if (Input.GetKeyDown(KeyCode.O))
+            if (Input.GetKeyDown(KeyCode.O))
             {
                 m_currentMagnet.DecrementMagnetStrength();
             }
@@ -35,6 +40,7 @@ public class MagnetInteraction : MonoBehaviour
         else
         {
             m_magnetStrengthUIRoot.gameObject.SetActive(false);
+            m_strengthIndicator.SetActive(false);
         }
        
     }
