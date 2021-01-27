@@ -11,9 +11,11 @@ public class Magnet : MonoBehaviour
     public Material m_blueMaterial;
 
    
-    public float m_magnetStrength;
+    public float m_magnetStrength = 0;
     public float m_maxMagnetStrength = 15;
     protected List<GameObject> m_otherMagnets;
+
+    
 
     void Awake() {
         gameObject.tag = "Magnet";
@@ -51,6 +53,7 @@ public class Magnet : MonoBehaviour
     public void IncrementMagnetStrength(){
         m_magnetStrength++;
         m_magnetStrength = Mathf.Clamp(m_magnetStrength, 0, m_maxMagnetStrength);
+
     }
     public void DecrementMagnetStrength(){
         m_magnetStrength--;
