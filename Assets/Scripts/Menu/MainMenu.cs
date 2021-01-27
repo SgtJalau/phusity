@@ -8,17 +8,33 @@ using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    // public static MainMenu instance;    // Allows calling from another script - This will be useful later for e.g. calling the main menu from in-game
+    public static MainMenu instance;    // Allows calling from other scripts
 
-    public List<GameObject> menus = new List<GameObject>();
-    public List<TextMeshProUGUI> percentages = new List<TextMeshProUGUI>();
+    [SerializeField] private List<GameObject> menus = new List<GameObject>();
+    [SerializeField] private List<TextMeshProUGUI> percentages = new List<TextMeshProUGUI>();
+    [SerializeField] private TMPro.TMP_Dropdown resDropdown = null;
+
     public AudioMixer audioMixer;
-    public TMPro.TMP_Dropdown resDropdown;
-    public Resolution[] resolutions;
+    public List<GameObject> rebindButton = new List<GameObject>();
+
+    private Resolution[] resolutions;
+
+    private void Awake()
+    {
+        instance = this;    // Allows calling from other scripts
+    }
 
     private void Start()
     {
-        // This will find all display resolutions currently available and configure the resolution dropdown in the options menu accordingly
+        // This will set the MainMenu object to the only active menu on game startup 
+        menus[0].SetActive(true);
+
+        for (int i = 1; i < menus.Count; i++)
+        {
+            menus[i].SetActive(false);
+        }
+
+        // This will find all display resolutions currently available and configure the resolution dropdown in the Options Menu accordingly
         resolutions = Screen.resolutions;
         List<string> options = new List<string>();
         int currentRes = 0;
@@ -38,18 +54,9 @@ public class MainMenu : MonoBehaviour
         resDropdown.AddOptions(options);
         resDropdown.value = currentRes;
         resDropdown.RefreshShownValue();
-
-
-        // This will set the MainMenu object to the only active menu on game startup 
-        menus[0].SetActive(true);
-
-        for (int i = 1; i < menus.Count; i++)
-        {
-            menus[i].SetActive(false);
-        }
     }
 
-    // Starts the without looking for save files
+    // Starts the game without looking for save files (currently)
     public void PlayGame () {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
@@ -73,7 +80,7 @@ public class MainMenu : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
-    // Sets sound volumes for music, sound effects and a master level
+    // Sets sound volumes for music and sound effects as well as a master level
     public void SetMasterVolume(float volume)
     {
         percentages[0].text = volume + "%";
