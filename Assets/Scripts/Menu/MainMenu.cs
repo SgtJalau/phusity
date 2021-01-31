@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class MainMenu : MonoBehaviour
@@ -18,6 +19,7 @@ public class MainMenu : MonoBehaviour
     public List<GameObject> rebindButton = new List<GameObject>();
 
     private Resolution[] resolutions;
+    private InputDevice[] devices;
 
     private void Awake()
     {
@@ -34,7 +36,7 @@ public class MainMenu : MonoBehaviour
             menus[i].SetActive(false);
         }
 
-        // This will find all display resolutions currently available and configure the resolution dropdown in the Options Menu accordingly
+        // This will find all display resolutions currently available and configure the resolution dropdown in the Resolution Menu accordingly
         resolutions = Screen.resolutions;
         List<string> options = new List<string>();
         int currentRes = 0;
@@ -54,6 +56,9 @@ public class MainMenu : MonoBehaviour
         resDropdown.AddOptions(options);
         resDropdown.value = currentRes;
         resDropdown.RefreshShownValue();
+
+        // This will find all input devices currently available and configure the resolution dropdown in the Controls Menu accordingly
+        // TODO
     }
 
     // Starts the game without looking for save files (currently)
@@ -78,6 +83,12 @@ public class MainMenu : MonoBehaviour
     {
         Resolution resolution = resolutions[resIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
+    }
+
+    // Changes the device to whatever was set in the resolutions dropdown
+    public void SetDevice(int resIndex)
+    {
+        // TODO
     }
 
     // Sets sound volumes for music and sound effects as well as a master level
