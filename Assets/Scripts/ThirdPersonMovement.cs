@@ -8,13 +8,20 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     public Rigidbody rb;
     public Transform camTransform;
+    
+    [SerializeField, Tooltip("The movement speed of the player")]
     public float speed = 6f;
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
+
+    [SerializeField, Tooltip("The movement speed that is applied if the player dashes")]
+    public float dashSpeed = 20f;
+    
     public Transform groundCheck;
     public float groundDistance = 0.5f;
 
+    
     public float maxStepHeight = 0.25f;
     public int stairDetail = 10;
     public LayerMask stepMask;
@@ -216,7 +223,7 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             dash = false;
             lastDash = Time.realtimeSinceStartup;
-            currentSpeed = 20.0f;
+            currentSpeed = dashSpeed;
         }
 
     }
