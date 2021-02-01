@@ -278,7 +278,7 @@ GameObject:
   - component: {fileID: 4798361301673058005}
   - component: {fileID: 4798361301673058000}
   m_Layer: 5
-  m_Name: MoveUp
+  m_Name: KeybindPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -435,7 +435,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4798361301673058007}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 851d8b4bdd351454eb8c58b718e40928, type: 3}
+  m_Script: {fileID: 11500000, guid: 22e2e14e923e57d4184b30f299bd9a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   keybind: {fileID: 0}
+  index: 0
