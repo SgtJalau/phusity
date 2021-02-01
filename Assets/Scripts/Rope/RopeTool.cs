@@ -193,7 +193,7 @@ public class RopeTool : MonoBehaviour
             joint.autoConfigureConnectedAnchor = false;
             joint.anchor = staticTransform.localPosition;
             joint.connectedAnchor = dynamicTransform.localPosition;
-            joint.spring = 1000;
+            joint.spring = 10000;
             joint.damper = 1.0f;
             joint.enableCollision = true;
             joint.minDistance = 0.0f;
