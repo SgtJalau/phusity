@@ -11,6 +11,7 @@ TagManager:
   - Menu
   - Magnet
   - Dragable
+  - Destructable
   layers:
   - Default
   - TransparentFX
@@ -26,7 +27,7 @@ TagManager:
   - Ground
   - Magnet
   - Stair
-  - 
+  - Destuctable
   - 
   - 
   - 
