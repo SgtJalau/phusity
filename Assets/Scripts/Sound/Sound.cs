@@ -1,10 +1,11 @@
 ﻿using UnityEngine.Audio;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class Sound 
 {
-    public string name;
+    [FormerlySerializedAs("sound")] public SoundType soundType;
     public AudioClip clip;
 
     [Range(0f,1f)]

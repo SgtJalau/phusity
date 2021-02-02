@@ -1,25 +1,36 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundOnCollision : MonoBehaviour
 {
-    public string soundName;
+    public SoundType soundType;
     public string targetLayer;
     public bool playOnlyOnce;
 
-    private bool allreadyPlayed = false;
+    private bool _alreadyPlayed = false;
+    
+    private AudioManager _audioManager;
+
+    private void Awake()
+    {
+        _audioManager = FindObjectOfType<AudioManager>();
+    }
+
     // Start is called before the first frame update
-    private void OnCollisionEnter(Collision other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer(targetLayer) )
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer(targetLayer))
         {
-            if (playOnlyOnce == true && allreadyPlayed == false)
+            if (playOnlyOnce && !_alreadyPlayed)
             {
-                FindObjectOfType<AudioManager>().Play(soundName);
-                allreadyPlayed = true;
+                _audioManager.Play(soundType);
+                _alreadyPlayed = true;
             }
-            else if(playOnlyOnce == false){
-                FindObjectOfType<AudioManager>().Play(soundName);
+            else if (!playOnlyOnce)
+            {
+                _audioManager.Play(soundType);
             }
         }
     }
