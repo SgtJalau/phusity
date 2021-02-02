@@ -2,4 +2,6 @@
 {
         DestroyWall,
         Theme,
+        PlayerDash,
+        DoubleJump,
 }
