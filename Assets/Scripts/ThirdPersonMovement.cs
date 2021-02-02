@@ -8,24 +8,24 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     public Rigidbody rb;
     public Transform camTransform;
-    
+
     [SerializeField, Tooltip("The movement speed of the player")]
     public float speed = 6f;
-    
+
     [SerializeField, Tooltip("The movement speed of the player in the air")]
     public float airMovementSpeed = 1f;
-    
+
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
 
     [SerializeField, Tooltip("The movement speed that is applied if the player dashes")]
     public float dashSpeed = 20f;
-    
+
     public Transform groundCheck;
     public float groundDistance = 0.5f;
 
-    
+
     public float maxStepHeight = 0.25f;
     public int stairDetail = 10;
     public LayerMask stepMask;
@@ -55,17 +55,19 @@ public class ThirdPersonMovement : MonoBehaviour
     private float currentSpeed;
     private float doublejumpTimeout;
 
+    private float stepSoundTimer;
+
 
     private GameStateHandler _gameStateHandler;
     private float lastDash;
-    
+
     private AudioManager _audioManager;
 
     private void Awake()
     {
         _audioManager = FindObjectOfType<AudioManager>();
     }
-    
+
     void Start()
     {
         velocity = new Vector3(0f, 0f, 0f);
@@ -88,18 +90,48 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
-        
-        if(hit.distance > 1.05 || !hit.collider || hit.collider.isTrigger)
+
+        if (hit.distance > 1.05 || !hit.collider || hit.collider.isTrigger)
         {
             isGrounded = false;
         }
-        else if(hit.distance <= 1.05)
+        else if (hit.distance <= 1.05)
         {
             jump = true;
             doubleJump = false;
             isGrounded = true;
+
+            //Check if we are moving on ground
+            if (rb.velocity.magnitude >= 0.1F)
+            {
+                if (stepSoundTimer <= 0)
+                {
+                    stepSoundTimer = 0.4f;
+
+                    Material material = GetMaterialAtHit(hit);
+
+                    if (material != null)
+                    {
+                        if (material.name == ("Mat_Gestein (Instance)") || material.name == ("Mat_Felsen (Instance)") || material.name == ("Mat_Bruecke (Instance)"))
+                        {
+                            _audioManager.Play(SoundType.StepRock);
+                        }
+                        else
+                        {
+                            _audioManager.Play(SoundType.StepGras);
+                        }
+                    }
+                    else
+                    {
+                        _audioManager.Play(SoundType.StepGras);
+                    }
+                }
+                else
+                {
+                    stepSoundTimer -= Time.deltaTime;
+                }
+            }
         }
-    
 
         //Quick save and load (inside frame update, because key press can be ignored by fixed update)
         if (Input.GetKeyDown(KeyCode.F1))
@@ -117,7 +149,6 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -149,7 +180,8 @@ public class ThirdPersonMovement : MonoBehaviour
         if (direction.magnitude >= 0.1F)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
+                turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
             moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
 
@@ -159,47 +191,58 @@ public class ThirdPersonMovement : MonoBehaviour
             {
                 maxVelocityChange = airMovementSpeed;
             }
-            
+
             var velocityChange = (moveDir - rb.velocity);
 
             velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
             velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
             velocityChange.y = 0;
-            
+
             //stair handling
             bool isFirstCheck = false;
             bool canMove = true;
             for (int i = stairDetail; i >= 1; i--)
             {
-                Collider[] c = Physics.OverlapBox(transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0), new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
-                if(new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero){
-                    if(c.Length > 0 && i == stairDetail){
+                Collider[] c =
+                    Physics.OverlapBox(transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
+                        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
+                if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
+                {
+                    if (c.Length > 0 && i == stairDetail)
+                    {
                         isFirstCheck = true;
-                        if(!isGrounded){
+                        if (!isGrounded)
+                        {
                             canMove = false;
                         }
                     }
-                    if(c.Length > 0 && !isFirstCheck){
-                        transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0); 
+
+                    if (c.Length > 0 && !isFirstCheck)
+                    {
+                        transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
                         break;
                     }
                 }
-
             }
 
             // handeling walls
             RaycastHit hitWall;
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
-            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall)){
-                if(hitWall.distance < 1.0f && !isGrounded){
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
+            {
+                if (hitWall.distance < 1.0f && !isGrounded)
+                {
                     canMove = false;
-                    Debug.Log("Can Move "+canMove);
+                    Debug.Log("Can Move " + canMove);
                 }
             }
 
-            if(canMove)
+            if (canMove)
+            {
                 rb.velocity += velocityChange;
-        } else if (isGrounded)
+            }
+        }
+        else if (isGrounded)
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
@@ -207,7 +250,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
         {
-            rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
+            rb.velocity = new Vector3(rb.velocity.x,
+                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
 
             jump = false;
             doubleJump = true;
@@ -215,8 +259,9 @@ public class ThirdPersonMovement : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
-            rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
-            
+            rb.velocity = new Vector3(rb.velocity.x,
+                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
+
             jump = false;
             doubleJump = false;
             _audioManager.Play(SoundType.DoubleJump);
@@ -243,23 +288,53 @@ public class ThirdPersonMovement : MonoBehaviour
             currentSpeed = dashSpeed;
             _audioManager.Play(SoundType.PlayerDash);
         }
-
     }
 
     public IEnumerator LookAtLocation(Transform vector3, long millis)
     {
         Transform previousFollow = _virtualCamera.ActiveVirtualCamera.Follow;
         Transform previousLookAt = _virtualCamera.ActiveVirtualCamera.LookAt;
-        
+
         //_virtualCamera.OutputCamera.transform.LookAt(vector3);
         _virtualCamera.ActiveVirtualCamera.Follow = vector3;
         _virtualCamera.ActiveVirtualCamera.LookAt = vector3;
 
-      
-        
-        yield return new WaitForSeconds(millis/1000F);
-        
+
+        yield return new WaitForSeconds(millis / 1000F);
+
         _virtualCamera.ActiveVirtualCamera.Follow = previousFollow;
         _virtualCamera.ActiveVirtualCamera.LookAt = previousLookAt;
+    }
+
+    private Material GetMaterialAtHit(RaycastHit hit)
+    {
+        if (hit.collider.material)
+        {
+            if (hit.collider.gameObject.TryGetComponent(out MeshFilter mesh) && mesh.mesh.isReadable)
+            {
+                var index = hit.triangleIndex;
+                var count = mesh.mesh.subMeshCount;
+
+                //Debug.Log(index + " | " + count);
+
+                for (var x = 0; x < count; x++)
+                {
+                    var triangles = mesh.mesh.GetTriangles(x);
+
+                    for (var y = 0; y < triangles.Length; y++)
+                    {
+                        if (triangles[y] == index)
+                        {
+                            //Debug.Log(triangles[y] + " | " + y + " | Mat Index: " + x + " | " +  hit.collider.GetComponent<MeshRenderer>().materials[x + 1]);
+                            return hit.collider.GetComponent<MeshRenderer>().materials[x + 1];
+                        }
+                    }
+                }
+            }
+
+            //Debug.Log(hit.collider.gameObject.GetComponent<MeshRenderer>().materials.Length + " test");
+        }
+
+        return null;
     }
 }

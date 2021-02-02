@@ -4,4 +4,6 @@
         Theme,
         PlayerDash,
         DoubleJump,
+        StepGras,
+        StepRock,
 }
