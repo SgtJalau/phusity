@@ -47,7 +47,7 @@ public class MovingPlatform : MonoBehaviour
         float reverse = _inReverse ? -1 : 1;
 
         //Move Platform using speed and reverse direction, speed in meter/s
-        _transform.Translate(Vector3.Normalize(currentPoint.vector3) * ((currentPoint.speed * Time.deltaTime) * reverse));
+        _transform.Translate(Vector3.Normalize(currentPoint.vector3) * ((currentPoint.speed * Time.deltaTime) * reverse),Space.World);
         
         //Check if we are moving away from target if so we reached the target position
         if (Vector3.Distance(_transform.localPosition, _currentAbsoluteTargetPoint) > _lastDistance)

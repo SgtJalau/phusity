@@ -8,13 +8,24 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     public Rigidbody rb;
     public Transform camTransform;
+    
+    [SerializeField, Tooltip("The movement speed of the player")]
     public float speed = 6f;
+    
+    [SerializeField, Tooltip("The movement speed of the player in the air")]
+    public float airMovementSpeed = 1f;
+    
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
+
+    [SerializeField, Tooltip("The movement speed that is applied if the player dashes")]
+    public float dashSpeed = 20f;
+    
     public Transform groundCheck;
     public float groundDistance = 0.5f;
 
+    
     public float maxStepHeight = 0.25f;
     public int stairDetail = 10;
     public LayerMask stepMask;
@@ -47,8 +58,14 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private GameStateHandler _gameStateHandler;
     private float lastDash;
+    
+    private AudioManager _audioManager;
 
-
+    private void Awake()
+    {
+        _audioManager = FindObjectOfType<AudioManager>();
+    }
+    
     void Start()
     {
         velocity = new Vector3(0f, 0f, 0f);
@@ -137,6 +154,12 @@ public class ThirdPersonMovement : MonoBehaviour
             moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
 
             float maxVelocityChange = speed;
+
+            if (!isGrounded)
+            {
+                maxVelocityChange = airMovementSpeed;
+            }
+            
             var velocityChange = (moveDir - rb.velocity);
 
             velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
@@ -184,18 +207,19 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
         {
-            rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer),
-                ForceMode.Impulse);
+            rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
+
             jump = false;
             doubleJump = true;
             doublejumpTimeout = 0.5f;
         }
         else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), ForceMode.Impulse);
+            rb.velocity = new Vector3(rb.velocity.x, Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
+            
             jump = false;
             doubleJump = false;
+            _audioManager.Play(SoundType.DoubleJump);
         }
         else if (Input.GetKey(KeyCode.LeftControl) && _glidingEnabled && direction.y <= 0)
         {
@@ -216,7 +240,8 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             dash = false;
             lastDash = Time.realtimeSinceStartup;
-            currentSpeed = 20.0f;
+            currentSpeed = dashSpeed;
+            _audioManager.Play(SoundType.PlayerDash);
         }
 
     }

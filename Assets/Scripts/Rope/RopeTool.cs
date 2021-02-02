@@ -15,7 +15,9 @@ public class RopeTool : MonoBehaviour
 {
     public Camera cam;
     
-    public Material mat;
+    public Material debugMat;
+    public Material distanceMat;
+    //public Material 
     
     public GameObject ropePrefab;
 
@@ -44,7 +46,7 @@ public class RopeTool : MonoBehaviour
         debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Destroy(debugSphere.GetComponent<Collider>());
         debugSphere.transform.localScale = new Vector3(0.3f,0.3f,0.3f);
-        debugSphere.GetComponent<Renderer>().material = mat;
+        debugSphere.GetComponent<Renderer>().material = debugMat;
         debugSphere.SetActive(false);
 
         limSpring = new SoftJointLimitSpring
@@ -193,7 +195,7 @@ public class RopeTool : MonoBehaviour
             joint.autoConfigureConnectedAnchor = false;
             joint.anchor = staticTransform.localPosition;
             joint.connectedAnchor = dynamicTransform.localPosition;
-            joint.spring = 1000;
+            joint.spring = 10000;
             joint.damper = 1.0f;
             joint.enableCollision = true;
             joint.minDistance = 0.0f;
@@ -201,6 +203,7 @@ public class RopeTool : MonoBehaviour
 
             GameObject renderEmpty = new GameObject("DistanceConnectionRenderEmpty");
             LineRenderer renderer = renderEmpty.AddComponent<LineRenderer>();
+            renderer.material = distanceMat;
             DistanceConnectionRenderer renderUpdater = renderEmpty.AddComponent<DistanceConnectionRenderer>();
             renderUpdater.lineRenderer = renderer;
             renderUpdater.t1 = staticTransform;
