@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SoundOnCollision : MonoBehaviour
 {
-    public string soundName;
+    public SoundType soundType;
     public string targetLayer;
     public bool playOnlyOnce;
 
@@ -25,12 +25,12 @@ public class SoundOnCollision : MonoBehaviour
         {
             if (playOnlyOnce && !_alreadyPlayed)
             {
-                _audioManager.Play(soundName);
+                _audioManager.Play(soundType);
                 _alreadyPlayed = true;
             }
             else if (!playOnlyOnce)
             {
-                _audioManager.Play(soundName);
+                _audioManager.Play(soundType);
             }
         }
     }

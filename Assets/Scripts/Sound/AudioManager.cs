@@ -20,19 +20,23 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        Play("Theme");
+        Play(SoundType.Theme);
     }
 
-    public void Play(string name)
+    public Sound FindSound(SoundType soundType)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-        s?.source.Play();
+        return Array.Find(sounds, a => a.soundType == soundType);
     }
 
-    public void Play(string name, float pitch, float volume)
+    public void Play(SoundType soundType)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-        
+        FindSound(soundType)?.source.Play();
+    }
+
+    public void Play(SoundType soundType, float pitch, float volume)
+    {
+        Sound s = FindSound(soundType);
+
         if (s == null)
         {
             return;
