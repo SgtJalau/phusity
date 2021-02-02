@@ -3539,6 +3539,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1020862469231444778, guid: 8328a9d871f68c34a8b54e03f02253c9,
+        type: 3}
+      propertyPath: debugMat
+      value: 
+      objectReference: {fileID: 2100000, guid: 28c0b25f71acec34f915904e39825f67, type: 2}
+    - target: {fileID: 1020862469231444778, guid: 8328a9d871f68c34a8b54e03f02253c9,
+        type: 3}
+      propertyPath: distanceMat
+      value: 
+      objectReference: {fileID: 2100000, guid: 28c0b25f71acec34f915904e39825f67, type: 2}
     - target: {fileID: 1020862469231444789, guid: 8328a9d871f68c34a8b54e03f02253c9,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -8518,7 +8528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cfa16f43852d724e9cff6894708af9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundName: destroyWall
+  soundType: 0
   targetLayer: Destuctable
   playOnlyOnce: 1
 --- !u!1 &1823966763
