@@ -112,7 +112,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
                     if (material != null)
                     {
-                        if (material.name == ("Mat_Gestein (Instance)") || material.name == ("Mat_Felsen (Instance)") || material.name == ("Mat_Bruecke (Instance)"))
+                        if (material.name == ("Mat_Gestein (Instance)") || material.name == ("Mat_Felsen (Instance)") || material.name == "Mat_Bruecke (Instance)" || material.name == "Mat_Ruine (Instance)")
                         {
                             _audioManager.Play(SoundType.StepRock);
                         }
@@ -275,13 +275,13 @@ public class ThirdPersonMovement : MonoBehaviour
 
         velocity.y = rb.velocity.y;
 
-        if (Time.realtimeSinceStartup - lastDash > 0.3)
+        if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
         {
             dash = true;
             currentSpeed = speed;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dash)
+        if (Input.GetKey(KeyCode.LeftShift) && dash)
         {
             dash = false;
             lastDash = Time.realtimeSinceStartup;
@@ -317,6 +317,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
                 //Debug.Log(index + " | " + count);
 
+                var meshRenderer = hit.collider.GetComponent<MeshRenderer>();
                 for (var x = 0; x < count; x++)
                 {
                     var triangles = mesh.mesh.GetTriangles(x);
@@ -326,7 +327,12 @@ public class ThirdPersonMovement : MonoBehaviour
                         if (triangles[y] == index)
                         {
                             //Debug.Log(triangles[y] + " | " + y + " | Mat Index: " + x + " | " +  hit.collider.GetComponent<MeshRenderer>().materials[x + 1]);
-                            return hit.collider.GetComponent<MeshRenderer>().materials[x + 1];
+                            var materials = meshRenderer.materials;
+                            
+                            //No idea why the materials are shifted by one but for some reason they are
+                            var matIndex = x + 1 < materials.Length ? x + 1 : materials.Length - 1;
+                            
+                            return materials[matIndex];
                         }
                     }
                 }
