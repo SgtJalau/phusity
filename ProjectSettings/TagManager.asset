@@ -12,6 +12,7 @@ TagManager:
   - Magnet
   - Dragable
   - Destructable
+  - CollisionCheck
   layers:
   - Default
   - TransparentFX
