@@ -12,6 +12,9 @@ public class TargetingActivator : MonoBehaviour
     public int priorityBoost = 10;
     public Volume globalPostProcessVolume;
 
+    public Mesh simpleQuad;
+    public Material ropeTargetMat;
+
     Cinemachine.CinemachineVirtualCameraBase vcam;
     bool boosted = false;
 
@@ -44,11 +47,31 @@ public class TargetingActivator : MonoBehaviour
         {
             if (boosted)
             {
-                var hits = Physics.OverlapSphere(Camera.main.transform.position, 100.0f, ~LayerMask.NameToLayer("RopeTarget"));
-                foreach (var hit in hits)
+                Vector3 camXWS = Camera.main.transform.right;
+                Vector3 camYWS = Camera.main.transform.up;
+
+                //--------------------------- "FINDING" TARGETS AND DRAWING OVERLAY ELEMENT FOR EACH --------------------------------//
+                var hits = Physics.OverlapSphere(transform.position, 100.0f, LayerMask.GetMask("RopeTarget"));
+                //Drawing every target hit. Not doing any culling for now, amount of targets in radius should be rather low anyways
+                Matrix4x4[] matrices = new Matrix4x4[hits.Length];
+                for (var i = 0; i < hits.Length; i++)
                 {
-                    Debug.DrawLine(hit.transform.position - 0.5f*Vector3.up, hit.transform.position + 0.5f*Vector3.up, Color.cyan);
+                    //constructing "rotation" Matrix from camera axis in world space
+                    Matrix4x4 rotMat = Matrix4x4.identity;
+                    rotMat.SetColumn(1, camYWS);
+                    rotMat.SetColumn(2, camXWS);
+                    //the following can be avoided if we require the "TargetPosition" Empty to not also define the target collider
+                    Transform targetTransform = hits[i].name == "TargetPosition" ? hits[i].transform : hits[i].transform.Find("TargetPosition");
+                    matrices[i] =
+                        Matrix4x4.Translate(targetTransform.position) * rotMat;
                 }
+                Graphics.DrawMeshInstanced(simpleQuad, 0, ropeTargetMat, matrices, matrices.Length,
+                    properties: null,
+                    castShadows: UnityEngine.Rendering.ShadowCastingMode.Off,
+                    receiveShadows: false,
+                    layer: LayerMask.NameToLayer("UI"), //may break stuff, will see when we have actual UI elements
+                    camera: null,
+                    lightProbeUsage: UnityEngine.Rendering.LightProbeUsage.Off);
             }
         }
     }
