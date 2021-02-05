@@ -8131,6 +8131,7 @@ GameObject:
   - component: {fileID: 1795796936}
   - component: {fileID: 1795796938}
   - component: {fileID: 1795796939}
+  - component: {fileID: 1795796940}
   m_Layer: 0
   m_Name: SteinAnSeil
   m_TagString: Dragable
@@ -8220,6 +8221,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnHitEffect: {fileID: 7694259577496870619, guid: 03389333704177b4e974fa51fe020345,
     type: 3}
+--- !u!114 &1795796940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795796934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c010263e6f51b654cba713c910424e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 738bbc50-5895-4362-8912-20995bb95309
+  respawnOnCollide: 1
 --- !u!1 &1823966763
 GameObject:
   m_ObjectHideFlags: 0
