@@ -58,6 +58,14 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""ToggleTargeting"",
+                    ""type"": ""Button"",
+                    ""id"": ""2d00e3dc-1f9b-4efc-a762-8d26bf48fea6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -234,6 +242,17 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""98e9e2ac-d3c9-450d-88ce-0a3b5d61dfb4"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ToggleTargeting"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -431,6 +450,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Glide = m_Player.FindAction("Glide", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_ToggleTargeting = m_Player.FindAction("ToggleTargeting", throwIfNotFound: true);
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_OpenInventory = m_Gameplay.FindAction("OpenInventory", throwIfNotFound: true);
@@ -503,6 +523,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Glide;
     private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_ToggleTargeting;
     public struct PlayerActions
     {
         private @InputMaster m_Wrapper;
@@ -511,6 +532,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Glide => m_Wrapper.m_Player_Glide;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
+        public InputAction @ToggleTargeting => m_Wrapper.m_Player_ToggleTargeting;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -532,6 +554,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Dash.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
+                @ToggleTargeting.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleTargeting;
+                @ToggleTargeting.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleTargeting;
+                @ToggleTargeting.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleTargeting;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -548,6 +573,9 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
+                @ToggleTargeting.started += instance.OnToggleTargeting;
+                @ToggleTargeting.performed += instance.OnToggleTargeting;
+                @ToggleTargeting.canceled += instance.OnToggleTargeting;
             }
         }
     }
@@ -666,6 +694,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnGlide(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnToggleTargeting(InputAction.CallbackContext context);
     }
     public interface IGameplayActions
     {
