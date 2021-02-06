@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.InputSystem;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
@@ -62,9 +63,14 @@ public class ThirdPersonMovement : MonoBehaviour
     private float lastDash;
 
     private AudioManager _audioManager;
+    private InputMaster _input;
 
     private void Awake()
     {
+        _input = new InputMaster();
+        _input.Gameplay.QuickLoad.performed += _ => LoadGameState();
+        _input.Gameplay.QuickSave.performed += _ => SaveGameState();
+
         _audioManager = FindObjectOfType<AudioManager>();
     }
 
@@ -133,18 +139,19 @@ public class ThirdPersonMovement : MonoBehaviour
             }
         }
 
-        //Quick save and load (inside frame update, because key press can be ignored by fixed update)
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            _gameStateHandler.SaveGameState();
-            Debug.Log("Quick saved state");
-        }
 
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            _gameStateHandler.QuickLoadGameState();
-            Debug.Log("Quick loaded state");
-        }
+    }
+
+    void LoadGameState()
+    {
+        _gameStateHandler.QuickLoadGameState();
+        Debug.Log("Quick loaded state");
+    }
+
+    void SaveGameState()
+    {
+        _gameStateHandler.SaveGameState();
+        Debug.Log("Quick saved state");
     }
 
     void FixedUpdate()
@@ -342,5 +349,17 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void OnEnable()
+    {
+        _input.Player.Enable();
+        _input.Gameplay.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _input.Player.Disable();
+        _input.Gameplay.Disable();
     }
 }
