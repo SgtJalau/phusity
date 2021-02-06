@@ -70,7 +70,7 @@ public class ThirdPersonMovement : MonoBehaviour
         _input = new InputMaster();
         _input.Gameplay.QuickLoad.performed += _ => LoadGameState();
         _input.Gameplay.QuickSave.performed += _ => SaveGameState();
-        _input.Player.Movement.performed += _ => Movement();
+        //_input.Player.Movement. += _ => Movement();
         _input.Player.Jump.performed += _ => Jump();
         _input.Player.Dash.performed += _ => Dash();
         _input.Player.Glide.performed += _ => Glide();
@@ -101,15 +101,20 @@ public class ThirdPersonMovement : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
 
-        if (hit.distance > 1.05 || !hit.collider || hit.collider.isTrigger)
+        const double hitDistance = 0.95;
+
+        if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
             isGrounded = false;
         }
-        else if (hit.distance <= 1.05)
+        //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
+        else if (hit.distance <= hitDistance && !(doubleJump && rb.velocity.y < 0))
         {
+
             jump = true;
             doubleJump = false;
             isGrounded = true;
+    
 
             //Check if we are moving on ground
             if (rb.velocity.magnitude >= 0.1F)
@@ -251,20 +256,25 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Jump()
     {
+   
         if (jump && isGrounded)
         {
             rb.velocity = new Vector3(rb.velocity.x,
                 Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
 
+            isGrounded = false;
             jump = false;
             doubleJump = true;
             doublejumpTimeout = 0.5f;
+            
+            Debug.Log("Jump " + jump + " double jump: " + doubleJump + " ground: " + isGrounded + " out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
         }
         else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
             rb.velocity = new Vector3(rb.velocity.x,
                 Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
 
+            isGrounded = false;
             jump = false;
             doubleJump = false;
             _audioManager.Play(SoundType.DoubleJump);
@@ -295,6 +305,25 @@ public class ThirdPersonMovement : MonoBehaviour
             dash = true;
             currentSpeed = speed;
         }
+        
+        float gravity = gravityMultiplyer;
+        
+        if (_gliding)
+        {
+            if (isGrounded)
+            {
+                _gliding = false;
+            }
+            else
+            {
+                gravity /= 3;
+                Debug.Log("Changed gravity enabled");
+            }
+        }
+
+        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+
+        Movement();
     }
 
     public IEnumerator LookAtLocation(Transform vector3, long millis)
