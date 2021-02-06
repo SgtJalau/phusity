@@ -70,6 +70,10 @@ public class ThirdPersonMovement : MonoBehaviour
         _input = new InputMaster();
         _input.Gameplay.QuickLoad.performed += _ => LoadGameState();
         _input.Gameplay.QuickSave.performed += _ => SaveGameState();
+        _input.Player.Movement.performed += _ => Movement();
+        _input.Player.Jump.performed += _ => Jump();
+        _input.Player.Dash.performed += _ => Dash();
+        _input.Player.Glide.performed += _ => Glide();
 
         _audioManager = FindObjectOfType<AudioManager>();
     }
@@ -154,34 +158,13 @@ public class ThirdPersonMovement : MonoBehaviour
         Debug.Log("Quick saved state");
     }
 
-    void FixedUpdate()
+    void Movement()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        float horizontal = _input.Player.Movement.ReadValue<Vector2>().x;
+        float vertical = _input.Player.Movement.ReadValue<Vector2>().y;
 
         direction = new Vector3(horizontal, 0f, vertical).normalized;
         Vector3 moveDir = new Vector3(0f, 0f, 0f);
-
-        if (doublejumpTimeout > 0.0f)
-        {
-            doublejumpTimeout -= Time.fixedDeltaTime;
-        }
-
-        float gravity = gravityMultiplyer;
-        if (_gliding)
-        {
-            if (isGrounded)
-            {
-                _gliding = false;
-            }
-            else
-            {
-                gravity /= 3;
-                Debug.Log("Changed gravity enabled");
-            }
-        }
-
-        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
 
         //Check if player movement should be applied
         if (direction.magnitude >= 0.1F)
@@ -253,9 +236,22 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
+    }
 
+    void Dash()
+    {
+        if (dash)
+        {
+            dash = false;
+            lastDash = Time.realtimeSinceStartup;
+            currentSpeed = dashSpeed;
+            _audioManager.Play(SoundType.PlayerDash);
+        }
+    }
 
-        if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
+    void Jump()
+    {
+        if (jump && isGrounded)
         {
             rb.velocity = new Vector3(rb.velocity.x,
                 Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
@@ -264,7 +260,7 @@ public class ThirdPersonMovement : MonoBehaviour
             doubleJump = true;
             doublejumpTimeout = 0.5f;
         }
-        else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
+        else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
             rb.velocity = new Vector3(rb.velocity.x,
                 Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
@@ -273,11 +269,23 @@ public class ThirdPersonMovement : MonoBehaviour
             doubleJump = false;
             _audioManager.Play(SoundType.DoubleJump);
         }
-        else if (Input.GetKey(KeyCode.LeftControl) && _glidingEnabled && direction.y <= 0)
+    }
+
+    void Glide()
+    {
+        if (_glidingEnabled && direction.y <= 0)
         {
             _gliding = true;
             _glidingEnabled = false;
             Debug.Log("Gliding enabled");
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (doublejumpTimeout > 0.0f)
+        {
+            doublejumpTimeout -= Time.fixedDeltaTime;
         }
 
         velocity.y = rb.velocity.y;
@@ -286,14 +294,6 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             dash = true;
             currentSpeed = speed;
-        }
-
-        if (Input.GetKey(KeyCode.LeftShift) && dash)
-        {
-            dash = false;
-            lastDash = Time.realtimeSinceStartup;
-            currentSpeed = dashSpeed;
-            _audioManager.Play(SoundType.PlayerDash);
         }
     }
 
@@ -351,13 +351,13 @@ public class ThirdPersonMovement : MonoBehaviour
         return null;
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         _input.Player.Enable();
         _input.Gameplay.Enable();
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         _input.Player.Disable();
         _input.Gameplay.Disable();
