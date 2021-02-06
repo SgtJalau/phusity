@@ -6,42 +6,32 @@ public class AudioManager : MonoBehaviour
 {
     public Sound[] sounds;
 
-
     void Awake()
     {
-        foreach(Sound s in sounds)
+        foreach (Sound s in sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
-            s.source.clip = s.clip;
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            s.source.loop = s.loop;
         }
     }
 
-    void Start() {
-        Play("Theme");
-    }
-    
-    public void Play(string name)
+    private void Start()
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-        if (s == null)
-        {
-            return;
-        }
-        s.source.Play();        
+        Play(SoundType.Theme);
     }
 
-    public void PlayAdvanced(string name, float pitch, float volume)
+    public Sound FindSound(SoundType soundType)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-        if (s == null)
-        {
-            return;
-        }
-        s.source.volume = volume;
-        s.source.pitch = pitch;
-        s.source.Play();       
+        return Array.Find(sounds, a => a.soundType == soundType);
+    }
+
+    public void Play(SoundType soundType)
+    {
+        FindSound(soundType)?.PlayRandomAudioFile();
+    }
+
+    public void Play(SoundType soundType, float pitch, float volume)
+    {
+        Sound s = FindSound(soundType);
+        s?.PlayRandomAudioFile(pitch, volume);
     }
 }
