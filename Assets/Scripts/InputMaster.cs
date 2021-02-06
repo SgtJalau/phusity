@@ -60,9 +60,41 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""ToggleTargeting"",
+                    ""name"": ""Drag"",
+                    ""type"": ""Button"",
+                    ""id"": ""f28a1e5d-2555-4fcd-979a-ca67de57d9ed"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""ea712063-208b-44b3-a0a7-e48587511aa5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""AbilityChange"",
+                    ""type"": ""Button"",
+                    ""id"": ""e2adbd83-75b9-4b6f-a8a9-d08ef6c0f288"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""TargetMode"",
                     ""type"": ""Button"",
                     ""id"": ""2d00e3dc-1f9b-4efc-a762-8d26bf48fea6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MagnetPower"",
+                    ""type"": ""Button"",
+                    ""id"": ""0235d9da-e7e3-4c72-8b5d-f03c970032af"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -94,7 +126,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""WASDKeys"",
                     ""id"": ""edaf6396-299a-4cf6-8307-aad15885a304"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""2DVector(mode=1)"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -149,7 +181,7 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""D-Pad"",
                     ""id"": ""1f834ff1-b402-4bbf-8cf0-b13b65f10987"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""2DVector(mode=1)"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -237,11 +269,33 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4d4e76d4-5b9c-45b0-a28b-0075dd7bb980"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""19beb10a-8d29-4349-aff2-f940e6b536f0"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ef4d5d30-4553-4bdf-a200-f35c5bbba5a3"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drag"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -252,7 +306,139 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""ToggleTargeting"",
+                    ""action"": ""TargetMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c26cb0d1-e6df-4830-8f58-5ad5dea05635"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""TargetMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Keyboard"",
+                    ""id"": ""ebaeae8c-ad3d-4392-9206-45c615c7efee"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MagnetPower"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""8938d416-8c85-4a13-b233-30f9d366a350"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""MagnetPower"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""ed6f23e2-93c8-448f-8735-2f83f5b9851f"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""MagnetPower"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""MouseScroll"",
+                    ""id"": ""e494bb89-7f06-4f0b-8531-0f55ef04a3e6"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MagnetPower"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""ec6794e5-679a-4b43-a197-826712b42469"",
+                    ""path"": ""<Mouse>/scroll/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""MagnetPower"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""e544d194-03ac-4990-bd50-374216acf782"",
+                    ""path"": ""<Mouse>/scroll/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""MagnetPower"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ab116ad-789e-4667-af8e-3c05b7806ffb"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3d1389a4-7b5e-492a-b213-bd766b2e19ed"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dd7418a2-cb80-45f3-8403-a271d37e26fd"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bd3ac86a-16bf-44d8-853b-d0d872799b98"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""AbilityChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""487ef255-a0b4-4daf-82be-909ac1b8cb68"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""AbilityChange"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -262,14 +448,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
             ""name"": ""Gameplay"",
             ""id"": ""5048c0b7-4aee-48de-8d16-85098fe52bda"",
             ""actions"": [
-                {
-                    ""name"": ""OpenInventory"",
-                    ""type"": ""Button"",
-                    ""id"": ""14cd597d-1521-461c-824a-450f284c966d"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
                 {
                     ""name"": ""OpenMenu"",
                     ""type"": ""Button"",
@@ -354,60 +532,11 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""c564d9c8-50d2-470b-a13a-819a19c9f094"",
-                    ""path"": ""<Gamepad>/select"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""OpenMenu"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e92773a9-c6f6-47c6-8b18-126727a08c08"",
-                    ""path"": ""<Keyboard>/i"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""OpenInventory"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""60d1e60e-845b-4288-8687-8d891d64a75d"",
                     ""path"": ""<Gamepad>/start"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
-                    ""action"": ""OpenInventory"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
-            ""name"": ""Debug"",
-            ""id"": ""958a0511-7f1c-46f8-8527-b388b516b295"",
-            ""actions"": [
-                {
-                    ""name"": ""New action"",
-                    ""type"": ""Button"",
-                    ""id"": ""370eecb6-2048-4cfc-b898-46bcee46283e"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""ef61e24d-c382-4cd1-80be-3246d5a652c6"",
-                    ""path"": """",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""OpenMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -450,16 +579,16 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Glide = m_Player.FindAction("Glide", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
-        m_Player_ToggleTargeting = m_Player.FindAction("ToggleTargeting", throwIfNotFound: true);
+        m_Player_Drag = m_Player.FindAction("Drag", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_AbilityChange = m_Player.FindAction("AbilityChange", throwIfNotFound: true);
+        m_Player_TargetMode = m_Player.FindAction("TargetMode", throwIfNotFound: true);
+        m_Player_MagnetPower = m_Player.FindAction("MagnetPower", throwIfNotFound: true);
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
-        m_Gameplay_OpenInventory = m_Gameplay.FindAction("OpenInventory", throwIfNotFound: true);
         m_Gameplay_OpenMenu = m_Gameplay.FindAction("OpenMenu", throwIfNotFound: true);
         m_Gameplay_QuickLoad = m_Gameplay.FindAction("QuickLoad", throwIfNotFound: true);
         m_Gameplay_QuickSave = m_Gameplay.FindAction("QuickSave", throwIfNotFound: true);
-        // Debug
-        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
-        m_Debug_Newaction = m_Debug.FindAction("New action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -523,7 +652,11 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Glide;
     private readonly InputAction m_Player_Dash;
-    private readonly InputAction m_Player_ToggleTargeting;
+    private readonly InputAction m_Player_Drag;
+    private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_AbilityChange;
+    private readonly InputAction m_Player_TargetMode;
+    private readonly InputAction m_Player_MagnetPower;
     public struct PlayerActions
     {
         private @InputMaster m_Wrapper;
@@ -532,7 +665,11 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Glide => m_Wrapper.m_Player_Glide;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
-        public InputAction @ToggleTargeting => m_Wrapper.m_Player_ToggleTargeting;
+        public InputAction @Drag => m_Wrapper.m_Player_Drag;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @AbilityChange => m_Wrapper.m_Player_AbilityChange;
+        public InputAction @TargetMode => m_Wrapper.m_Player_TargetMode;
+        public InputAction @MagnetPower => m_Wrapper.m_Player_MagnetPower;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -554,9 +691,21 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Dash.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
-                @ToggleTargeting.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleTargeting;
-                @ToggleTargeting.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleTargeting;
-                @ToggleTargeting.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnToggleTargeting;
+                @Drag.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrag;
+                @Drag.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrag;
+                @Drag.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrag;
+                @Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @AbilityChange.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityChange;
+                @AbilityChange.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityChange;
+                @AbilityChange.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityChange;
+                @TargetMode.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTargetMode;
+                @TargetMode.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTargetMode;
+                @TargetMode.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTargetMode;
+                @MagnetPower.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMagnetPower;
+                @MagnetPower.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMagnetPower;
+                @MagnetPower.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMagnetPower;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -573,9 +722,21 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
-                @ToggleTargeting.started += instance.OnToggleTargeting;
-                @ToggleTargeting.performed += instance.OnToggleTargeting;
-                @ToggleTargeting.canceled += instance.OnToggleTargeting;
+                @Drag.started += instance.OnDrag;
+                @Drag.performed += instance.OnDrag;
+                @Drag.canceled += instance.OnDrag;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
+                @AbilityChange.started += instance.OnAbilityChange;
+                @AbilityChange.performed += instance.OnAbilityChange;
+                @AbilityChange.canceled += instance.OnAbilityChange;
+                @TargetMode.started += instance.OnTargetMode;
+                @TargetMode.performed += instance.OnTargetMode;
+                @TargetMode.canceled += instance.OnTargetMode;
+                @MagnetPower.started += instance.OnMagnetPower;
+                @MagnetPower.performed += instance.OnMagnetPower;
+                @MagnetPower.canceled += instance.OnMagnetPower;
             }
         }
     }
@@ -584,7 +745,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     // Gameplay
     private readonly InputActionMap m_Gameplay;
     private IGameplayActions m_GameplayActionsCallbackInterface;
-    private readonly InputAction m_Gameplay_OpenInventory;
     private readonly InputAction m_Gameplay_OpenMenu;
     private readonly InputAction m_Gameplay_QuickLoad;
     private readonly InputAction m_Gameplay_QuickSave;
@@ -592,7 +752,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     {
         private @InputMaster m_Wrapper;
         public GameplayActions(@InputMaster wrapper) { m_Wrapper = wrapper; }
-        public InputAction @OpenInventory => m_Wrapper.m_Gameplay_OpenInventory;
         public InputAction @OpenMenu => m_Wrapper.m_Gameplay_OpenMenu;
         public InputAction @QuickLoad => m_Wrapper.m_Gameplay_QuickLoad;
         public InputAction @QuickSave => m_Wrapper.m_Gameplay_QuickSave;
@@ -605,9 +764,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_GameplayActionsCallbackInterface != null)
             {
-                @OpenInventory.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenInventory;
-                @OpenInventory.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenInventory;
-                @OpenInventory.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenInventory;
                 @OpenMenu.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenMenu;
                 @OpenMenu.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenMenu;
                 @OpenMenu.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnOpenMenu;
@@ -621,9 +777,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @OpenInventory.started += instance.OnOpenInventory;
-                @OpenInventory.performed += instance.OnOpenInventory;
-                @OpenInventory.canceled += instance.OnOpenInventory;
                 @OpenMenu.started += instance.OnOpenMenu;
                 @OpenMenu.performed += instance.OnOpenMenu;
                 @OpenMenu.canceled += instance.OnOpenMenu;
@@ -637,39 +790,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         }
     }
     public GameplayActions @Gameplay => new GameplayActions(this);
-
-    // Debug
-    private readonly InputActionMap m_Debug;
-    private IDebugActions m_DebugActionsCallbackInterface;
-    private readonly InputAction m_Debug_Newaction;
-    public struct DebugActions
-    {
-        private @InputMaster m_Wrapper;
-        public DebugActions(@InputMaster wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_Debug_Newaction;
-        public InputActionMap Get() { return m_Wrapper.m_Debug; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
-        public void SetCallbacks(IDebugActions instance)
-        {
-            if (m_Wrapper.m_DebugActionsCallbackInterface != null)
-            {
-                @Newaction.started -= m_Wrapper.m_DebugActionsCallbackInterface.OnNewaction;
-                @Newaction.performed -= m_Wrapper.m_DebugActionsCallbackInterface.OnNewaction;
-                @Newaction.canceled -= m_Wrapper.m_DebugActionsCallbackInterface.OnNewaction;
-            }
-            m_Wrapper.m_DebugActionsCallbackInterface = instance;
-            if (instance != null)
-            {
-                @Newaction.started += instance.OnNewaction;
-                @Newaction.performed += instance.OnNewaction;
-                @Newaction.canceled += instance.OnNewaction;
-            }
-        }
-    }
-    public DebugActions @Debug => new DebugActions(this);
     private int m_KeyboardandMouseSchemeIndex = -1;
     public InputControlScheme KeyboardandMouseScheme
     {
@@ -694,17 +814,16 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnGlide(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
-        void OnToggleTargeting(InputAction.CallbackContext context);
+        void OnDrag(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnAbilityChange(InputAction.CallbackContext context);
+        void OnTargetMode(InputAction.CallbackContext context);
+        void OnMagnetPower(InputAction.CallbackContext context);
     }
     public interface IGameplayActions
     {
-        void OnOpenInventory(InputAction.CallbackContext context);
         void OnOpenMenu(InputAction.CallbackContext context);
         void OnQuickLoad(InputAction.CallbackContext context);
         void OnQuickSave(InputAction.CallbackContext context);
-    }
-    public interface IDebugActions
-    {
-        void OnNewaction(InputAction.CallbackContext context);
     }
 }

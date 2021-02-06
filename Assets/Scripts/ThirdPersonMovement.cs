@@ -70,7 +70,6 @@ public class ThirdPersonMovement : MonoBehaviour
         _input = new InputMaster();
         _input.Gameplay.QuickLoad.performed += _ => LoadGameState();
         _input.Gameplay.QuickSave.performed += _ => SaveGameState();
-        //_input.Player.Movement. += _ => Movement();
         _input.Player.Jump.performed += _ => Jump();
         _input.Player.Dash.performed += _ => Dash();
         _input.Player.Glide.performed += _ => Glide();
@@ -88,7 +87,7 @@ public class ThirdPersonMovement : MonoBehaviour
         isGrounded = false;
         lastDash = Time.realtimeSinceStartup;
         currentSpeed = speed;
-        doublejumpTimeout = 0.5f;
+        doublejumpTimeout = 0.3f;
 
         _gameStateHandler = new GameStateHandler();
 
@@ -148,28 +147,43 @@ public class ThirdPersonMovement : MonoBehaviour
                 }
             }
         }
-
-
     }
 
-    void LoadGameState()
+    void FixedUpdate()
     {
-        _gameStateHandler.QuickLoadGameState();
-        Debug.Log("Quick loaded state");
-    }
+        if (doublejumpTimeout > 0.0f)
+        {
+            doublejumpTimeout -= Time.fixedDeltaTime;
+        }
 
-    void SaveGameState()
-    {
-        _gameStateHandler.SaveGameState();
-        Debug.Log("Quick saved state");
-    }
+        velocity.y = rb.velocity.y;
 
-    void Movement()
-    {
-        float horizontal = _input.Player.Movement.ReadValue<Vector2>().x;
-        float vertical = _input.Player.Movement.ReadValue<Vector2>().y;
+        if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
+        {
+            dash = true;
+            currentSpeed = speed;
+        }
 
-        direction = new Vector3(horizontal, 0f, vertical).normalized;
+        float gravity = gravityMultiplyer;
+
+        if (_gliding)
+        {
+            if (isGrounded)
+            {
+                _gliding = false;
+            }
+            else
+            {
+                gravity /= 3;
+                Debug.Log("Changed gravity enabled");
+            }
+        }
+
+        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+
+        // Player movement is handeled here
+        Vector2 move = _input.Player.Movement.ReadValue<Vector2>();
+        direction = new Vector3(move.x, 0f, move.y).normalized;
         Vector3 moveDir = new Vector3(0f, 0f, 0f);
 
         //Check if player movement should be applied
@@ -244,20 +258,20 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
-    void Dash()
+    void LoadGameState()
     {
-        if (dash)
-        {
-            dash = false;
-            lastDash = Time.realtimeSinceStartup;
-            currentSpeed = dashSpeed;
-            _audioManager.Play(SoundType.PlayerDash);
-        }
+        _gameStateHandler.QuickLoadGameState();
+        Debug.Log("Quick loaded state");
+    }
+
+    void SaveGameState()
+    {
+        _gameStateHandler.SaveGameState();
+        Debug.Log("Quick saved state");
     }
 
     void Jump()
     {
-   
         if (jump && isGrounded)
         {
             rb.velocity = new Vector3(rb.velocity.x,
@@ -266,7 +280,7 @@ public class ThirdPersonMovement : MonoBehaviour
             isGrounded = false;
             jump = false;
             doubleJump = true;
-            doublejumpTimeout = 0.5f;
+            doublejumpTimeout = 0.3f;
             
             Debug.Log("Jump " + jump + " double jump: " + doubleJump + " ground: " + isGrounded + " out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
         }
@@ -282,6 +296,17 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
+    void Dash()
+    {
+        if (dash)
+        {
+            dash = false;
+            lastDash = Time.realtimeSinceStartup;
+            currentSpeed = dashSpeed;
+            _audioManager.Play(SoundType.PlayerDash);
+        }
+    }
+
     void Glide()
     {
         if (_glidingEnabled && direction.y <= 0)
@@ -290,41 +315,6 @@ public class ThirdPersonMovement : MonoBehaviour
             _glidingEnabled = false;
             Debug.Log("Gliding enabled");
         }
-    }
-
-    void FixedUpdate()
-    {
-        if (doublejumpTimeout > 0.0f)
-        {
-            doublejumpTimeout -= Time.fixedDeltaTime;
-        }
-
-        velocity.y = rb.velocity.y;
-
-        if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
-        {
-            dash = true;
-            currentSpeed = speed;
-        }
-        
-        float gravity = gravityMultiplyer;
-        
-        if (_gliding)
-        {
-            if (isGrounded)
-            {
-                _gliding = false;
-            }
-            else
-            {
-                gravity /= 3;
-                Debug.Log("Changed gravity enabled");
-            }
-        }
-
-        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
-
-        Movement();
     }
 
     public IEnumerator LookAtLocation(Transform vector3, long millis)

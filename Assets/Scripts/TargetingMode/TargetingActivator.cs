@@ -23,7 +23,7 @@ public class TargetingActivator : MonoBehaviour
     void Awake()
     {
         _input = new InputMaster();
-        _input.Player.ToggleTargeting.performed += _ => toggleStatus();
+        _input.Player.TargetMode.performed += _ => toggleStatus();
     }
 
     private void OnEnable()
