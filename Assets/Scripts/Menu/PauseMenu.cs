@@ -7,30 +7,43 @@ using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
     public static bool gameIsPaused = false;
-    
-    [SerializeField] private GameObject pauseMenuUI = null;
-    
+
+    private CanvasGroup ui;
     private InputMaster _input;
+
     // private bool gameWasSaved = false;    // TODO
 
     private void Awake()
     {
         _input = new InputMaster();
         _input.Gameplay.OpenMenu.performed += _ => PauseResumeGame();
-        pauseMenuUI.SetActive(false);
+    }
+
+    private void Start()
+    {
+        ui = gameObject.GetComponent<CanvasGroup>();
+        ui.interactable = false;
+        ui.alpha = 0f;
     }
 
     public void PauseResumeGame()
     {
         if (gameIsPaused)
         {
-            pauseMenuUI.SetActive(false);
+            // Continues the game
+            Cursor.lockState = CursorLockMode.Locked;
+            ui.interactable = false;
+            ui.alpha = 0f;
             Time.timeScale = 1f;
             gameIsPaused = false;
         } 
         else
         {
-            pauseMenuUI.SetActive(true);
+            // Pauses the game
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            ui.interactable = true;
+            ui.alpha = 1f;
             Time.timeScale = 0f;
             gameIsPaused = true;
         }

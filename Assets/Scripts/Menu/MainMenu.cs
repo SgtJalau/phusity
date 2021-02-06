@@ -23,7 +23,15 @@ public class MainMenu : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;    // Allows calling from other scripts
+        if (instance == null)
+        {
+            instance = this;    // Allows calling from other scripts
+        }
+        else
+        {
+            Destroy(gameObject); // If two ore more MainMenu instances should ever be present, then this will delete all but one of them
+                                 // This is a fallback and should never be needed if possible
+        }
     }
 
     private void Start()
