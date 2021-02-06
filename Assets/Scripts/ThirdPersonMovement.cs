@@ -282,7 +282,7 @@ public class ThirdPersonMovement : MonoBehaviour
             doubleJump = true;
             doublejumpTimeout = 0.3f;
             
-            Debug.Log("Jump " + jump + " double jump: " + doubleJump + " ground: " + isGrounded + " out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+            //Debug.Log("Jump: " + jump + ",   double jump: " + doubleJump + ",   ground: " + isGrounded + ",   out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
         }
         else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
