@@ -107,8 +107,9 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             isGrounded = false;
         }
+        
         //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
-        else if (hit.distance <= hitDistance && !(doubleJump && rb.velocity.y < 0))
+        else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && rb.velocity.y < 0))
         {
 
             jump = true;
