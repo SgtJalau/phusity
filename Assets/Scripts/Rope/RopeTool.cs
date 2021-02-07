@@ -11,7 +11,6 @@ public enum RopeToolState
 
 public class RopeTool : MonoBehaviour
 {   
-    public Material debugMat;
     public Material distanceMat;
     
     public GameObject ropePrefab;
@@ -46,12 +45,6 @@ public class RopeTool : MonoBehaviour
     {
 
         ropeTargetLayerMask = LayerMask.GetMask("RopeTarget");
-
-        debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        Destroy(debugSphere.GetComponent<Collider>());
-        debugSphere.transform.localScale = new Vector3(0.3f,0.3f,0.3f);
-        debugSphere.GetComponent<Renderer>().material = debugMat;
-        debugSphere.SetActive(false);
 
         limSpring = new SoftJointLimitSpring
         {
@@ -150,9 +143,6 @@ public class RopeTool : MonoBehaviour
                 }
                 toolState = RopeToolState.SELECTED_NONE;
             }
-            /* Visualize Hit */
-            debugSphere.SetActive(true);
-            debugSphere.transform.position = result.point;
         }
     }
 
