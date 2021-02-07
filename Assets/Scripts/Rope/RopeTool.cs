@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//If performance problems come up then its probably better to refactor the whole code
-
-enum ROPE_STATE
+public enum RopeToolState
 {
-    NONE,
-    ONE_STATIC,
-    ONE_DYNAMIC
+    SELECTED_NONE,
+    SELECTED_DYNAMIC,
+    SELECTED_STATIC
 }
 
 public class RopeTool : MonoBehaviour
@@ -23,22 +21,31 @@ public class RopeTool : MonoBehaviour
 
     GameObject debugSphere = null;
 
-    LayerMask layerMask;
-    
-    ROPE_STATE state = ROPE_STATE.NONE;
-    
+    LayerMask ropeTargetLayerMask;
+
+    RopeToolState toolState = RopeToolState.SELECTED_NONE;
     RaycastHit hit1;
     RopeTarget hit1Target;
+    Transform hit1TargetTransform;
     RaycastHit hit2;
     RopeTarget hit2Target;
+    Transform hit2TargetTransform;
 
     SoftJointLimitSpring limSpring;
     SoftJointLimit limLin;
 
+    private InputMaster _input;
+
+    public RopeToolState getState()
+    {
+        return toolState;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        layerMask = LayerMask.GetMask("RopeTarget");
+
+        ropeTargetLayerMask = LayerMask.GetMask("RopeTarget");
 
         debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Destroy(debugSphere.GetComponent<Collider>());
@@ -60,131 +67,123 @@ public class RopeTool : MonoBehaviour
         linkSize = linkPrefab.GetComponent<MeshRenderer>().bounds.size;
     }
 
-    // Update is called once per frame
-    void Update()
+    void ShootRope()
     {
         Camera cam = Camera.main;
-
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.X))
+        Vector3 wPos = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth*0.5f, cam.pixelHeight*0.5f, 0));
+        RaycastHit result;
+        if (Physics.SphereCast(origin: wPos, 0.1f, transform.forward, out result, Mathf.Infinity, ropeTargetLayerMask))
         {
-            Vector3 wPos = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth*0.5f, cam.pixelHeight*0.5f, 0));
-            RaycastHit result;
-            if (Physics.SphereCast(origin: wPos, 0.1f, transform.forward, out result, Mathf.Infinity, layerMask))
+            bool hitDynamic = result.collider.CompareTag("DynamicRopeTarget");
+            //hit1 should be the static target, hit2 the dynamic (or static) one
+            if (toolState == RopeToolState.SELECTED_NONE)
             {
-                bool hitDynamic = result.collider.CompareTag("DynamicRopeTarget");
-                //TODO: very ugly probably better to refactor
-                switch (state)
+                if (hitDynamic)
                 {
-                    case ROPE_STATE.NONE:
-                        hit1 = result;
-                        state = hitDynamic ? ROPE_STATE.ONE_DYNAMIC : ROPE_STATE.ONE_STATIC;
-                        break;
-                    case ROPE_STATE.ONE_STATIC:
-                        hit2 = result;
-                        if (hit2.transform.gameObject == hit1.transform.gameObject)
-                        {
-                            state = ROPE_STATE.NONE;
-                            return;
-                        }
-                        if (hitDynamic)
-                        {
-                            createDynamicRope();
-                        }
-                        else
-                        {
-                            createStaticRope();   
-                        }
-                        state = ROPE_STATE.NONE;
-                        break;
-                    case ROPE_STATE.ONE_DYNAMIC:
-                        if (hitDynamic)
-                        {
-                            state = ROPE_STATE.NONE;
-                        }
-                        else
-                        {
-                            hit2 = hit1;
-                            hit1 = result;
-                            if (hit2.transform.gameObject == hit1.transform.gameObject)
-                            {
-                                state = ROPE_STATE.NONE;
-                                return;
-                            }
-                            createDynamicRope();
-                        }
-                        state = ROPE_STATE.NONE;
-                        break;
+                    hit2 = result;
+                    toolState = RopeToolState.SELECTED_DYNAMIC;
                 }
-                debugSphere.SetActive(true);
-                debugSphere.transform.position = result.point;
+                else
+                {
+                    hit1 = result;
+                    toolState = RopeToolState.SELECTED_STATIC;
+                }
             }
+            else
+            {
+                if (toolState == RopeToolState.SELECTED_DYNAMIC)
+                {
+                    if (hitDynamic)
+                    {
+                        return;
+                    }
+                    hit1 = result;
+                }
+                else
+                {
+                    hit2 = result;
+                }
+
+                /* Test if its possible to connect the two hits */
+                //dont connect Object to itself
+                if (hit1.transform == hit2.transform)
+                {
+                    return;
+                }
+                hit1TargetTransform = hit1.transform.Find("TargetPosition");
+                Vector3 p1 = hit1TargetTransform.position;
+                hit2TargetTransform = hit2.transform.Find("TargetPosition");
+                Vector3 p2 = hit2TargetTransform.position;
+                //Is something obstructing the connection between the two points?
+                //have to test for all in case a target also defines a magnet (or similar), ie it contains another collider with a different layer
+                RaycastHit[] hits = Physics.RaycastAll(
+                    p1, (p2 - p1).normalized, (p2 - p1).magnitude, ~(ropeTargetLayerMask | LayerMask.GetMask("StaticRope"))); //maybe SphereCastAll
+                foreach(var hit in hits)
+                {
+                    if (hit.rigidbody != hit1.rigidbody && hit.rigidbody != hit2.rigidbody)
+                    {
+                        return;
+                    }
+                }
+
+                /* Destroy active connection if exists */
+                //unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
+                hit1Target = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
+                hit2Target = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
+                if (hit1Target.activeConnection != null)
+                {
+                    hit1Target.activeConnection.DestroyConnection();
+                }
+                if (hit2Target.activeConnection != null)
+                {
+                    hit2Target.activeConnection.DestroyConnection();
+                }
+
+                /* Now actually create the Rope */
+                if (hitDynamic || toolState == RopeToolState.SELECTED_DYNAMIC)
+                {
+                    createDynamicRope();
+                }
+                else
+                {
+                    createStaticRope();
+                }
+                toolState = RopeToolState.SELECTED_NONE;
+            }
+            /* Visualize Hit */
+            debugSphere.SetActive(true);
+            debugSphere.transform.position = result.point;
         }
     }
 
     void createStaticRope()
     {
 
-        Vector3 p1 = hit1.transform.Find("TargetPosition").position;
-        Vector3 p2 = hit2.transform.Find("TargetPosition").position;
+        Vector3 p1 = hit1TargetTransform.position;
+        Vector3 p2 = hit2TargetTransform.position;
 
-        if (!Physics.Linecast(p1, p2, ~(layerMask | LayerMask.GetMask("StaticRope")) )) //maybe SphereCast
-        {
-            RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
-            RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
-
-
-            if (target1.activeConnection != null)
-            {
-                target1.activeConnection.DestroyConnection();
-            }
-            if (target2.activeConnection != null)
-            {
-                target2.activeConnection.DestroyConnection();
-            }
-
-            StaticConnection newConnection = new StaticConnection();
+        StaticConnection newConnection = new StaticConnection();
             
-            GameObject rope = Instantiate(ropePrefab, (p1+p2) * 0.5f, Quaternion.LookRotation(p2 - p1, Vector3.up));
-            rope.transform.localScale = new Vector3(1, 1, (p2-p1).magnitude);
+        GameObject rope = Instantiate(ropePrefab, (p1+p2) * 0.5f, Quaternion.LookRotation(p2 - p1, Vector3.up));
+        rope.transform.localScale = new Vector3(1, 1, (p2-p1).magnitude);
 
-            newConnection.connection = rope;
-            newConnection.end1 = target1;
-            newConnection.end2 = target2;
-            target1.activeConnection = newConnection;
-            target2.activeConnection = newConnection;
-        }
+        newConnection.connection = rope;
+        newConnection.end1 = hit1Target;
+        newConnection.end2 = hit2Target;
+        hit1Target.activeConnection = newConnection;
+        hit2Target.activeConnection = newConnection;
 
     }
 
     void createDynamicRope()
     {
-        Transform staticTransform = hit1.transform.Find("TargetPosition");
-        Transform dynamicTransform = hit2.transform.Find("TargetPosition");
+        Transform staticTransform = hit1TargetTransform;
+        Transform dynamicTransform = hit2TargetTransform;
         Vector3 staticPoint = staticTransform.position;
         Vector3 dynamicPoint = dynamicTransform.position;
         Vector3 directionNorm = (dynamicPoint - staticPoint).normalized;
 
-        //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
-        RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
-        hit1Target = target1;
-        RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
-        hit2Target = target2;
-        ROPE_TYPE type = target2.type;
-
-        if (Physics.Linecast(staticPoint, dynamicPoint, ~layerMask) && type != ROPE_TYPE.DYNAMIC_DISTANCE) //maybe SphereCast
-        {
-            return;
-        }
-        
-        //delete existing connection
-        if (target1.activeConnection != null)
-        {
-            target1.activeConnection.DestroyConnection();
-        }
-        if (target2.activeConnection != null)
-        {
-            target2.activeConnection.DestroyConnection();
-        }
+        ROPE_TYPE type = hit2Target.type;
 
         if (type == ROPE_TYPE.DYNAMIC_DISTANCE)
         {
@@ -199,7 +198,7 @@ public class RopeTool : MonoBehaviour
             joint.damper = 1.0f;
             joint.enableCollision = true;
             joint.minDistance = 0.0f;
-            joint.maxDistance = target2.autoConfigureMaxLength ? (staticPoint-dynamicPoint).magnitude : target2.maxLength;
+            joint.maxDistance = hit2Target.autoConfigureMaxLength ? (staticPoint-dynamicPoint).magnitude : hit2Target.maxLength;
 
             GameObject renderEmpty = new GameObject("DistanceConnectionRenderEmpty");
             LineRenderer renderer = renderEmpty.AddComponent<LineRenderer>();
@@ -209,12 +208,12 @@ public class RopeTool : MonoBehaviour
             renderUpdater.t1 = staticTransform;
             renderUpdater.t2 = dynamicTransform;
 
-            newConnection.end1 = target1;
-            newConnection.end2 = target2;
+            newConnection.end1 = hit1Target;
+            newConnection.end2 = hit2Target;
             newConnection.springJoint = joint;
             newConnection.rendererEmpty = renderEmpty;
-            target1.activeConnection = newConnection;
-            target2.activeConnection = newConnection;
+            hit1Target.activeConnection = newConnection;
+            hit2Target.activeConnection = newConnection;
         }
         else
         {
@@ -224,7 +223,7 @@ public class RopeTool : MonoBehaviour
             LinkConnection newConnection = new LinkConnection();
             newConnection.emptyWithLinks = emptyForStorage;
             
-            float linkOffset = (linkSize.y-0.2f)*target2.linkScale;
+            float linkOffset = (linkSize.y-0.2f)* hit2Target.linkScale;
             int amountOfLinks = Mathf.RoundToInt((staticPoint - dynamicPoint).magnitude / linkOffset);
             float trueLength = (staticPoint - dynamicPoint).magnitude / amountOfLinks;
             float scale = trueLength / (linkSize.y-0.2f);
@@ -280,7 +279,7 @@ public class RopeTool : MonoBehaviour
             newConnection.endJoint = jointN;
 
             //avoid stretching by adding additional stiff spring joint from start to end
-            if (target2.addDistanceConstraint)
+            if (hit2Target.addDistanceConstraint)
             {
                 SpringJoint springJoint = hit1.transform.gameObject.AddComponent<SpringJoint>();
                 springJoint.connectedBody = hit2.rigidbody;
@@ -294,10 +293,10 @@ public class RopeTool : MonoBehaviour
                 springJoint.maxDistance = (dynamicPoint - staticPoint).magnitude;
             }
 
-            newConnection.end1 = target1;
-            newConnection.end2 = target2;
-            target1.activeConnection = newConnection;
-            target2.activeConnection = newConnection;
+            newConnection.end1 = hit1Target;
+            newConnection.end2 = hit2Target;
+            hit1Target.activeConnection = newConnection;
+            hit2Target.activeConnection = newConnection;
         }
     }
 
@@ -339,5 +338,21 @@ public class RopeTool : MonoBehaviour
             limit = 177
         };
         joint.enableProjection = true;
+    }
+
+    void Awake()
+    {
+        _input = new InputMaster();
+        _input.Player.Interact.performed += _ => ShootRope(); 
+    }
+
+    void OnEnable()
+    {
+        _input.Player.Enable();
+    }
+
+    void OnDisable()
+    {
+        _input.Player.Disable();
     }
 }

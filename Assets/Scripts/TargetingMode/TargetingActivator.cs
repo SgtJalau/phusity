@@ -64,14 +64,18 @@ public class TargetingActivator : MonoBehaviour
             Matrix4x4[] matrices = new Matrix4x4[hits.Length];
             for (var i = 0; i < hits.Length; i++)
             {
+                //unlike raycasthit.transform, sphereoverlap returns the colliders own. 
+                //Ie we have to get the parent containing the rigidbody and its transform ourselves
+                GameObject topmostGameObject = hits[i].attachedRigidbody.gameObject;
+
                 //constructing "rotation" Matrix from camera axis in world space
                 Matrix4x4 rotMat = Matrix4x4.identity;
                 rotMat.SetColumn(1, camYWS);
                 rotMat.SetColumn(2, camXWS);
                 //the following can be avoided if we require the "TargetPosition" Empty to not also define the target collider
-                Transform targetTransform = hits[i].name == "TargetPosition" ? hits[i].transform : hits[i].transform.Find("TargetPosition");
-                matrices[i] =
-                    Matrix4x4.Translate(targetTransform.position) * rotMat;
+                Transform targetTransform = topmostGameObject.transform.Find("TargetPosition");
+
+                matrices[i] = Matrix4x4.Translate(targetTransform.position) * rotMat;
             }
             Graphics.DrawMeshInstanced(simpleQuad, 0, ropeTargetMat, matrices, matrices.Length,
                 properties: null,
