@@ -44,20 +44,11 @@ public class TargetingActivator : MonoBehaviour
 
     private void toggleStatus()
     {
-        if (!modeActive)
-        {
-            globalPostProcessVolume.profile.TryGet<Vignette>(out Vignette vig);
-            vig.active = true;
-            vcam.Priority += priorityBoost;
-            modeActive = true;
-        }
-        else
-        {
-            globalPostProcessVolume.profile.TryGet<Vignette>(out Vignette vig);
-            vig.active = false;
-            vcam.Priority -= priorityBoost;
-            modeActive = false;
-        }
+        globalPostProcessVolume.profile.TryGet<Vignette>(out Vignette vig);
+        vig.active = !vig.active;
+        vcam.Priority += priorityBoost;
+        priorityBoost *= -1;
+        modeActive = !modeActive;
     }
 
     void Update()

@@ -12,12 +12,9 @@ enum ROPE_STATE
 }
 
 public class RopeTool : MonoBehaviour
-{
-    public Camera cam;
-    
+{   
     public Material debugMat;
     public Material distanceMat;
-    //public Material 
     
     public GameObject ropePrefab;
 
@@ -31,9 +28,9 @@ public class RopeTool : MonoBehaviour
     ROPE_STATE state = ROPE_STATE.NONE;
     
     RaycastHit hit1;
-    RopeTarget t1;
+    RopeTarget hit1Target;
     RaycastHit hit2;
-    RopeTarget t2;
+    RopeTarget hit2Target;
 
     SoftJointLimitSpring limSpring;
     SoftJointLimit limLin;
@@ -66,6 +63,8 @@ public class RopeTool : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Camera cam = Camera.main;
+
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.X))
         {
             Vector3 wPos = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth*0.5f, cam.pixelHeight*0.5f, 0));
@@ -128,11 +127,12 @@ public class RopeTool : MonoBehaviour
         Vector3 p1 = hit1.transform.Find("TargetPosition").position;
         Vector3 p2 = hit2.transform.Find("TargetPosition").position;
 
-        if (!Physics.Linecast(p1, p2, ~layerMask)) //maybe SphereCast
+        if (!Physics.Linecast(p1, p2, ~(layerMask | LayerMask.GetMask("StaticRope")) )) //maybe SphereCast
         {
-            //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
             RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
             RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
+
+
             if (target1.activeConnection != null)
             {
                 target1.activeConnection.DestroyConnection();
@@ -166,9 +166,9 @@ public class RopeTool : MonoBehaviour
 
         //TODO: unsure if ...InChildern is needed given the script should be attached to the highest level object (?)
         RopeTarget target1 = hit1.transform.gameObject.GetComponentInChildren<RopeTarget>();
-        t1 = target1;
+        hit1Target = target1;
         RopeTarget target2 = hit2.transform.gameObject.GetComponentInChildren<RopeTarget>();
-        t2 = target2;
+        hit2Target = target2;
         ROPE_TYPE type = target2.type;
 
         if (Physics.Linecast(staticPoint, dynamicPoint, ~layerMask) && type != ROPE_TYPE.DYNAMIC_DISTANCE) //maybe SphereCast
@@ -250,8 +250,8 @@ public class RopeTool : MonoBehaviour
                 link.layer = LayerMask.NameToLayer("RopeLink");
 
                 var rb = link.AddComponent<Rigidbody>();
-                rb.collisionDetectionMode = t2.collisionMode;
-                rb.mass = t2.linkMass;
+                rb.collisionDetectionMode = hit2Target.collisionMode;
+                rb.mass = hit2Target.linkMass;
                 links[i] = rb;
                 if (i != 0)
                 {
@@ -306,8 +306,8 @@ public class RopeTool : MonoBehaviour
         joint.xMotion = ConfigurableJointMotion.Locked;
         joint.yMotion = ConfigurableJointMotion.Locked;
         joint.zMotion = ConfigurableJointMotion.Locked;
-        joint.enablePreprocessing = t2.enablePrePro;
-        joint.projectionMode = t2.enableProjection ? 
+        joint.enablePreprocessing = hit2Target.enablePrePro;
+        joint.projectionMode = hit2Target.enableProjection ? 
             JointProjectionMode.PositionAndRotation : JointProjectionMode.None;
     }
 

@@ -13,9 +13,12 @@ public enum ROPE_TYPE
     DYNAMIC_DISTANCE,
 }
 
+[RequireComponent(typeof(Rigidbody))]
 [ExecuteInEditMode]
 public class RopeTarget : MonoBehaviour
 {
+    /************************************************/
+
     public GameObject targetGameObject;
 
     public ROPE_TYPE type;
@@ -61,6 +64,5 @@ public class RopeTarget : MonoBehaviour
             targetGameObject.tag = "Untagged";
         }
         targetGameObject.layer = LayerMask.NameToLayer("RopeTarget");
-
     }
 }

@@ -5034,6 +5034,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1152772186}
+  - component: {fileID: 1152772189}
   - component: {fileID: 1152772187}
   - component: {fileID: 1152772188}
   m_Layer: 9
@@ -5094,6 +5095,22 @@ MonoBehaviour:
   collisionMode: 0
   enablePrePro: 0
   enableProjection: 1
+--- !u!54 &1152772189
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152772185}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1153327129 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0d49ded8a36a96f468920879c7fd78f9,

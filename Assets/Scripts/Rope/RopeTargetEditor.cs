@@ -35,8 +35,8 @@ public class RopeTargetEditor : Editor
     {
         serializedObject.Update();
         EditorGUILayout.LabelField("How to use / recommended setup:",EditorStyles.boldLabel);
-        EditorGUILayout.LabelField("The topmost GameObject in the hierarchy should contain this script (and" +
-            " potentially a Rigidbody). You can add more children that contain meshes and colliders" +
+        EditorGUILayout.LabelField("The topmost GameObject in the hierarchy should contain this script and" +
+            " a Rigidbody. You can add more children that contain meshes and colliders" +
             " (with their tags and layers)",EditorStyles.wordWrappedLabel);
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("GameObject containing the collider used as a target for the RopeTool", EditorStyles.boldLabel);
