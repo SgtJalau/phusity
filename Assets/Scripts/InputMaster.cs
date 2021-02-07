@@ -44,17 +44,17 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Glide"",
+                    ""name"": ""Dash"",
                     ""type"": ""Button"",
-                    ""id"": ""9894af9f-3360-4967-8782-3cfd75b26006"",
+                    ""id"": ""45b48271-5eea-460d-8b12-542e7c35ac7a"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Dash"",
+                    ""name"": ""Glide"",
                     ""type"": ""Button"",
-                    ""id"": ""45b48271-5eea-460d-8b12-542e7c35ac7a"",
+                    ""id"": ""9894af9f-3360-4967-8782-3cfd75b26006"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -101,28 +101,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""da197385-3029-4023-be55-30fe831cfd16"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1be299dc-75df-402a-ba44-a7ce1869db33"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": ""WASDKeys"",
                     ""id"": ""edaf6396-299a-4cf6-8307-aad15885a304"",
@@ -232,28 +210,6 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""898c26da-4714-459a-b200-f544c4aa0ffd"",
-                    ""path"": ""<Keyboard>/leftCtrl"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""Glide"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""029420e0-b2e2-47f7-856e-275b35d95fbe"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Glide"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -441,6 +397,50 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                     ""action"": ""AbilityChange"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""da197385-3029-4023-be55-30fe831cfd16"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1be299dc-75df-402a-ba44-a7ce1869db33"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""898c26da-4714-459a-b200-f544c4aa0ffd"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Glide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""029420e0-b2e2-47f7-856e-275b35d95fbe"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Glide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -577,8 +577,8 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
-        m_Player_Glide = m_Player.FindAction("Glide", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_Glide = m_Player.FindAction("Glide", throwIfNotFound: true);
         m_Player_Drag = m_Player.FindAction("Drag", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_AbilityChange = m_Player.FindAction("AbilityChange", throwIfNotFound: true);
@@ -650,8 +650,8 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Jump;
-    private readonly InputAction m_Player_Glide;
     private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_Glide;
     private readonly InputAction m_Player_Drag;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_AbilityChange;
@@ -663,8 +663,8 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
         public PlayerActions(@InputMaster wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
-        public InputAction @Glide => m_Wrapper.m_Player_Glide;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
+        public InputAction @Glide => m_Wrapper.m_Player_Glide;
         public InputAction @Drag => m_Wrapper.m_Player_Drag;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @AbilityChange => m_Wrapper.m_Player_AbilityChange;
@@ -685,12 +685,12 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
-                @Glide.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGlide;
-                @Glide.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGlide;
-                @Glide.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGlide;
                 @Dash.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
+                @Glide.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGlide;
+                @Glide.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGlide;
+                @Glide.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGlide;
                 @Drag.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrag;
                 @Drag.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrag;
                 @Drag.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrag;
@@ -716,12 +716,12 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @Glide.started += instance.OnGlide;
-                @Glide.performed += instance.OnGlide;
-                @Glide.canceled += instance.OnGlide;
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
+                @Glide.started += instance.OnGlide;
+                @Glide.performed += instance.OnGlide;
+                @Glide.canceled += instance.OnGlide;
                 @Drag.started += instance.OnDrag;
                 @Drag.performed += instance.OnDrag;
                 @Drag.canceled += instance.OnDrag;
@@ -812,8 +812,8 @@ public partial class @InputMaster : IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnGlide(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnGlide(InputAction.CallbackContext context);
         void OnDrag(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnAbilityChange(InputAction.CallbackContext context);
