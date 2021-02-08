@@ -8,9 +8,7 @@ public class TeleportCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        ThirdPersonMovement thirdPersonMovement = null;
-
-        if (other.gameObject.TryGetComponent(out thirdPersonMovement))
+        if (other.gameObject.CompareTag("Player"))
         {
             teleportLocation.TeleportToLocation(other.gameObject);
         }

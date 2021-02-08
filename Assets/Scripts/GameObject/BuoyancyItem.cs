@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -14,12 +15,13 @@ public class BuoyancyItem : MonoBehaviour
     [SerializeField, Tooltip("Center of mass on Y axis (kind of), default 0.")]
     float offsetY = 0f;
 
-
     private Rigidbody rb;
     private Collider coll;
     private WaterBody waterBody;
     private float yBound;
-    private int waterCount;
+
+
+    private List<WaterBody> _waterCount = new List<WaterBody>();
 
 
     private void OnEnable()
@@ -30,7 +32,7 @@ public class BuoyancyItem : MonoBehaviour
 
     private void Update()
     {
-        if (waterCount == 0)
+        if (_waterCount.Count == 0)
         {
             waterBody = null;
         }
@@ -45,54 +47,47 @@ public class BuoyancyItem : MonoBehaviour
             return;
         }
 
-        waterCount++;
+        _waterCount.Add(colliderBody);
+
+        waterBody = _waterCount[0];
     }
 
     private void OnTriggerStay(Collider water)
     {
         WaterBody colliderBody = water.GetComponent<WaterBody>();
-
-        if (!colliderBody)
+        
+        if (!colliderBody || colliderBody != waterBody)
         {
+            Debug.Log(colliderBody  + " " + waterBody);
             return;
         }
+        
 
         if (transform.position.x < water.bounds.max.x
             && transform.position.z < water.bounds.max.z
             && transform.position.x > water.bounds.min.x
             && transform.position.z > water.bounds.min.z)
         {
-            if (waterBody != null && !ReferenceEquals(waterBody.gameObject, water.gameObject))
+            //Check if we are still within the bounds of the water height
+            //This should roughly keep a realistic amount of body above water
+            var bounds = coll.bounds;
+            float objectYValue = bounds.min.y + 0.3f * (bounds.center.y - bounds.min.y);
+
+            yBound = waterBody.GetYBound();
+
+            if (objectYValue < yBound)
             {
-                waterBody = null;
-            }
-            else if (waterBody == null)
-            {
-                waterBody = water.GetComponent<WaterBody>();
-            }
-            else
-            {
-                //Check if we are still within the bounds of the water height
-                //This should roughly keep a realistic amount of body above water
-                var bounds = coll.bounds;
-                float objectYValue = bounds.min.y + 0.3f*(bounds.center.y - bounds.min.y);
+                float buoyantForceMass = buoyantForce * rb.mass;
 
-                yBound = waterBody.GetYBound();
+                //Min of 0 and max of 1
+                float underWaterBuoyantForce = Mathf.Clamp01((yBound - objectYValue) * depthPower);
+                float buoyency = buoyantForceMass + (buoyantForceMass * underWaterBuoyantForce);
 
-                if (objectYValue < yBound)
-                {
-                    float buoyantForceMass = buoyantForce * rb.mass;
+                //Add the current velocity on top inverted so we start slowly floating at the top of the water
+                rb.AddForce(0, -rb.velocity.y, 0);
 
-                    //Min of 0 and max of 1
-                    float underWaterBuoyantForce = Mathf.Clamp01((yBound - objectYValue) * depthPower);
-                    float buoyency = buoyantForceMass + (buoyantForceMass * underWaterBuoyantForce);
-
-                    //Add the current velocity on top inverted so we start slowly floating at the top of the water
-                    rb.AddForce(0, -rb.velocity.y, 0);
-
-                    //Add buoyency
-                    rb.AddForce(0f, buoyency, 0f);
-                }
+                //Add buoyency
+                rb.AddForce(0f, buoyency, 0f);
             }
         }
     }
@@ -106,6 +101,12 @@ public class BuoyancyItem : MonoBehaviour
             return;
         }
 
-        waterCount--;
+        _waterCount.Remove(colliderBody);
+
+        if (_waterCount.Count > 0)
+        {
+            waterBody = _waterCount[0];
+            Debug.Log("colliderBody  + \" \" + waterBody");
+        }
     }
 }

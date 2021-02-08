@@ -24,14 +24,18 @@ public class AudioManager : MonoBehaviour
         return Array.Find(sounds, a => a.soundType == soundType);
     }
 
-    public void Play(SoundType soundType)
+    public Sound Play(SoundType soundType)
     {
-        FindSound(soundType)?.PlayRandomAudioFile();
+        Sound sound = FindSound(soundType);
+        sound?.PlayRandomAudioFile();
+
+        return sound;
     }
 
-    public void Play(SoundType soundType, float pitch, float volume)
+    public Sound Play(SoundType soundType, float pitch, float volume)
     {
         Sound s = FindSound(soundType);
         s?.PlayRandomAudioFile(pitch, volume);
+        return s;
     }
 }

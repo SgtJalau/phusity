@@ -110,12 +110,10 @@ public class ThirdPersonMovement : MonoBehaviour
         //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
         else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && rb.velocity.y < 0))
         {
-
             jump = true;
             doubleJump = false;
             isGrounded = true;
-    
-
+            
             //Check if we are moving on ground
             if (rb.velocity.magnitude >= 0.1F)
             {
@@ -151,6 +149,13 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        Collider target = GetTargetCollider(5);
+
+        if (target != null)
+        {
+            Debug.Log("Targeting: " + target);
+        }
+        
         if (doublejumpTimeout > 0.0f)
         {
             doublejumpTimeout -= Time.fixedDeltaTime;
@@ -368,6 +373,30 @@ public class ThirdPersonMovement : MonoBehaviour
             //Debug.Log(hit.collider.gameObject.GetComponent<MeshRenderer>().materials.Length + " test");
         }
 
+        return null;
+    }
+
+    public Collider GetTargetCollider(float maxDistance)
+    {
+        RaycastHit hit;
+        
+        var raysToCheck = new List<Vector3>
+        {
+            transform.TransformDirection(Vector3.forward),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.up),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.down),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.left),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.right)
+        };
+
+        foreach (Vector3 rayDirection in raysToCheck)
+        {
+            if (Physics.Raycast(transform.position, rayDirection, out hit, maxDistance, LayerMask.GetMask("Targetable")))
+            {
+                return hit.collider;
+            }
+        }
+        
         return null;
     }
 
