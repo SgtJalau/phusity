@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.InputSystem;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
@@ -62,9 +63,17 @@ public class ThirdPersonMovement : MonoBehaviour
     private float lastDash;
 
     private AudioManager _audioManager;
+    private InputMaster _input;
 
     private void Awake()
     {
+        _input = new InputMaster();
+        _input.Gameplay.QuickLoad.performed += _ => LoadGameState();
+        _input.Gameplay.QuickSave.performed += _ => SaveGameState();
+        _input.Player.Jump.performed += _ => Jump();
+        _input.Player.Dash.performed += _ => Dash();
+        _input.Player.Glide.performed += _ => Glide();
+
         _audioManager = FindObjectOfType<AudioManager>();
     }
 
@@ -78,7 +87,7 @@ public class ThirdPersonMovement : MonoBehaviour
         isGrounded = false;
         lastDash = Time.realtimeSinceStartup;
         currentSpeed = speed;
-        doublejumpTimeout = 0.5f;
+        doublejumpTimeout = 0.3f;
 
         _gameStateHandler = new GameStateHandler();
 
@@ -91,16 +100,20 @@ public class ThirdPersonMovement : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
 
-        if (hit.distance > 1.05 || !hit.collider || hit.collider.isTrigger)
+        const double hitDistance = 0.95;
+
+        if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
             isGrounded = false;
         }
-        else if (hit.distance <= 1.05)
+        
+        //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
+        else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && rb.velocity.y < 0))
         {
             jump = true;
             doubleJump = false;
             isGrounded = true;
-
+            
             //Check if we are moving on ground
             if (rb.velocity.magnitude >= 0.1F)
             {
@@ -132,35 +145,32 @@ public class ThirdPersonMovement : MonoBehaviour
                 }
             }
         }
-
-        //Quick save and load (inside frame update, because key press can be ignored by fixed update)
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            _gameStateHandler.SaveGameState();
-            Debug.Log("Quick saved state");
-        }
-
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            _gameStateHandler.QuickLoadGameState();
-            Debug.Log("Quick loaded state");
-        }
     }
 
     void FixedUpdate()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        Collider target = GetTargetCollider(5);
 
-        direction = new Vector3(horizontal, 0f, vertical).normalized;
-        Vector3 moveDir = new Vector3(0f, 0f, 0f);
-
+        if (target != null)
+        {
+            Debug.Log("Targeting: " + target);
+        }
+        
         if (doublejumpTimeout > 0.0f)
         {
             doublejumpTimeout -= Time.fixedDeltaTime;
         }
 
+        velocity.y = rb.velocity.y;
+
+        if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
+        {
+            dash = true;
+            currentSpeed = speed;
+        }
+
         float gravity = gravityMultiplyer;
+
         if (_gliding)
         {
             if (isGrounded)
@@ -175,6 +185,11 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+
+        // Player movement is handeled here
+        Vector2 move = _input.Player.Movement.ReadValue<Vector2>();
+        direction = new Vector3(move.x, 0f, move.y).normalized;
+        Vector3 moveDir = new Vector3(0f, 0f, 0f);
 
         //Check if player movement should be applied
         if (direction.magnitude >= 0.1F)
@@ -246,47 +261,64 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
+    }
 
+    void LoadGameState()
+    {
+        _gameStateHandler.QuickLoadGameState();
+        Debug.Log("Quick loaded state");
+    }
 
-        if (Input.GetKey(KeyCode.Space) && jump && isGrounded)
+    void SaveGameState()
+    {
+        _gameStateHandler.SaveGameState();
+        Debug.Log("Quick saved state");
+    }
+
+    void Jump()
+    {
+        if (jump && isGrounded)
         {
             rb.velocity = new Vector3(rb.velocity.x,
                 Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
 
+            isGrounded = false;
             jump = false;
             doubleJump = true;
-            doublejumpTimeout = 0.5f;
+            doublejumpTimeout = 0.3f;
+            
+            //Debug.Log("Jump: " + jump + ",   double jump: " + doubleJump + ",   ground: " + isGrounded + ",   out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
         }
-        else if (Input.GetKey(KeyCode.Space) && doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
+        else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
             rb.velocity = new Vector3(rb.velocity.x,
                 Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
 
+            isGrounded = false;
             jump = false;
             doubleJump = false;
             _audioManager.Play(SoundType.DoubleJump);
         }
-        else if (Input.GetKey(KeyCode.LeftControl) && _glidingEnabled && direction.y <= 0)
-        {
-            _gliding = true;
-            _glidingEnabled = false;
-            Debug.Log("Gliding enabled");
-        }
+    }
 
-        velocity.y = rb.velocity.y;
-
-        if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
-        {
-            dash = true;
-            currentSpeed = speed;
-        }
-
-        if (Input.GetKey(KeyCode.LeftShift) && dash)
+    void Dash()
+    {
+        if (dash)
         {
             dash = false;
             lastDash = Time.realtimeSinceStartup;
             currentSpeed = dashSpeed;
             _audioManager.Play(SoundType.PlayerDash);
+        }
+    }
+
+    void Glide()
+    {
+        if (_glidingEnabled && direction.y <= 0)
+        {
+            _gliding = true;
+            _glidingEnabled = false;
+            Debug.Log("Gliding enabled");
         }
     }
 
@@ -342,5 +374,41 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         return null;
+    }
+
+    public Collider GetTargetCollider(float maxDistance)
+    {
+        RaycastHit hit;
+        
+        var raysToCheck = new List<Vector3>
+        {
+            transform.TransformDirection(Vector3.forward),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.up),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.down),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.left),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.right)
+        };
+
+        foreach (Vector3 rayDirection in raysToCheck)
+        {
+            if (Physics.Raycast(transform.position, rayDirection, out hit, maxDistance, LayerMask.GetMask("Targetable")))
+            {
+                return hit.collider;
+            }
+        }
+        
+        return null;
+    }
+
+    void OnEnable()
+    {
+        _input.Player.Enable();
+        _input.Gameplay.Enable();
+    }
+
+    void OnDisable()
+    {
+        _input.Player.Disable();
+        _input.Gameplay.Disable();
     }
 }

@@ -6,4 +6,5 @@
         DoubleJump,
         StepGras,
         StepRock,
+        TutorialTheme,
 }

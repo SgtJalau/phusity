@@ -3,28 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    public static MainMenu instance;    // Allows calling from other scripts
+    //public static MainMenu instance;    // Allows calling from other scripts
 
-    [SerializeField] private List<GameObject> menus = new List<GameObject>();
-    [SerializeField] private List<TextMeshProUGUI> percentages = new List<TextMeshProUGUI>();
-    [SerializeField] private TMPro.TMP_Dropdown resDropdown = null;
+    [SerializeField, Tooltip("A list of all menus for quick referencing")]
+    private List<GameObject> menus = new List<GameObject>();
+    
+    [SerializeField, Tooltip("References of percentages that are stored in the Sound Menu")] 
+    private List<TextMeshProUGUI> percentages = new List<TextMeshProUGUI>();
 
-    public AudioMixer audioMixer;
-    public List<GameObject> rebindButton = new List<GameObject>();
+    [SerializeField, Tooltip("A reference to the Resolution Dropdown object in the Resolution Menu")] 
+    private TMPro.TMP_Dropdown resDropdown = null;
+
+    [SerializeField, Tooltip("The Master Audio Mixer file")]
+    private AudioMixer audioMixer = null;
 
     private Resolution[] resolutions;
     private InputDevice[] devices;
 
-    private void Awake()
+/*    private void Awake()
     {
-        instance = this;    // Allows calling from other scripts
-    }
+        if (instance == null)
+        {
+            instance = this;    // Allows calling from other scripts
+        }
+        else
+        {
+            Destroy(gameObject); // If two ore more MainMenu instances should ever be present, then this will delete all but one of them
+                                 // This is a fallback and should never be needed if possible
+        }
+    }*/
 
     private void Start()
     {

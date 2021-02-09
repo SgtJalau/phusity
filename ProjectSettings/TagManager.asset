@@ -12,6 +12,7 @@ TagManager:
   - Magnet
   - Dragable
   - Destructable
+  - CollisionCheck
   layers:
   - Default
   - TransparentFX
@@ -28,8 +29,8 @@ TagManager:
   - Magnet
   - Stair
   - Destuctable
-  - 
-  - 
+  - StaticRope
+  - Targetable
   - 
   - 
   - 
