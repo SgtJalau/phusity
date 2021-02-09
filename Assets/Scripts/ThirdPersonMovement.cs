@@ -65,6 +65,8 @@ public class ThirdPersonMovement : MonoBehaviour
     private AudioManager _audioManager;
     private InputMaster _input;
 
+    private List<HighlightableActivator> _highlighting;
+
     private void Awake()
     {
         _input = new InputMaster();
@@ -75,6 +77,8 @@ public class ThirdPersonMovement : MonoBehaviour
         _input.Player.Glide.performed += _ => Glide();
 
         _audioManager = FindObjectOfType<AudioManager>();
+
+        _highlighting = new List<HighlightableActivator>();
     }
 
     void Start()
@@ -106,14 +110,14 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             isGrounded = false;
         }
-        
+
         //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
         else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && rb.velocity.y < 0))
         {
             jump = true;
             doubleJump = false;
             isGrounded = true;
-            
+
             //Check if we are moving on ground
             if (rb.velocity.magnitude >= 0.1F)
             {
@@ -125,7 +129,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
                     if (material != null)
                     {
-                        if (material.name == ("Mat_Gestein (Instance)") || material.name == ("Mat_Felsen (Instance)") || material.name == "Mat_Bruecke (Instance)" || material.name == "Mat_Ruine (Instance)")
+                        if (material.name == ("Mat_Gestein (Instance)") || material.name == ("Mat_Felsen (Instance)") ||
+                            material.name == "Mat_Bruecke (Instance)" || material.name == "Mat_Ruine (Instance)")
                         {
                             _audioManager.Play(SoundType.StepRock);
                         }
@@ -149,13 +154,50 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        Collider target = GetTargetCollider(5);
+        Collider target;
+        bool targetFound = GetTargetCollider(5, out target);
 
-        if (target != null)
+        HighlightableActivator activator = null;
+        if (targetFound)
         {
-            Debug.Log("Targeting: " + target);
+            if (target.TryGetComponent(out activator))
+            {
+                //Interact
+                if (Input.GetKey(KeyCode.F))
+                {
+                    activator.activate();
+                } else if (!_highlighting.Contains(activator))
+                {
+                    activator.Highlight();
+                }
+            }
+            else
+            {
+                //We did not find anything we want to highlight
+                targetFound = false;
+            }
         }
-        
+
+        //Remove all highlights that aren't the current highlighted
+        foreach (HighlightableActivator highlightable in _highlighting)
+        {
+            if (highlightable != activator)
+            {
+                highlightable.Restore();
+                Debug.Log("Removed Highlighting");
+            }
+        }
+
+        //Clear list
+        _highlighting.Clear();
+
+        //Add back highlight target if we found some
+        if (targetFound)
+        {
+            _highlighting.Add(activator);
+        }
+
+
         if (doublejumpTimeout > 0.0f)
         {
             doublejumpTimeout -= Time.fixedDeltaTime;
@@ -218,9 +260,9 @@ public class ThirdPersonMovement : MonoBehaviour
             bool canMove = true;
             for (int i = stairDetail; i >= 1; i--)
             {
-                Collider[] c =
-                    Physics.OverlapBox(transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
-                        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
+                Collider[] c = Physics.OverlapBox(
+                    transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
+                    new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
                 if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
                 {
                     if (c.Length > 0 && i == stairDetail)
@@ -286,7 +328,7 @@ public class ThirdPersonMovement : MonoBehaviour
             jump = false;
             doubleJump = true;
             doublejumpTimeout = 0.3f;
-            
+
             //Debug.Log("Jump: " + jump + ",   double jump: " + doubleJump + ",   ground: " + isGrounded + ",   out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
         }
         else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
@@ -360,10 +402,10 @@ public class ThirdPersonMovement : MonoBehaviour
                         {
                             //Debug.Log(triangles[y] + " | " + y + " | Mat Index: " + x + " | " +  hit.collider.GetComponent<MeshRenderer>().materials[x + 1]);
                             var materials = meshRenderer.materials;
-                            
+
                             //No idea why the materials are shifted by one but for some reason they are
                             var matIndex = x + 1 < materials.Length ? x + 1 : materials.Length - 1;
-                            
+
                             return materials[matIndex];
                         }
                     }
@@ -376,28 +418,36 @@ public class ThirdPersonMovement : MonoBehaviour
         return null;
     }
 
-    public Collider GetTargetCollider(float maxDistance)
+    public bool GetTargetCollider(float maxDistance, out Collider collider)
     {
         RaycastHit hit;
-        
+
         var raysToCheck = new List<Vector3>
         {
             transform.TransformDirection(Vector3.forward),
             transform.TransformDirection(Vector3.forward * 3 + Vector3.up),
             transform.TransformDirection(Vector3.forward * 3 + Vector3.down),
             transform.TransformDirection(Vector3.forward * 3 + Vector3.left),
-            transform.TransformDirection(Vector3.forward * 3 + Vector3.right)
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.right),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.down * 2),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.down + Vector3.left * 2),
+            transform.TransformDirection(Vector3.forward * 3 + Vector3.down + Vector3.right * 2)
         };
 
         foreach (Vector3 rayDirection in raysToCheck)
         {
-            if (Physics.Raycast(transform.position, rayDirection, out hit, maxDistance, LayerMask.GetMask("Targetable")))
+            Debug.DrawRay(transform.position, rayDirection, Color.green);
+
+            if (Physics.Raycast(transform.position, rayDirection, out hit, maxDistance,
+                LayerMask.GetMask("Targetable")))
             {
-                return hit.collider;
+                collider = hit.collider;
+                return true;
             }
         }
-        
-        return null;
+
+        collider = null;
+        return false;
     }
 
     void OnEnable()
