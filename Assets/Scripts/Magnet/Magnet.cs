@@ -10,7 +10,7 @@ public class Magnet : MonoBehaviour
     public Material m_redMaterial;
     public Material m_blueMaterial;
 
-   
+    public float m_magnetRange = 0;
     public float m_magnetStrength = 0;
     public float m_maxMagnetStrength = 15;
     protected List<GameObject> m_otherMagnets;
@@ -63,7 +63,7 @@ public class Magnet : MonoBehaviour
     {
         foreach (GameObject other in m_otherMagnets)
         {
-            if (Vector3.Distance(other.transform.position, transform.position) <= m_magnetStrength )
+            if (Vector3.Distance(other.transform.position, transform.position) <= m_magnetRange )
             {
                 float factor = m_maxMagnetStrength / (Vector3.Distance(transform.position , other.transform.position) + 1);
                 float combinedStrength = Mathf.Sqrt(Mathf.Abs(m_magnetStrength) * Mathf.Abs(m_magnetStrength) + Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength) * Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength)) ;
@@ -84,7 +84,7 @@ public class Magnet : MonoBehaviour
     void Update() {
         foreach (GameObject other in m_otherMagnets)
         {
-            if (Vector3.Distance(other.transform.position, transform.position) <= m_magnetStrength )
+            if (Vector3.Distance(other.transform.position, transform.position) <= m_magnetRange )
             {
                 Debug.DrawLine(transform.position ,other.transform.position, Color.white); 
             }   
