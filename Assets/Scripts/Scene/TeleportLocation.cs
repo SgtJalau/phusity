@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Serializable]
 public class TeleportLocation
 {
     public Vector3 teleportLocation;

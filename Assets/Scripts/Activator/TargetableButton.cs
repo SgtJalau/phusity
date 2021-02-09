@@ -1,6 +1,6 @@
-﻿public class TargetableButton : Activator
+﻿public class TargetableButton : HighlightableActivator
 {
-    private bool _active = false;
+    
 
     public new void activate()
     {
