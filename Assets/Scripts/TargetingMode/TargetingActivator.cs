@@ -10,7 +10,6 @@ using UnityEngine.Rendering.HighDefinition;
 public class TargetingActivator : MonoBehaviour
 {
     public int priorityBoost = 10;
-    public Volume globalPostProcessVolume;
 
     public Mesh simpleQuad;
     public Material ropeTargetMat;
@@ -48,8 +47,6 @@ public class TargetingActivator : MonoBehaviour
 
     private void toggleStatus()
     {
-        globalPostProcessVolume.profile.TryGet<Vignette>(out Vignette vig);
-        vig.active = !vig.active;
         vcam.Priority += priorityBoost;
         priorityBoost *= -1;
         modeActive = !modeActive;
