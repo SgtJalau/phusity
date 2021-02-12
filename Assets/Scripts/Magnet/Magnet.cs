@@ -66,7 +66,7 @@ public class Magnet : MonoBehaviour
             if (Vector3.Distance(other.transform.position, transform.position) <= m_magnetRange )
             {
                 float factor = m_maxMagnetStrength / (Vector3.Distance(transform.position , other.transform.position) + 1);
-                float combinedStrength = Mathf.Sqrt(Mathf.Abs(m_magnetStrength) * Mathf.Abs(m_magnetStrength) + Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength) * Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength)) ;
+                float combinedStrength = 2 * Mathf.Sqrt( Mathf.Sqrt(Mathf.Abs(m_magnetStrength) * Mathf.Abs(m_magnetStrength) * Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength) * Mathf.Abs(other.GetComponent<Magnet>().m_magnetStrength)) );
                 if (other.GetComponent<Magnet>().m_magnetColor == m_magnetColor)
                 {
                     other.GetComponent<Rigidbody>().AddForce(Vector3.Normalize( transform.position - other.transform.position) * factor * -combinedStrength);

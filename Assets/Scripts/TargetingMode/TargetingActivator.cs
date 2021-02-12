@@ -20,9 +20,10 @@ public class TargetingActivator : MonoBehaviour
 
     private RopeTool ropeTool;
 
-    private MagnetInteraction magnetInteraction;
-
     private InputMaster _input;
+
+    public GameObject focusedObject; 
+
 
     void Awake()
     {
@@ -45,9 +46,7 @@ public class TargetingActivator : MonoBehaviour
         vcam = GetComponent<Cinemachine.CinemachineVirtualCameraBase>();
         Assert.IsNotNull(vcam);
         ropeTool = Camera.main.GetComponent<RopeTool>();
-        magnetInteraction = GameObject.Find("Player").GetComponent<MagnetInteraction >();
         Assert.IsNotNull(ropeTool);
-        Assert.IsNotNull(magnetInteraction);
     }
 
     private void toggleStatus()
@@ -71,77 +70,92 @@ public class TargetingActivator : MonoBehaviour
             Collider hitCollider = null;
             //only testing against RopeTargets for now, can add more layers
             //TODO: store last hit in class field and access it from outside (ie RopeTool doesnt need to SphereCast again, just use the result from here)
-            if (Physics.SphereCast(origin: wPos, 0.1f, transform.forward, out result, Mathf.Infinity, LayerMask.GetMask("RopeTarget") ))
-            {
-                hitCollider = result.collider;
-            }
 
-            //--------------------------- "FINDING" ROPETARGETS AND DRAWING OVERLAY ELEMENT FOR EACH --------------------------------//
-            var hits = Physics.OverlapSphere(transform.position, 100.0f, LayerMask.GetMask("RopeTarget"));
-            Matrix4x4[] matrices = new Matrix4x4[hits.Length];
-            int amount = 0;
-            for (var i = 0; i < hits.Length; i++)
+            if (GameObject.Find("Player").GetComponent<SwitchAbility>().activeAbility == Ability.Rope)
             {
-                RopeToolState currentState = ropeTool.getState();
-                if (currentState == RopeToolState.SELECTED_NONE ||
-                    currentState == RopeToolState.SELECTED_STATIC ||
-                    (currentState == RopeToolState.SELECTED_DYNAMIC && !hits[i].CompareTag("DynamicRopeTarget")))
+                if (Physics.SphereCast(origin: wPos, 0.1f, transform.forward, out result, Mathf.Infinity, LayerMask.GetMask("RopeTarget") ))
                 {
-                    //unlike raycasthit.transform, sphereoverlap returns the colliders own transform. 
-                    //Ie we have to get the parent containing the rigidbody and its transform ourselves
-                    GameObject topmostGameObject = hits[i].attachedRigidbody.gameObject;
+                    hitCollider = result.collider;
+                    focusedObject = result.collider.gameObject;
+                }
+                //--------------------------- "FINDING" ROPETARGETS AND DRAWING OVERLAY ELEMENT FOR EACH --------------------------------//
+                var hits = Physics.OverlapSphere(transform.position, 100.0f, LayerMask.GetMask("RopeTarget"));
+                Matrix4x4[] matrices = new Matrix4x4[hits.Length];
+                int amount = 0;
+                for (var i = 0; i < hits.Length; i++)
+                {
+                    RopeToolState currentState = ropeTool.getState();
+                    if (currentState == RopeToolState.SELECTED_NONE ||
+                        currentState == RopeToolState.SELECTED_STATIC ||
+                        (currentState == RopeToolState.SELECTED_DYNAMIC && !hits[i].CompareTag("DynamicRopeTarget")))
+                    {
+                        //unlike raycasthit.transform, sphereoverlap returns the colliders own transform. 
+                        //Ie we have to get the parent containing the rigidbody and its transform ourselves
+                        GameObject topmostGameObject = hits[i].attachedRigidbody.gameObject;
+
+                        //constructing "rotation" Matrix from camera axis in world space
+                        Matrix4x4 rotMat = Matrix4x4.identity;
+                        rotMat.SetColumn(1, camYWS);
+                        rotMat.SetColumn(2, camXWS);
+                        if (hits[i] == hitCollider)
+                        { 
+                            rotMat *= Matrix4x4.Rotate(Quaternion.Euler(Time.time*360, 0, 0));
+                        }
+                        Transform targetTransform = topmostGameObject.transform.Find("TargetPosition");
+
+                        matrices[amount] = Matrix4x4.Translate(targetTransform.position) * rotMat;
+                        amount++;
+                    }
+                }
+                //Drawing the generated overlay
+                Graphics.DrawMeshInstanced(simpleQuad, 0, ropeTargetMat, matrices, amount,
+                    properties: null,
+                    castShadows: UnityEngine.Rendering.ShadowCastingMode.Off,
+                    receiveShadows: false,
+                    layer: LayerMask.NameToLayer("UI"), //Dk if this takes precedence over the material settings. May break stuff, will see when we have actual UI elements
+                    camera: null,
+                    lightProbeUsage: UnityEngine.Rendering.LightProbeUsage.Off);
+
+            }
+            else if (GameObject.Find("Player").GetComponent<SwitchAbility>().activeAbility == Ability.Magnet)
+            {
+                if (Physics.SphereCast(origin: wPos, 0.1f, transform.forward, out result, Mathf.Infinity, LayerMask.GetMask("Magnet") ))
+                {
+                    hitCollider = result.collider;
+                    focusedObject = result.collider.gameObject;
+                }
+                
+                //--------------------------- "FINDING" Magnets AND DRAWING OVERLAY ELEMENT FOR EACH --------------------------------//
+                var magnetHits = Physics.OverlapSphere(transform.position, 100.0f, LayerMask.GetMask("Magnet"));
+                Matrix4x4[] magnetMatrices = new Matrix4x4[magnetHits.Length];
+                int magnetAmount = 0;
+                for (var i = 0; i < magnetHits.Length; i++)
+                {
+                    //GameObject topmostGameObject = magnetHits[i].attachedRigidbody.gameObject;
 
                     //constructing "rotation" Matrix from camera axis in world space
                     Matrix4x4 rotMat = Matrix4x4.identity;
                     rotMat.SetColumn(1, camYWS);
                     rotMat.SetColumn(2, camXWS);
-                    if (hits[i] == hitCollider)
+                    if (magnetHits[i] == hitCollider)
                     { 
                         rotMat *= Matrix4x4.Rotate(Quaternion.Euler(Time.time*360, 0, 0));
                     }
-                    Transform targetTransform = topmostGameObject.transform.Find("TargetPosition");
-
-                    matrices[amount] = Matrix4x4.Translate(targetTransform.position) * rotMat;
-                    amount++;
+                    magnetMatrices[magnetAmount] = Matrix4x4.Translate(magnetHits[i].transform.position) * rotMat;
+                    magnetAmount++;
+                    
                 }
+                //Drawing the generated overlay
+                Graphics.DrawMeshInstanced(simpleQuad, 0, magnetTargetMat, magnetMatrices, magnetAmount,
+                    properties: null,
+                    castShadows: UnityEngine.Rendering.ShadowCastingMode.Off,
+                    receiveShadows: false,
+                    layer: LayerMask.NameToLayer("UI"), //Dk if this takes precedence over the material settings. May break stuff, will see when we have actual UI elements
+                    camera: null,
+                    lightProbeUsage: UnityEngine.Rendering.LightProbeUsage.Off);
             }
-            //Drawing the generated overlay
-            Graphics.DrawMeshInstanced(simpleQuad, 0, ropeTargetMat, matrices, amount,
-                properties: null,
-                castShadows: UnityEngine.Rendering.ShadowCastingMode.Off,
-                receiveShadows: false,
-                layer: LayerMask.NameToLayer("UI"), //Dk if this takes precedence over the material settings. May break stuff, will see when we have actual UI elements
-                camera: null,
-                lightProbeUsage: UnityEngine.Rendering.LightProbeUsage.Off);
 
-            //--------------------------- "FINDING" Magnets AND DRAWING OVERLAY ELEMENT FOR EACH --------------------------------//
-            var magnetHits = Physics.OverlapSphere(transform.position, 100.0f, LayerMask.GetMask("Magnet"));
-            Matrix4x4[] magnetMatrices = new Matrix4x4[magnetHits.Length];
-            int magnetAmount = 0;
-            for (var i = 0; i < magnetHits.Length; i++)
-            {
-                //GameObject topmostGameObject = magnetHits[i].attachedRigidbody.gameObject;
-
-                //constructing "rotation" Matrix from camera axis in world space
-                Matrix4x4 rotMat = Matrix4x4.identity;
-                rotMat.SetColumn(1, camYWS);
-                rotMat.SetColumn(2, camXWS);
-                if (magnetHits[i] == hitCollider)
-                { 
-                    rotMat *= Matrix4x4.Rotate(Quaternion.Euler(Time.time*360, 0, 0));
-                }
-                magnetMatrices[magnetAmount] = Matrix4x4.Translate(magnetHits[i].transform.position) * rotMat;
-                magnetAmount++;
-                
-            }
-            //Drawing the generated overlay
-            Graphics.DrawMeshInstanced(simpleQuad, 0, magnetTargetMat, magnetMatrices, magnetAmount,
-                properties: null,
-                castShadows: UnityEngine.Rendering.ShadowCastingMode.Off,
-                receiveShadows: false,
-                layer: LayerMask.NameToLayer("UI"), //Dk if this takes precedence over the material settings. May break stuff, will see when we have actual UI elements
-                camera: null,
-                lightProbeUsage: UnityEngine.Rendering.LightProbeUsage.Off);
+            
         }
     }
 }
