@@ -120,7 +120,7 @@ public class TargetingActivator : MonoBehaviour
             int magnetAmount = 0;
             for (var i = 0; i < magnetHits.Length; i++)
             {
-                GameObject topmostGameObject = magnetHits[i].attachedRigidbody.gameObject;
+                //GameObject topmostGameObject = magnetHits[i].attachedRigidbody.gameObject;
 
                 //constructing "rotation" Matrix from camera axis in world space
                 Matrix4x4 rotMat = Matrix4x4.identity;
@@ -130,7 +130,7 @@ public class TargetingActivator : MonoBehaviour
                 { 
                     rotMat *= Matrix4x4.Rotate(Quaternion.Euler(Time.time*360, 0, 0));
                 }
-                magnetMatrices[magnetAmount] =  rotMat;
+                magnetMatrices[magnetAmount] = Matrix4x4.Translate(magnetHits[i].transform.position) * rotMat;
                 magnetAmount++;
                 
             }
