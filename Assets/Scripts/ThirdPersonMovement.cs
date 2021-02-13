@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using Cinemachine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +11,16 @@ public class ThirdPersonMovement : MonoBehaviour
     [SerializeField, Tooltip("The movement speed of the player")]
     public float speed = 6f;
 
-    [SerializeField, Tooltip("The movement speed of the player in the air")]
-    public float airMovementSpeed = 1f;
-
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
+
+    //-------- JUMP VARIABLES ------------//
+    [Header("Jump")]
     public float jumpHeight = 6.0f;
+    [SerializeField, Tooltip("The movement speed of the player in the air")]
+    public float airMovementSpeed = 1f; //TODO: i think once we do this correctly this should be equal to speed
+    private bool canJumpGround = false; //TODO: not sure if this is needed, since canJumpGround = isGrounded atm
+    private bool canJumpAir = false;
 
     //-------- DASH VARIABLES ------------//
     [Header("Dash")]
@@ -26,7 +31,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private float dashSpeed = 0.0f;
     [SerializeField, Tooltip("Time the dash needs to recharge")]
     public float dashCooldown = 1.0f;
-    private float timeSinceDash = 10.0f; //some high numbe, dash possible by default
+    private float timeSinceDash = 10.0f; //some high number, dash possible by default
     private bool canDash = true;
     private bool isDashing = false;
     private float timeInDash = 0.0f;
@@ -59,14 +64,11 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private bool _gliding;
 
-    private bool jump;
-    private bool doubleJump;
     private float turnSmoothVelocity;
     private Vector3 velocity;
     private bool isGrounded;
     private Vector3 direction;
     private float currentSpeed;
-    private float doublejumpTimeout;
 
     private float stepSoundTimer;
 
@@ -99,11 +101,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
         velocity = new Vector3(0f, 0f, 0f);
         direction = new Vector3(0f, 0f, 0f);
-        jump = true;
-        doubleJump = false;
         isGrounded = false;
         currentSpeed = speed;
-        doublejumpTimeout = 0.3f;
 
         dashSpeed = dashDistance / dashDuration;
 
@@ -113,27 +112,32 @@ public class ThirdPersonMovement : MonoBehaviour
         playerRigidbody.useGravity = false;
     }
 
+    void OnDrawGizmos()
+    {
+        Handles.Label(transform.position + Vector3.up, "Grounded: "+isGrounded);
+    }
+
     void Update()
     {
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit); //just Vector3.down enough? Player cant rotate
-        const double hitDistance = 0.95;
+        const double hitDistance = 0.85;
         Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (float)hitDistance,Color.red);
 
+        //TODO: this kind of sucks, doable with OnCollisionEnter and normal comparison?
         if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
             isGrounded = false;
         }
-
-        //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
-        else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && playerRigidbody.velocity.y < 0))
+        else if (hit.distance <= hitDistance)
         {
-            jump = true;
-            doubleJump = false;
+            canJumpGround = true;
+            canJumpAir = true; //TODO: could lead to errors: jump directly after pressing jump but still close enough to ground -> triple jump
             isGrounded = true;
             touchedGroundSinceLastDash = true;
+            _gliding = false;
 
-            //Check if we are moving on ground
+            //Check if we are moving on ground and play sound if we are
             if (playerRigidbody.velocity.magnitude >= 0.1F)
             {
                 if (stepSoundTimer <= 0)
@@ -212,12 +216,6 @@ public class ThirdPersonMovement : MonoBehaviour
             _highlighting.Add(activator);
         }
 
-
-        if (doublejumpTimeout > 0.0f)
-        {
-            doublejumpTimeout -= Time.fixedDeltaTime;
-        }
-
         if (isDashing)
         {
             timeInDash += Time.fixedDeltaTime;
@@ -239,28 +237,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
             velocity.y = playerRigidbody.velocity.y;
 
-            //TODO: update & move correct position in code
-            //if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
-            //{
-            //    dash = true;
-            //    currentSpeed = speed;
-            //}
-
             float gravity = gravityMultiplyer;
 
-            //TODO: move correct position in code
-            //if (_gliding) //TODO: enable and check if working
-            //{
-            //    if (isGrounded)
-            //    {
-            //        _gliding = false;
-            //    }
-            //    else
-            //    {
-            //        gravity /= 3;
-            //        Debug.Log("Changed gravity enabled");
-            //    }
-            //}
+            if (_gliding)
+            {
+                gravity /= 3;
+            }
 
             playerRigidbody.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
 
@@ -318,6 +300,7 @@ public class ThirdPersonMovement : MonoBehaviour
                     }
                 }
 
+                //TODO: what does this actually do? -> needed in dash branch? -yes-> move outside of if-else
                 // handeling walls
                 RaycastHit hitWall;
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
@@ -356,34 +339,33 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Jump()
     {
-        if (jump && isGrounded)
+        if (isGrounded && canJumpGround)
         {
-            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x,
-                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), playerRigidbody.velocity.z);
-
+            performJump();
             isGrounded = false;
-            jump = false;
-            doubleJump = true;
-            doublejumpTimeout = 0.3f;
-
-            //Debug.Log("Jump: " + jump + ",   double jump: " + doubleJump + ",   ground: " + isGrounded + ",   out: " + doublejumpTimeout + DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+            canJumpGround = false; 
+            //these two probably not doing anything tbh. player is still too close to the ground
+            //and in the next update the player will be set to isGrounded again, still: figure out better solution than timeout
         }
-        else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
+        else if (!isGrounded && canJumpAir)
         {
-            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x,
-                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), playerRigidbody.velocity.z);
-
-            isGrounded = false;
-            jump = false;
-            doubleJump = false;
+            performJump();
+            canJumpAir = false;
             _audioManager.Play(SoundType.DoubleJump);
         }
+    }
+
+    void performJump()
+    {
+        playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x,
+                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), playerRigidbody.velocity.z);
     }
 
     void Dash()
     {
         if (canDash)
         { 
+            //TODO: dont just dash forward. If on ground: take slope into account so dash doesnt instantly get cancelled
             playerRigidbody.velocity = transform.forward * dashSpeed;
             isDashing = true;
             timeInDash = 0.0f;
