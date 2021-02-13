@@ -7,9 +7,6 @@ using UnityEngine.InputSystem;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
-    public Rigidbody rb;
-    public Transform camTransform;
-
     [SerializeField, Tooltip("The movement speed of the player")]
     public float speed = 6f;
 
@@ -20,9 +17,22 @@ public class ThirdPersonMovement : MonoBehaviour
     public float gravityMultiplyer = 1.0f;
     public float jumpHeight = 6.0f;
 
+    //-------- DASH VARIABLES ------------//
+    [Header("Dash")]
     [SerializeField, Tooltip("The movement speed that is applied if the player dashes")]
-    public float dashSpeed = 20f;
+    public float dashDistance = 2f;
+    [SerializeField, Tooltip("The time it takes to complete the Dash (if uninterrupted")]
+    public float dashDuration = 0.2f;
+    private float dashSpeed = 0.0f;
+    [SerializeField, Tooltip("Time the dash needs to recharge")]
+    public float dashCooldown = 1.0f;
+    private float timeSinceDash = 10.0f; //some high numbe, dash possible by default
+    private bool canDash = true;
+    private bool isDashing = false;
+    private float timeInDash = 0.0f;
+    private bool touchedGroundSinceLastDash = true; //in case we only touch ground for a moment after dashing, the dash should be reset anyways
 
+    [Header("TODO: CLEAN UP VARIABLES")]
     public Transform groundCheck;
     public float groundDistance = 0.5f;
 
@@ -44,11 +54,13 @@ public class ThirdPersonMovement : MonoBehaviour
         set => _glidingEnabled = value;
     }
 
+    private Rigidbody playerRigidbody;
+    private Transform camTransform;
+
     private bool _gliding;
 
     private bool jump;
     private bool doubleJump;
-    private bool dash;
     private float turnSmoothVelocity;
     private Vector3 velocity;
     private bool isGrounded;
@@ -60,7 +72,6 @@ public class ThirdPersonMovement : MonoBehaviour
 
 
     private GameStateHandler _gameStateHandler;
-    private float lastDash;
 
     private AudioManager _audioManager;
     private InputMaster _input;
@@ -83,28 +94,31 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Start()
     {
+        playerRigidbody = GetComponent<Rigidbody>();
+        camTransform = Camera.main.transform;
+
         velocity = new Vector3(0f, 0f, 0f);
         direction = new Vector3(0f, 0f, 0f);
         jump = true;
         doubleJump = false;
-        dash = true;
         isGrounded = false;
-        lastDash = Time.realtimeSinceStartup;
         currentSpeed = speed;
         doublejumpTimeout = 0.3f;
+
+        dashSpeed = dashDistance / dashDuration;
 
         _gameStateHandler = new GameStateHandler();
 
         //Deactivate gravity since we handle it here in our own way
-        rb.useGravity = false;
+        playerRigidbody.useGravity = false;
     }
 
     void Update()
     {
         RaycastHit hit;
-        Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit);
-
+        Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit); //just Vector3.down enough? Player cant rotate
         const double hitDistance = 0.95;
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (float)hitDistance,Color.red);
 
         if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
@@ -112,14 +126,15 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         //Player is only grounded if we are within distance and the player has not enabled a double jump and is still falling (otherwise the user can't double jump anymore if jump height is too low)
-        else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && rb.velocity.y < 0))
+        else if (hit.distance <= hitDistance && doublejumpTimeout <= 0 && !(doubleJump && playerRigidbody.velocity.y < 0))
         {
             jump = true;
             doubleJump = false;
             isGrounded = true;
+            touchedGroundSinceLastDash = true;
 
             //Check if we are moving on ground
-            if (rb.velocity.magnitude >= 0.1F)
+            if (playerRigidbody.velocity.magnitude >= 0.1F)
             {
                 if (stepSoundTimer <= 0)
                 {
@@ -163,7 +178,7 @@ public class ThirdPersonMovement : MonoBehaviour
             if (target.TryGetComponent(out activator))
             {
                 //Interact
-                if (Input.GetKey(KeyCode.F))
+                if (Input.GetKey(KeyCode.F)) //TODO: new InputSystem
                 {
                     activator.activate();
                 } else if (!_highlighting.Contains(activator))
@@ -203,105 +218,127 @@ public class ThirdPersonMovement : MonoBehaviour
             doublejumpTimeout -= Time.fixedDeltaTime;
         }
 
-        velocity.y = rb.velocity.y;
-
-        if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
+        if (isDashing)
         {
-            dash = true;
-            currentSpeed = speed;
-        }
-
-        float gravity = gravityMultiplyer;
-
-        if (_gliding)
-        {
-            if (isGrounded)
+            timeInDash += Time.fixedDeltaTime;
+            if (timeInDash >= dashDuration
+                || playerRigidbody.velocity.magnitude < dashSpeed)
             {
-                _gliding = false;
-            }
-            else
-            {
-                gravity /= 3;
-                Debug.Log("Changed gravity enabled");
+                isDashing = false;
+                timeSinceDash = 0.0f;
+                canDash = false;
             }
         }
-
-        rb.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
-
-        // Player movement is handeled here
-        Vector2 move = _input.Player.Movement.ReadValue<Vector2>();
-        direction = new Vector3(move.x, 0f, move.y).normalized;
-        Vector3 moveDir = new Vector3(0f, 0f, 0f);
-
-        //Check if player movement should be applied
-        if (direction.magnitude >= 0.1F)
+        else //unsure if else is enough, maybe test if !isDashing so dash can be cancelled and normal physics calculated in the same timestep
         {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
-                turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
-
-            float maxVelocityChange = speed;
-
-            if (!isGrounded)
+            timeSinceDash += Time.fixedDeltaTime;
+            if (timeSinceDash >= dashCooldown && touchedGroundSinceLastDash)
             {
-                maxVelocityChange = airMovementSpeed;
+                canDash = true;
             }
 
-            var velocityChange = (moveDir - rb.velocity);
+            velocity.y = playerRigidbody.velocity.y;
 
-            velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
-            velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-            velocityChange.y = 0;
+            //TODO: update & move correct position in code
+            //if (Time.realtimeSinceStartup - lastDash > 2 && !dash && isGrounded)
+            //{
+            //    dash = true;
+            //    currentSpeed = speed;
+            //}
 
-            //stair handling
-            bool isFirstCheck = false;
-            bool canMove = true;
-            for (int i = stairDetail; i >= 1; i--)
+            float gravity = gravityMultiplyer;
+
+            //TODO: move correct position in code
+            //if (_gliding) //TODO: enable and check if working
+            //{
+            //    if (isGrounded)
+            //    {
+            //        _gliding = false;
+            //    }
+            //    else
+            //    {
+            //        gravity /= 3;
+            //        Debug.Log("Changed gravity enabled");
+            //    }
+            //}
+
+            playerRigidbody.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+
+            // Player movement is handeled here
+            Vector2 move = _input.Player.Movement.ReadValue<Vector2>();
+            direction = new Vector3(move.x, 0f, move.y).normalized; //TODO: normalizing breaks controller input
+            Vector3 moveDir = new Vector3(0f, 0f, 0f);
+
+            //Check if player movement should be applied
+            if (direction.magnitude >= 0.1F)
             {
-                Collider[] c = Physics.OverlapBox(
-                    transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
-                    new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
-                if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
+                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
+                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
+                    turnSmoothTime);
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
+
+                float maxVelocityChange = speed;
+
+                if (!isGrounded)
                 {
-                    if (c.Length > 0 && i == stairDetail)
+                    maxVelocityChange = airMovementSpeed;
+                }
+
+                var velocityChange = (moveDir - playerRigidbody.velocity);
+
+                velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
+                velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
+                velocityChange.y = 0;
+
+                //stair handling
+                bool isFirstCheck = false;
+                bool canMove = true;
+                for (int i = stairDetail; i >= 1; i--)
+                {
+                    Collider[] c = Physics.OverlapBox(
+                        transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
+                        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
+                    if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
                     {
-                        isFirstCheck = true;
-                        if (!isGrounded)
+                        if (c.Length > 0 && i == stairDetail)
                         {
-                            canMove = false;
+                            isFirstCheck = true;
+                            if (!isGrounded)
+                            {
+                                canMove = false;
+                            }
+                        }
+
+                        if (c.Length > 0 && !isFirstCheck)
+                        {
+                            transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
+                            break;
                         }
                     }
+                }
 
-                    if (c.Length > 0 && !isFirstCheck)
+                // handeling walls
+                RaycastHit hitWall;
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
+                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
+                {
+                    if (hitWall.distance < 1.0f && !isGrounded)
                     {
-                        transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
-                        break;
+                        canMove = false;
+                        Debug.Log("Can Move " + canMove);
                     }
                 }
-            }
 
-            // handeling walls
-            RaycastHit hitWall;
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
-            {
-                if (hitWall.distance < 1.0f && !isGrounded)
+                if (canMove)
                 {
-                    canMove = false;
-                    Debug.Log("Can Move " + canMove);
+                    playerRigidbody.velocity += velocityChange;
                 }
             }
-
-            if (canMove)
+            else if (isGrounded)
             {
-                rb.velocity += velocityChange;
+                playerRigidbody.velocity = new Vector3(0, playerRigidbody.velocity.y, 0);
             }
-        }
-        else if (isGrounded)
-        {
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
     }
 
@@ -321,8 +358,8 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         if (jump && isGrounded)
         {
-            rb.velocity = new Vector3(rb.velocity.x,
-                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
+            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x,
+                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), playerRigidbody.velocity.z);
 
             isGrounded = false;
             jump = false;
@@ -333,8 +370,8 @@ public class ThirdPersonMovement : MonoBehaviour
         }
         else if (doubleJump && !isGrounded && doublejumpTimeout <= 0.0f)
         {
-            rb.velocity = new Vector3(rb.velocity.x,
-                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), rb.velocity.z);
+            playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x,
+                Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * gravityMultiplyer), playerRigidbody.velocity.z);
 
             isGrounded = false;
             jump = false;
@@ -345,11 +382,13 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Dash()
     {
-        if (dash)
-        {
-            dash = false;
-            lastDash = Time.realtimeSinceStartup;
-            currentSpeed = dashSpeed;
+        if (canDash)
+        { 
+            playerRigidbody.velocity = transform.forward * dashSpeed;
+            isDashing = true;
+            timeInDash = 0.0f;
+            canDash = false;
+            touchedGroundSinceLastDash = false;
             _audioManager.Play(SoundType.PlayerDash);
         }
     }
