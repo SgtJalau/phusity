@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Assertions;
 using Cinemachine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,10 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     [SerializeField, Tooltip("The movement speed of the player")]
     public float speed = 6f;
+    [SerializeField, Tooltip("The movement speed of the player in the air")]
+    public float speedInAir = 3f;
+    [SerializeField, Tooltip("Changing direction greater than this angle will cancel active freefall")]
+    public float freeFallAngleLimit = 45f;
 
     public float turnSmoothTime = 0.1f;
     public float gravityMultiplyer = 1.0f;
@@ -17,8 +22,6 @@ public class ThirdPersonMovement : MonoBehaviour
     //-------- JUMP VARIABLES ------------//
     [Header("Jump")]
     public float jumpHeight = 6.0f;
-    [SerializeField, Tooltip("The movement speed of the player in the air")]
-    public float airMovementSpeed = 1f; //TODO: i think once we do this correctly this should be equal to speed
     private bool canJumpGround = false; //TODO: not sure if this is needed, since canJumpGround = isGrounded atm
     private bool canJumpAir = false;
 
@@ -37,11 +40,11 @@ public class ThirdPersonMovement : MonoBehaviour
     private float timeInDash = 0.0f;
     private bool touchedGroundSinceLastDash = true; //in case we only touch ground for a moment after dashing, the dash should be reset anyways
 
-    [Header("TODO: CLEAN UP VARIABLES")]
+    [Header("Ground Check")]
     public Transform groundCheck;
     public float groundDistance = 0.5f;
 
-
+    [Header("Stair Handling")]
     public float maxStepHeight = 0.25f;
     public int stairDetail = 10;
     public LayerMask stepMask;
@@ -51,7 +54,7 @@ public class ThirdPersonMovement : MonoBehaviour
      */
     private bool _glidingEnabled = false;
 
-    public CinemachineBrain _virtualCamera;
+    private CinemachineBrain _virtualCamera;
 
     public bool GlidingEnabled
     {
@@ -59,8 +62,8 @@ public class ThirdPersonMovement : MonoBehaviour
         set => _glidingEnabled = value;
     }
 
-    private Rigidbody playerRigidbody;
-    private Transform camTransform;
+    private Rigidbody playerRigidbody = null;
+    private Transform camTransform = null;
 
     private bool _gliding;
 
@@ -69,6 +72,11 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool isGrounded;
     private Vector3 direction;
     private float currentSpeed;
+
+    //--------- AIR MOVEMENT VARIABLES ---------//
+    private bool isInFreeFall = false;
+    private bool wasGrounded = false;
+    private Vector3 freeFallVelocity = Vector3.zero;
 
     private float stepSoundTimer;
 
@@ -108,6 +116,9 @@ public class ThirdPersonMovement : MonoBehaviour
 
         _gameStateHandler = new GameStateHandler();
 
+        _virtualCamera = Camera.main.GetComponent<CinemachineBrain>();
+        Assert.IsNotNull(_virtualCamera);
+
         //Deactivate gravity since we handle it here in our own way
         playerRigidbody.useGravity = false;
     }
@@ -115,9 +126,12 @@ public class ThirdPersonMovement : MonoBehaviour
     void OnDrawGizmos()
     {
         Handles.Label(transform.position + Vector3.up, "Grounded: "+isGrounded);
+        Handles.Label(transform.position + Vector3.up * 0.8f, "In Free Fall: " + isInFreeFall);
+        if(playerRigidbody != null)
+            Handles.Label(transform.position + Vector3.up * 0.65f, "Horizontal Speed: " + new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude);
     }
 
-    void Update()
+    void Update() //not sure why this is done in update()? maybe FixedUpdate also enough
     {
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit); //just Vector3.down enough? Player cant rotate
@@ -128,6 +142,10 @@ public class ThirdPersonMovement : MonoBehaviour
         if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
             isGrounded = false;
+            if (wasGrounded)
+            { 
+                isInFreeFall = true;
+            }
         }
         else if (hit.distance <= hitDistance)
         {
@@ -136,6 +154,10 @@ public class ThirdPersonMovement : MonoBehaviour
             isGrounded = true;
             touchedGroundSinceLastDash = true;
             _gliding = false;
+
+            //Keep the last velocity saved in case we leave the ground
+            isInFreeFall = false;
+            freeFallVelocity = playerRigidbody.velocity;
 
             //Check if we are moving on ground and play sound if we are
             if (playerRigidbody.velocity.magnitude >= 0.1F)
@@ -169,6 +191,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 }
             }
         }
+        wasGrounded = isGrounded;
     }
 
     void FixedUpdate()
@@ -225,7 +248,10 @@ public class ThirdPersonMovement : MonoBehaviour
                 isDashing = false;
                 timeSinceDash = 0.0f;
                 canDash = false;
-            }
+                isInFreeFall = true;
+                playerRigidbody.velocity = playerRigidbody.velocity.normalized * speed; //not sure if we want to use speedInAir here, handle this the same as starting free fall from a jump
+                freeFallVelocity = playerRigidbody.velocity; 
+            }   
         }
         else //unsure if else is enough, maybe test if !isDashing so dash can be cancelled and normal physics calculated in the same timestep
         {
@@ -258,69 +284,95 @@ public class ThirdPersonMovement : MonoBehaviour
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
                     turnSmoothTime);
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
-                moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized * currentSpeed;
+                moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized;
+                float deltaAngle = Vector3.Angle(moveDir, new Vector3(freeFallVelocity.x,0,freeFallVelocity.z));
+                //Debug.DrawRay(transform.position, moveDir, Color.red);
+                //Debug.DrawRay(transform.position, new Vector3(freeFallVelocity.x, 0, freeFallVelocity.z), Color.blue);
+                                                                                          //player couldve entered freeFall by jumping straight up
+                bool overwriteFreeFall = isInFreeFall && (deltaAngle < freeFallAngleLimit && freeFallVelocity.xz().magnitude > 0.1f);
+                float maxSpeed = (isGrounded || overwriteFreeFall) ? speed : speedInAir;
+                moveDir *= maxSpeed;
 
-                float maxVelocityChange = speed;
-
-                if (!isGrounded)
-                {
-                    maxVelocityChange = airMovementSpeed;
-                }
 
                 var velocityChange = (moveDir - playerRigidbody.velocity);
 
-                velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
-                velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
+                velocityChange.x = Mathf.Clamp(velocityChange.x, -maxSpeed, maxSpeed);
+                velocityChange.z = Mathf.Clamp(velocityChange.z, -maxSpeed, maxSpeed);
                 velocityChange.y = 0;
 
-                //stair handling
-                bool isFirstCheck = false;
-                bool canMove = true;
-                for (int i = stairDetail; i >= 1; i--)
-                {
-                    Collider[] c = Physics.OverlapBox(
-                        transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
-                        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
-                    if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
-                    {
-                        if (c.Length > 0 && i == stairDetail)
-                        {
-                            isFirstCheck = true;
-                            if (!isGrounded)
-                            {
-                                canMove = false;
-                            }
-                        }
 
-                        if (c.Length > 0 && !isFirstCheck)
-                        {
-                            transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
-                            break;
-                        }
-                    }
+                ////stair handling
+                //bool isFirstCheck = false;
+                //bool canMove = true;
+                //for (int i = stairDetail; i >= 1; i--)
+                //{
+                //    Collider[] c = Physics.OverlapBox(
+                //        transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
+                //        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
+                //    if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
+                //    {
+                //        if (c.Length > 0 && i == stairDetail)
+                //        {
+                //            isFirstCheck = true;
+                //            if (!isGrounded)
+                //            {
+                //                canMove = false;
+                //            }
+                //        }
+
+                //        if (c.Length > 0 && !isFirstCheck)
+                //        {
+                //            transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
+                //            break;
+                //        }
+                //    }
+                //}
+
+                ////TODO: what does this actually do? -> needed in dash branch? -yes-> move outside of if-else
+                //// handeling walls
+                //RaycastHit hitWall;
+                //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
+                //if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
+                //{
+                //    if (hitWall.distance < 1.0f && !isGrounded)
+                //    {
+                //        canMove = false;
+                //        Debug.Log("Can Move " + canMove);
+                //    }
+                //}
+
+                //if (canMove)
+                //{
+                //    playerRigidbody.velocity += velocityChange;
+                //}
+
+                //if (!isInFreeFall || actualVelocityChange > 0.5f )
+                ////if (!isInFreeFall || (actualSpeedChange > 0.5f || deltaAngle > 5))
+                //{
+                //    playerRigidbody.velocity += velocityChange;
+                //    isInFreeFall = false;
+                //}
+                playerRigidbody.velocity += velocityChange;
+                if (overwriteFreeFall)
+                {
+                    //stay in free fall, maybe change direction a tiny bit
+                    freeFallVelocity = playerRigidbody.velocity;
                 }
-
-                //TODO: what does this actually do? -> needed in dash branch? -yes-> move outside of if-else
-                // handeling walls
-                RaycastHit hitWall;
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
-                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
+                else
                 {
-                    if (hitWall.distance < 1.0f && !isGrounded)
-                    {
-                        canMove = false;
-                        Debug.Log("Can Move " + canMove);
-                    }
-                }
-
-                if (canMove)
-                {
-                    playerRigidbody.velocity += velocityChange;
+                    isInFreeFall = false;
                 }
             }
-            else if (isGrounded)
+            else
             {
-                playerRigidbody.velocity = new Vector3(0, playerRigidbody.velocity.y, 0);
+                if (isInFreeFall)
+                {
+                    playerRigidbody.velocity = new Vector3(freeFallVelocity.x, playerRigidbody.velocity.y, freeFallVelocity.z);
+                }
+                else
+                { 
+                    playerRigidbody.velocity = new Vector3(0, playerRigidbody.velocity.y, 0);
+                }
             }
         }
     }
@@ -351,6 +403,8 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             performJump();
             canJumpAir = false;
+            isInFreeFall = true;
+            freeFallVelocity = playerRigidbody.velocity;
             _audioManager.Play(SoundType.DoubleJump);
         }
     }
@@ -365,7 +419,7 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         if (canDash)
         { 
-            //TODO: dont just dash forward. If on ground: take slope into account so dash doesnt instantly get cancelled
+            //TODO: Maybe dont just dash forward. If on ground: Dash along slope so dash doesnt instantly get cancelled
             playerRigidbody.velocity = transform.forward * dashSpeed;
             isDashing = true;
             timeInDash = 0.0f;

@@ -1461,7 +1461,7 @@ MonoBehaviour:
   turnSmoothTime: 0.09
   gravityMultiplyer: 1
   jumpHeight: 1
-  airMovementSpeed: 1
+  canJumpGround: 0
   dashDistance: 2
   dashDuration: 0.2
   dashCooldown: 1
