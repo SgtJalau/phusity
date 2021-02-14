@@ -134,7 +134,7 @@ public class ThirdPersonMovement : MonoBehaviour
     void Update() //not sure why this is done in update()? maybe FixedUpdate also enough
     {
         RaycastHit hit;
-        Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit); //just Vector3.down enough? Player cant rotate
+        Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 2, ~LayerMask.GetMask("Player")); //just Vector3.down enough? Player cant rotate
         const double hitDistance = 0.85;
         Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (float)hitDistance,Color.red);
 
@@ -242,16 +242,23 @@ public class ThirdPersonMovement : MonoBehaviour
         if (isDashing)
         {
             timeInDash += Time.fixedDeltaTime;
-            if (timeInDash >= dashDuration
-                || playerRigidbody.velocity.magnitude < dashSpeed)
+            if (playerRigidbody.velocity.magnitude < dashSpeed)
+            {
+                isDashing = false;
+                timeSinceDash = 0.0f;
+                canDash = false;
+                isInFreeFall = false;
+                playerRigidbody.velocity = Vector3.zero;
+            }
+            if (timeInDash >= dashDuration)
             {
                 isDashing = false;
                 timeSinceDash = 0.0f;
                 canDash = false;
                 isInFreeFall = true;
-                playerRigidbody.velocity = playerRigidbody.velocity.normalized * speed; //not sure if we want to use speedInAir here, handle this the same as starting free fall from a jump
+                playerRigidbody.velocity = playerRigidbody.velocity.normalized * Mathf.Min(speed,dashSpeed); //not sure if we want to use speedInAir here, handle this the same as starting free fall from a jump
                 freeFallVelocity = playerRigidbody.velocity; 
-            }   
+            }
         }
         else //unsure if else is enough, maybe test if !isDashing so dash can be cancelled and normal physics calculated in the same timestep
         {
@@ -288,9 +295,9 @@ public class ThirdPersonMovement : MonoBehaviour
                 float deltaAngle = Vector3.Angle(moveDir, new Vector3(freeFallVelocity.x,0,freeFallVelocity.z));
                 //Debug.DrawRay(transform.position, moveDir, Color.red);
                 //Debug.DrawRay(transform.position, new Vector3(freeFallVelocity.x, 0, freeFallVelocity.z), Color.blue);
-                                                                                          //player couldve entered freeFall by jumping straight up
-                bool overwriteFreeFall = isInFreeFall && (deltaAngle < freeFallAngleLimit && freeFallVelocity.xz().magnitude > 0.1f);
-                float maxSpeed = (isGrounded || overwriteFreeFall) ? speed : speedInAir;
+                                                                                   //player couldve entered freeFall by jumping straight up
+                bool keepFreeFall = isInFreeFall && (deltaAngle < freeFallAngleLimit && freeFallVelocity.xz().magnitude > 0.1f);
+                float maxSpeed = (isGrounded || keepFreeFall) ? speed : speedInAir;
                 moveDir *= maxSpeed;
 
 
@@ -328,32 +335,8 @@ public class ThirdPersonMovement : MonoBehaviour
                 //    }
                 //}
 
-                ////TODO: what does this actually do? -> needed in dash branch? -yes-> move outside of if-else
-                //// handeling walls
-                //RaycastHit hitWall;
-                //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
-                //if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
-                //{
-                //    if (hitWall.distance < 1.0f && !isGrounded)
-                //    {
-                //        canMove = false;
-                //        Debug.Log("Can Move " + canMove);
-                //    }
-                //}
-
-                //if (canMove)
-                //{
-                //    playerRigidbody.velocity += velocityChange;
-                //}
-
-                //if (!isInFreeFall || actualVelocityChange > 0.5f )
-                ////if (!isInFreeFall || (actualSpeedChange > 0.5f || deltaAngle > 5))
-                //{
-                //    playerRigidbody.velocity += velocityChange;
-                //    isInFreeFall = false;
-                //}
                 playerRigidbody.velocity += velocityChange;
-                if (overwriteFreeFall)
+                if (keepFreeFall)
                 {
                     //stay in free fall, maybe change direction a tiny bit
                     freeFallVelocity = playerRigidbody.velocity;
@@ -391,21 +374,24 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Jump()
     {
-        if (isGrounded && canJumpGround)
+        if (!isDashing)
         {
-            performJump();
-            isGrounded = false;
-            canJumpGround = false; 
-            //these two probably not doing anything tbh. player is still too close to the ground
-            //and in the next update the player will be set to isGrounded again, still: figure out better solution than timeout
-        }
-        else if (!isGrounded && canJumpAir)
-        {
-            performJump();
-            canJumpAir = false;
-            isInFreeFall = true;
-            freeFallVelocity = playerRigidbody.velocity;
-            _audioManager.Play(SoundType.DoubleJump);
+            if (isGrounded && canJumpGround)
+            {
+                performJump();
+                isGrounded = false;
+                canJumpGround = false;
+                //these two probably not doing anything tbh. player is still too close to the ground
+                //and in the next update the player will be set to isGrounded again, still: figure out better solution than timeout
+            }
+            else if (!isGrounded && canJumpAir)
+            {
+                performJump();
+                canJumpAir = false;
+                isInFreeFall = true;
+                freeFallVelocity = playerRigidbody.velocity;
+                _audioManager.Play(SoundType.DoubleJump);
+            }
         }
     }
 
@@ -425,6 +411,7 @@ public class ThirdPersonMovement : MonoBehaviour
             timeInDash = 0.0f;
             canDash = false;
             touchedGroundSinceLastDash = false;
+            freeFallVelocity = playerRigidbody.velocity; //not really freeFall, just store in this variable
             _audioManager.Play(SoundType.PlayerDash);
         }
     }
