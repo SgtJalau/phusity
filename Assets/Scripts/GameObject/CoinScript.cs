@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class CoinScript : MonoBehaviour
 {
-
+    private AudioManager _audioManager;
+    
+    private void Start()
+    {
+        _audioManager = FindObjectOfType<AudioManager>();
+    }
+    
     void Update()
     {
         transform.Rotate(90 * Time.deltaTime, 0, 0);
@@ -15,6 +21,8 @@ public class CoinScript : MonoBehaviour
         {
             other.GetComponent<ThirdPersonMovement>().points++;
             Destroy(gameObject);
+            _audioManager.Play(SoundType.CoinPickup);
         }
     }
+   
 }
