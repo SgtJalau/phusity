@@ -334,7 +334,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 //        }
                 //    }
                 //}
-
+                
                 playerRigidbody.velocity += velocityChange;
                 if (keepFreeFall)
                 {
