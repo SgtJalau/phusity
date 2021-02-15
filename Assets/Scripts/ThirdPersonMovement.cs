@@ -49,6 +49,11 @@ public class ThirdPersonMovement : MonoBehaviour
     public int stairDetail = 10;
     public LayerMask stepMask;
 
+    [Header("Coins")]
+    public int points = 0;
+
+
+
     /**
      * If gliding is enabled we can press a key to start gliding
      */
@@ -439,6 +444,11 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
+
+    void OnGUI() //Coin Gui
+    {
+        GUI.Label(new Rect(10, 10, 100, 20), "Score : " + points);
+    }
     public IEnumerator LookAtLocation(Transform vector3, long millis)
     {
         Transform previousFollow = _virtualCamera.ActiveVirtualCamera.Follow;
