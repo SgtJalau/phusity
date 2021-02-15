@@ -69,7 +69,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private float turnSmoothVelocity;
     private Vector3 velocity;
+
+    //--------- GROUND TEST VARIABLES -----------//
     private bool isGrounded;
+    private bool isGroundedTest = false;
+    private Collider footCollider = null;
+    private List<Collider> groundColliders = new List<Collider>();
     private Vector3 direction;
     private float currentSpeed;
 
@@ -116,6 +121,9 @@ public class ThirdPersonMovement : MonoBehaviour
 
         _gameStateHandler = new GameStateHandler();
 
+        footCollider = transform.Find("FootCollider").GetComponent<CapsuleCollider>();
+        Assert.IsNotNull(footCollider);
+
         _virtualCamera = Camera.main.GetComponent<CinemachineBrain>();
         Assert.IsNotNull(_virtualCamera);
 
@@ -125,10 +133,13 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Handles.Label(transform.position + Vector3.up, "Grounded: "+isGrounded);
-        Handles.Label(transform.position + Vector3.up * 0.8f, "In Free Fall: " + isInFreeFall);
-        if(playerRigidbody != null)
-            Handles.Label(transform.position + Vector3.up * 0.65f, "Horizontal Speed: " + new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude);
+        GUIStyle style = new GUIStyle();
+        style.normal.textColor = Color.red;
+        Handles.Label(transform.position + Vector3.up, "Grounded (raycast): "+isGrounded+
+            "\nGrounded (Collider): " + (groundColliders.Count > 0) +
+            "\nIn Free Fall: " + isInFreeFall+
+            "\nHorizontal Speed: " + ((playerRigidbody!=null) ? new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude : 0),
+            style);
     }
 
     void Update() //not sure why this is done in update()? maybe FixedUpdate also enough
@@ -360,16 +371,23 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
-    void LoadGameState()
+    void OnCollisionEnter(Collision collision)
     {
-        _gameStateHandler.QuickLoadGameState();
-        Debug.Log("Quick loaded state");
+        //maybe need for each? not sure if testing just one point is enought (dont even know how often more than one point comes into contact)
+        if (collision.contacts[0].thisCollider == footCollider
+            && !groundColliders.Contains(collision.collider))
+        {
+            groundColliders.Add(collision.collider);
+        }
     }
 
-    void SaveGameState()
+    void OnCollisionExit(Collision collision)
     {
-        _gameStateHandler.SaveGameState();
-        Debug.Log("Quick saved state");
+        //maybe need for each? not sure if testing just one point is enought (dont even know how often more than one point comes into contact)
+        if (groundColliders.Contains(collision.collider))
+        {
+            groundColliders.Remove(collision.collider);
+        }
     }
 
     void Jump()
@@ -424,6 +442,18 @@ public class ThirdPersonMovement : MonoBehaviour
             _glidingEnabled = false;
             Debug.Log("Gliding enabled");
         }
+    }
+
+    void LoadGameState()
+    {
+        _gameStateHandler.QuickLoadGameState();
+        Debug.Log("Quick loaded state");
+    }
+
+    void SaveGameState()
+    {
+        _gameStateHandler.SaveGameState();
+        Debug.Log("Quick saved state");
     }
 
     public IEnumerator LookAtLocation(Transform vector3, long millis)
