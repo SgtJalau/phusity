@@ -346,7 +346,8 @@ public class ThirdPersonMovement : MonoBehaviour
                 //    }
                 //}
                 
-                playerRigidbody.velocity += velocityChange;
+                //playerRigidbody.velocity += velocityChange;
+                playerRigidbody.AddForce(velocityChange, ForceMode.VelocityChange); //Cant see any difference now, maybe in more complex scenarios
                 if (keepFreeFall)
                 {
                     //stay in free fall, maybe change direction a tiny bit
