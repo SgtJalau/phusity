@@ -71,8 +71,8 @@ public class ThirdPersonMovement : MonoBehaviour
     private Vector3 velocity;
 
     //--------- GROUND TEST VARIABLES -----------//
-    private bool isGrounded;
-    private bool isGroundedTest = false;
+    private bool isGroundedOld;
+    private bool isGrounded = false;
     private Collider footCollider = null;
     private List<Collider> groundColliders = new List<Collider>();
     private Vector3 direction;
@@ -114,7 +114,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         velocity = new Vector3(0f, 0f, 0f);
         direction = new Vector3(0f, 0f, 0f);
-        isGrounded = false;
+        isGroundedOld = false;
         currentSpeed = speed;
 
         dashSpeed = dashDistance / dashDuration;
@@ -135,8 +135,8 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         GUIStyle style = new GUIStyle();
         style.normal.textColor = Color.red;
-        Handles.Label(transform.position + Vector3.up, "Grounded (raycast): "+isGrounded+
-            "\nGrounded (Collider): " + (groundColliders.Count > 0) +
+        Handles.Label(transform.position + Vector3.up, "Grounded (raycast): "+isGroundedOld+
+            "\nGrounded (Collider): " + isGrounded +
             "\nIn Free Fall: " + isInFreeFall+
             "\nHorizontal Speed: " + ((playerRigidbody!=null) ? new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude : 0),
             style);
@@ -144,6 +144,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Update() //not sure why this is done in update()? maybe FixedUpdate also enough
     {
+        //------- old grounded test. kept for comparison reasons, not used anymore ----------------//
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 2, ~LayerMask.GetMask("Player")); //just Vector3.down enough? Player cant rotate
         const double hitDistance = 0.85;
@@ -152,17 +153,36 @@ public class ThirdPersonMovement : MonoBehaviour
         //TODO: this kind of sucks, doable with OnCollisionEnter and normal comparison?
         if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
-            isGrounded = false;
-            if (wasGrounded)
-            { 
-                isInFreeFall = true;
-            }
+            isGroundedOld = false;
+            //if (wasGrounded)
+            //{ 
+            //    isInFreeFall = true;
+            //}
         }
         else if (hit.distance <= hitDistance)
         {
+            isGroundedOld = true;
+            //canJumpGround = true;
+            //canJumpAir = true;
+            //touchedGroundSinceLastDash = true;
+            //_gliding = false;
+
+            ////Keep the last velocity saved in case we leave the ground
+            //isInFreeFall = false;
+            //freeFallVelocity = playerRigidbody.velocity;
+        }
+        //wasGrounded = isGrounded;
+
+        //---------- new grounded test, using touching colliders ------------//
+        isGrounded = groundColliders.Count > 0;
+        if (!isGrounded && wasGrounded)
+        { 
+            isInFreeFall = true;
+        }
+        if (isGrounded)
+        {
             canJumpGround = true;
-            canJumpAir = true; //TODO: could lead to errors: jump directly after pressing jump but still close enough to ground -> triple jump
-            isGrounded = true;
+            canJumpAir = true;
             touchedGroundSinceLastDash = true;
             _gliding = false;
 
