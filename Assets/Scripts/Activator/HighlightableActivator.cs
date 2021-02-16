@@ -45,12 +45,18 @@ public class HighlightableActivator : Activator
     public void Highlight()
     {
         this._active = true;
-        _renderer.material.color = Color.yellow;
+        /*var outline = gameObject.AddComponent<Outline>();
+
+        outline.OutlineMode = Outline.Mode.OutlineAll;
+        outline.OutlineColor = Color.yellow;
+        outline.OutlineWidth = 5f;
+        outline.enabled = true;*/
     }
 
     public void Restore()
     {
         this._active = false;
-        _renderer.material.color = _realColor;
+        /*_renderer.material.color = _realColor;
+        Destroy(gameObject.GetComponent<Outline>());*/
     }
 }
