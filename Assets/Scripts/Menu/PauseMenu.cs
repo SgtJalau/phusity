@@ -21,7 +21,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Start()
     {
-        ui = gameObject.GetComponent<CanvasGroup>();
+        ui = gameObject.transform.GetChild(0).GetComponent<CanvasGroup>();
         ui.interactable = false;
         ui.alpha = 0f;
     }
