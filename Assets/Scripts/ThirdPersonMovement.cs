@@ -76,12 +76,13 @@ public class ThirdPersonMovement : MonoBehaviour
     private Collider footCollider = null;
     private List<Collider> groundColliders = new List<Collider>();
     private Vector3 direction;
-    private float currentSpeed;
 
     //--------- AIR MOVEMENT VARIABLES ---------//
     private bool isInFreeFall = false;
     private bool wasGrounded = false;
     private Vector3 freeFallVelocity = Vector3.zero;
+
+    private PhysicMaterial bodyPhysMat;
 
     private float stepSoundTimer;
 
@@ -115,7 +116,6 @@ public class ThirdPersonMovement : MonoBehaviour
         velocity = new Vector3(0f, 0f, 0f);
         direction = new Vector3(0f, 0f, 0f);
         isGroundedOld = false;
-        currentSpeed = speed;
 
         dashSpeed = dashDistance / dashDuration;
 
@@ -123,6 +123,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
         footCollider = transform.Find("FootCollider").GetComponent<CapsuleCollider>();
         Assert.IsNotNull(footCollider);
+        bodyPhysMat = GetComponent<CapsuleCollider>().material;
+        Assert.IsNotNull(bodyPhysMat);
 
         _virtualCamera = Camera.main.GetComponent<CinemachineBrain>();
         Assert.IsNotNull(_virtualCamera);
@@ -154,27 +156,16 @@ public class ThirdPersonMovement : MonoBehaviour
         if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
             isGroundedOld = false;
-            //if (wasGrounded)
-            //{ 
-            //    isInFreeFall = true;
-            //}
         }
         else if (hit.distance <= hitDistance)
         {
             isGroundedOld = true;
-            //canJumpGround = true;
-            //canJumpAir = true;
-            //touchedGroundSinceLastDash = true;
-            //_gliding = false;
-
-            ////Keep the last velocity saved in case we leave the ground
-            //isInFreeFall = false;
-            //freeFallVelocity = playerRigidbody.velocity;
         }
-        //wasGrounded = isGrounded;
 
-        //---------- new grounded test, using touching colliders ------------//
+        //---------- new grounded test, foot in contact with other colliders? ------------//
         isGrounded = groundColliders.Count > 0;
+        //TODO: unsure how expensive it is to swap out the material, really only have to change if isGrounded != wasGrounded
+        footCollider.material = !isGrounded ? bodyPhysMat : null;
         if (!isGrounded && wasGrounded)
         { 
             isInFreeFall = true;
@@ -365,9 +356,9 @@ public class ThirdPersonMovement : MonoBehaviour
                 //        }
                 //    }
                 //}
-                
-                //playerRigidbody.velocity += velocityChange;
-                playerRigidbody.AddForce(velocityChange, ForceMode.VelocityChange); //Cant see any difference now, maybe in more complex scenarios
+
+                playerRigidbody.velocity += velocityChange;
+                //playerRigidbody.AddForce(velocityChange, ForceMode.VelocityChange); //Cant see any difference now, maybe in more complex scenarios
                 if (keepFreeFall)
                 {
                     //stay in free fall, maybe change direction a tiny bit
@@ -398,13 +389,43 @@ public class ThirdPersonMovement : MonoBehaviour
         if (collision.contacts[0].thisCollider == footCollider
             && !groundColliders.Contains(collision.collider))
         {
-            groundColliders.Add(collision.collider);
+            if (Vector3.Angle(collision.contacts[0].normal, Vector3.up) <= 45) //TODO: parameter for angle 
+            {
+                groundColliders.Add(collision.collider);
+            }
+        }
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        Debug.DrawRay(collision.contacts[0].point, collision.contacts[0].normal, Color.cyan);
+        if (Input.GetKey(KeyCode.M))
+            Debug.Log(Vector3.Angle(collision.contacts[0].normal, Vector3.up));
+        if (collision.contacts[0].thisCollider == footCollider)
+        {
+            float angle = Vector3.Angle(collision.contacts[0].normal, Vector3.up);
+            if (angle <= 45) //TODO: parameter for angle 
+            {
+                if (!groundColliders.Contains(collision.collider))
+                {
+                    Debug.Log(Time.time + ": previous collider now ground");
+                    groundColliders.Add(collision.collider);
+                }
+            }
+            else
+            {
+                if (groundColliders.Contains(collision.collider))
+                {
+                    Debug.Log(Time.time + ": previous collider no longer ground");
+                    groundColliders.Remove(collision.collider);
+                }
+            }
         }
     }
 
     void OnCollisionExit(Collision collision)
     {
-        //maybe need for each? not sure if testing just one point is enought (dont even know how often more than one point comes into contact)
+        //also for each here? (dont even know if exit also gives multiple hits? Debug.Log!)
         if (groundColliders.Contains(collision.collider))
         {
             groundColliders.Remove(collision.collider);
