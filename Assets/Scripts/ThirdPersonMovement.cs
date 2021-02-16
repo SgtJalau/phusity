@@ -330,33 +330,6 @@ public class ThirdPersonMovement : MonoBehaviour
                 velocityChange.y = 0;
 
 
-                ////stair handling
-                //bool isFirstCheck = false;
-                //bool canMove = true;
-                //for (int i = stairDetail; i >= 1; i--)
-                //{
-                //    Collider[] c = Physics.OverlapBox(
-                //        transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
-                //        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
-                //    if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
-                //    {
-                //        if (c.Length > 0 && i == stairDetail)
-                //        {
-                //            isFirstCheck = true;
-                //            if (!isGrounded)
-                //            {
-                //                canMove = false;
-                //            }
-                //        }
-
-                //        if (c.Length > 0 && !isFirstCheck)
-                //        {
-                //            transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
-                //            break;
-                //        }
-                //    }
-                //}
-
                 playerRigidbody.velocity += velocityChange;
                 //playerRigidbody.AddForce(velocityChange, ForceMode.VelocityChange); //Cant see any difference now, maybe in more complex scenarios
                 if (keepFreeFall)
@@ -376,8 +349,15 @@ public class ThirdPersonMovement : MonoBehaviour
                     playerRigidbody.velocity = new Vector3(freeFallVelocity.x, playerRigidbody.velocity.y, freeFallVelocity.z);
                 }
                 else
-                { 
-                    playerRigidbody.velocity = new Vector3(0, playerRigidbody.velocity.y, 0);
+                {
+                    if (isGrounded && playerRigidbody.velocity.xz().magnitude > 0.1f)
+                    {
+                        playerRigidbody.velocity = new Vector3(0, 0, 0);
+                    }
+                    else
+                    { 
+                        playerRigidbody.velocity = new Vector3(0, playerRigidbody.velocity.y, 0);
+                    }
                 }
             }
         }
