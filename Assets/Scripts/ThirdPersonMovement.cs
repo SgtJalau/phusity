@@ -140,7 +140,8 @@ public class ThirdPersonMovement : MonoBehaviour
         Handles.Label(transform.position + Vector3.up, "Grounded (raycast): "+isGroundedOld+
             "\nGrounded (Collider): " + isGrounded +
             "\nIn Free Fall: " + isInFreeFall+
-            "\nHorizontal Speed: " + ((playerRigidbody!=null) ? new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude : 0),
+            "\nHorizontal Speed: " + ((playerRigidbody!=null) ? new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude : 0)+
+            "\nVelocity: "+playerRigidbody.velocity,
             style);
     }
 
@@ -325,6 +326,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 velocityChange.y = 0;
             }
 
+            //TODO: maybe optimize / combine branches
             if (isGrounded)
             {
                 if (velocity.y < 0f)
@@ -385,7 +387,24 @@ public class ThirdPersonMovement : MonoBehaviour
                     }
                 }
             }
-
+            //TODO: can no longer run into walls because of this and then "slide along"
+            //can move this into !isGrounded after a solution for the body collider "bouncing" is found
+            //maybe not sweepTest but raycast from head & foot?
+            RaycastHit[] sweepHits = playerRigidbody.SweepTestAll(velocity, (velocity * Time.fixedDeltaTime).magnitude);
+            bool hitSlope = false;
+            foreach (var hit in sweepHits)
+            {
+                Debug.DrawRay(hit.point, hit.normal, Color.magenta);
+                if (Vector3.Angle(Vector3.up, hit.normal) > 45)
+                {
+                    hitSlope = true;
+                    break;
+                }
+            }
+            if (hitSlope)
+            {
+                velocity.x = velocity.z = 0;
+            }
             playerRigidbody.velocity = velocity;
         }
     }
