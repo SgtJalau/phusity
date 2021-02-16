@@ -7,4 +7,5 @@
         StepGras,
         StepRock,
         TutorialTheme,
+        CoinPickup,
 }

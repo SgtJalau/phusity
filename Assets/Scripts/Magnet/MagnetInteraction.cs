@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class MagnetInteraction : MonoBehaviour
@@ -12,30 +14,60 @@ public class MagnetInteraction : MonoBehaviour
     public RectTransform m_magnetStrengthUIRoot;
     public Camera m_camera;
 
-    public GameObject m_strengthIndicator;
+    private InputMaster _input;
 
-    public float m_maxRayDistance = 2f;
+    public GameObject m_strengthIndicator;
+    public GameObject m_targetingCam;
+
     private void Awake() {
         layerMask = LayerMask.NameToLayer("Magnet");
         m_magnetStrengthUIRoot.gameObject.SetActive(false);
+        m_targetingCam = GameObject.Find("CM_TargetingCam");
+        _input = new InputMaster();
+        _input.Player.MagnetPower.performed += ChangeMagnetStrength;
     }
-    private void Update() {
-        selectMagnetByRay();
+    private void OnEnable()
+    {
+        _input.Player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _input.Player.Disable();
+    }
+
+    private void ChangeMagnetStrength(InputAction.CallbackContext context)
+    {
         if (m_currentMagnet != null)
         {
-            m_strengthIndicator.transform.position = m_currentMagnet.transform.position;
-            m_strengthIndicator.transform.localScale = new Vector3(m_currentMagnet.m_magnetStrength,m_currentMagnet.m_magnetStrength,m_currentMagnet.m_magnetStrength);
-            m_strengthIndicator.SetActive(true);
-            m_magnetStrengthUIRoot.gameObject.SetActive(true);
-            m_magnetStrengthUI.fillAmount = m_currentMagnet.m_magnetStrength / m_currentMagnet.m_maxMagnetStrength ;
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                m_currentMagnet.DecrementMagnetStrength();
-            }
-            if (Input.GetKeyDown(KeyCode.P))
+            float direction = context.ReadValue<float>();
+            if (direction == 1)
             {
                 m_currentMagnet.IncrementMagnetStrength();
             }
+            else{
+                m_currentMagnet.DecrementMagnetStrength();
+            }
+            
+        }
+    }
+
+    private void Update() {
+        if (m_targetingCam.GetComponent<TargetingActivator>().focusedObject != null)
+        {
+            m_currentMagnet = m_targetingCam.GetComponent<TargetingActivator>().focusedObject.GetComponent<Magnet>();
+        }
+        else
+        {
+            m_currentMagnet = null;
+        }
+        if (m_currentMagnet != null)
+        {
+            m_strengthIndicator.transform.position = m_currentMagnet.transform.position;
+            m_strengthIndicator.transform.localScale = new Vector3(m_currentMagnet.m_magnetRange,m_currentMagnet.m_magnetRange,m_currentMagnet.m_magnetRange);
+            m_strengthIndicator.SetActive(true);
+            m_magnetStrengthUIRoot.gameObject.SetActive(true);
+            m_magnetStrengthUI.fillAmount = m_currentMagnet.m_magnetStrength / m_currentMagnet.m_maxMagnetStrength ;
         }
         else
         {
@@ -43,32 +75,5 @@ public class MagnetInteraction : MonoBehaviour
             m_strengthIndicator.SetActive(false);
         }
        
-    }
-    private void selectMagnetByRay()
-    {
-        Ray ray = m_camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-        Ray playerRay = new Ray(transform.position, ray.direction);
-        Debug.DrawRay(playerRay.origin, ray.direction * m_maxRayDistance, Color.red);
-        RaycastHit hitInfo;
-        if (Physics.Raycast(playerRay, out hitInfo, layerMask))
-        {
-            var hitItem = hitInfo.collider.GetComponent<Magnet>();
-
-            if (hitItem == null)
-            {
-                m_currentMagnet = null;
-            }
-            else if (hitItem != null)
-            {
-                if (Vector3.Distance(hitItem.transform.position, transform.position) <= m_maxRayDistance)
-                {
-                    m_currentMagnet = hitItem;
-                }
-            }
-        }
-        else
-        {
-            m_currentMagnet = null;
-        }
     }
 }

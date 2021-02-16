@@ -1055,8 +1055,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc2c6de83132864190ff717debcd59e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 1020862469231444777}
-  debugMat: {fileID: 2100000, guid: 28c0b25f71acec34f915904e39825f67, type: 2}
   distanceMat: {fileID: 2100000, guid: 28c0b25f71acec34f915904e39825f67, type: 2}
   ropePrefab: {fileID: 465537670110804008, guid: ba3a07718cf6cd447b78a59d3882eab4,
     type: 3}
@@ -1267,12 +1265,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb9256f62f0f4994cf539faf8a427, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyToActive: 102
   priorityBoost: 10
-  globalPostProcessVolume: {fileID: 0}
   simpleQuad: {fileID: -462981019419857548, guid: 260e6189820c62147b2c7c84a3247c5f,
     type: 3}
   ropeTargetMat: {fileID: 2100000, guid: 11a83a40367fe7e4aa107b8cbd10e979, type: 2}
+  magnetTargetMat: {fileID: 0}
+  focusedObject: {fileID: 0}
 --- !u!1 &1020862469925995346
 GameObject:
   m_ObjectHideFlags: 0
@@ -1405,8 +1403,9 @@ GameObject:
   - component: {fileID: 1020862470095329567}
   - component: {fileID: 1020862470095329553}
   - component: {fileID: 1020862470095329555}
-  - component: {fileID: 1020862470095329556}
   - component: {fileID: 6786697140483236181}
+  - component: {fileID: 7580099785546482550}
+  - component: {fileID: 8700246233410052622}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1458,14 +1457,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bcd8400daaac794fb71b0ddfbca9a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 1020862470095329554}
-  camTransform: {fileID: 1020862469231444789}
   speed: 6
-  airMovementSpeed: 1
   turnSmoothTime: 0.09
   gravityMultiplyer: 1
   jumpHeight: 1
-  dashSpeed: 8
+  canJumpGround: 0
+  dashDistance: 2
+  dashDuration: 0.2
+  dashCooldown: 1
   groundCheck: {fileID: 1020862468994246341}
   groundDistance: 0.1
   maxStepHeight: 0.4
@@ -1515,20 +1514,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   triggerDistance: 1.5
---- !u!64 &1020862470095329556
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020862470095329565}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!114 &6786697140483236181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1541,6 +1526,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5306da6874edb540b6a77652d6f6e29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7580099785546482550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020862470095329565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1baa5ed5385f8a8428683cb87cc88d33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_magnetStrengthUI: {fileID: 0}
+  m_magnetStrengthUIRoot: {fileID: 0}
+  m_camera: {fileID: 1020862469231444777}
+  m_strengthIndicator: {fileID: 0}
+  m_targetingCam: {fileID: 0}
+--- !u!114 &8700246233410052622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020862470095329565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27b20928afb01a447b57c904cc073445, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeAbility: 0
 --- !u!1001 &4627484646704939020
 PrefabInstance:
   m_ObjectHideFlags: 0
