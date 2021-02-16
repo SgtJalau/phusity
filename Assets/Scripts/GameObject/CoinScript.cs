@@ -5,24 +5,24 @@ using UnityEngine;
 public class CoinScript : MonoBehaviour
 {
     private AudioManager _audioManager;
-    
+
     private void Start()
     {
         _audioManager = FindObjectOfType<AudioManager>();
     }
-    
+
     void Update()
     {
         transform.Rotate(90 * Time.deltaTime, 0, 0);
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.name == "Player")
+        if (other.name == "Player")
         {
-            other.GetComponent<ThirdPersonMovement>().points++;
+            other.GetComponent<PlayerObject>().Points++;
             Destroy(gameObject);
             _audioManager.Play(SoundType.CoinPickup);
         }
     }
-   
 }

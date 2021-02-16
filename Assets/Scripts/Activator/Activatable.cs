@@ -11,8 +11,8 @@ public abstract class Activatable : MonoBehaviour
     {
         yield return new WaitForSeconds(initialDelayMillis/1000F);
         
-        var objects = Object.FindObjectsOfType<ThirdPersonMovement>();
-        ThirdPersonMovement player = objects[0];
+        var objects = Object.FindObjectsOfType<PlayerObject>();
+        PlayerObject player = objects[0];
         StartCoroutine(player.LookAtLocation(transform, durationMillis));
     }
 }
