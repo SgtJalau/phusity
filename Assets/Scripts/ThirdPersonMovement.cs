@@ -399,8 +399,6 @@ public class ThirdPersonMovement : MonoBehaviour
     void OnCollisionStay(Collision collision)
     {
         Debug.DrawRay(collision.contacts[0].point, collision.contacts[0].normal, Color.cyan);
-        if (Input.GetKey(KeyCode.M))
-            Debug.Log(Vector3.Angle(collision.contacts[0].normal, Vector3.up));
         if (collision.contacts[0].thisCollider == footCollider)
         {
             float angle = Vector3.Angle(collision.contacts[0].normal, Vector3.up);
@@ -408,7 +406,6 @@ public class ThirdPersonMovement : MonoBehaviour
             {
                 if (!groundColliders.Contains(collision.collider))
                 {
-                    Debug.Log(Time.time + ": previous collider now ground");
                     groundColliders.Add(collision.collider);
                 }
             }
@@ -416,7 +413,6 @@ public class ThirdPersonMovement : MonoBehaviour
             {
                 if (groundColliders.Contains(collision.collider))
                 {
-                    Debug.Log(Time.time + ": previous collider no longer ground");
                     groundColliders.Remove(collision.collider);
                 }
             }
