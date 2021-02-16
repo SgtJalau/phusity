@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
@@ -9,13 +10,59 @@ public class PlayerObject : MonoBehaviour
     
     private CinemachineBrain _virtualCamera;
 
-    void Start()
+    private GameStateHandler _gameStateHandler;
+    
+    private PlayerGUI _playerGUI;
+
+    private Rigidbody _rigidbody;
+    
+    public Rigidbody Rigidbody
+    {
+        get => _rigidbody;
+        set => _rigidbody = value;
+    }
+
+    public PlayerGUI PlayerGUI
+    {
+        get => _playerGUI;
+        set => _playerGUI = value;
+    }
+    
+    private ThirdPersonMovement _thirdPersonMovement;
+    
+    public ThirdPersonMovement ThirdPersonMovement
+    {
+        get => _thirdPersonMovement;
+        set => _thirdPersonMovement = value;
+    }
+    
+    private int _points = 0;
+
+    public int Points
+    {
+        get => _points;
+        set => _points = value;
+    }
+
+    private void Awake()
     {
         _virtualCamera = Camera.main.GetComponent<CinemachineBrain>();
         Assert.IsNotNull(_virtualCamera);
-    }
+
+        _gameStateHandler = new GameStateHandler();
+
+        _playerGUI = GetComponent<PlayerGUI>();
         
-    
+        _thirdPersonMovement = GetComponent<ThirdPersonMovement>();
+
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    void Start()
+    {
+ 
+    }
+
     public bool GetTargetCollider(float maxDistance, out Collider targetCollider)
     {
         RaycastHit hit;
@@ -47,6 +94,19 @@ public class PlayerObject : MonoBehaviour
         targetCollider = null;
         return false;
     }
+    
+    public void LoadGameState()
+    {
+        _gameStateHandler.QuickLoadGameState();
+        Debug.Log("Quick loaded state");
+    }
+
+    public void SaveGameState()
+    {
+        _gameStateHandler.SaveGameState();
+        Debug.Log("Quick saved state");
+    }
+
     
     public IEnumerator LookAtLocation(Transform vector3, long millis)
     {

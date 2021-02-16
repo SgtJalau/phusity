@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Assertions;
@@ -54,8 +55,6 @@ public class ThirdPersonMovement : MonoBehaviour
     public int stairDetail = 10;
     public LayerMask stepMask;
 
-    [Header("Coins")] public int points = 0;
-
 
     /**
      * If gliding is enabled we can press a key to start gliding
@@ -76,6 +75,13 @@ public class ThirdPersonMovement : MonoBehaviour
     private float turnSmoothVelocity;
     private Vector3 velocity;
     private bool isGrounded;
+
+    public bool IsGrounded
+    {
+        get => isGrounded;
+        set => isGrounded = value;
+    }
+
     private Vector3 direction;
     private float currentSpeed;
 
@@ -86,21 +92,26 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private float stepSoundTimer;
 
-
-    private GameStateHandler _gameStateHandler;
-
     private PlayerObject _playerObject;
 
     private AudioManager _audioManager;
     private InputMaster _input;
 
+    public InputMaster InputMaster
+    {
+        get => _input;
+        set => _input = value;
+    }
+
     private List<HighlightableActivator> _highlighting;
+
+    
+
 
     private void Awake()
     {
         _input = new InputMaster();
-        _input.Gameplay.QuickLoad.performed += _ => LoadGameState();
-        _input.Gameplay.QuickSave.performed += _ => SaveGameState();
+
         _input.Player.Jump.performed += _ => Jump();
         _input.Player.Dash.performed += _ => Dash();
         _input.Player.Glide.performed += _ => Glide();
@@ -114,6 +125,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Start()
     {
+        _playerObject = GetComponent<PlayerObject>();
+
         playerRigidbody = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
 
@@ -124,12 +137,11 @@ public class ThirdPersonMovement : MonoBehaviour
 
         dashSpeed = dashDistance / dashDuration;
 
-        _gameStateHandler = new GameStateHandler();
-
-        _playerObject = GetComponent<PlayerObject>();
-
         //Deactivate gravity since we handle it here in our own way
         playerRigidbody.useGravity = false;
+
+        _input.Gameplay.QuickLoad.performed += _ => _playerObject.LoadGameState();
+        _input.Gameplay.QuickSave.performed += _ => _playerObject.SaveGameState();
     }
 
     void OnDrawGizmos()
@@ -178,9 +190,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 {
                     stepSoundTimer = 0.4f;
 
-                    Material material = GetMaterialAtHit(hit);
-
-                    if (material != null)
+                    if (CastUtils.GetMaterialAtHit(hit, out var material))
                     {
                         if (material.name == ("Mat_Gestein (Instance)") || material.name == ("Mat_Felsen (Instance)") ||
                             material.name == "Mat_Bruecke (Instance)" || material.name == "Mat_Ruine (Instance)")
@@ -205,6 +215,14 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         wasGrounded = isGrounded;
+    }
+
+    public bool IsMovingHorizontally()
+    {
+        Vector3 velocity = playerRigidbody.velocity;
+        velocity.y = 0;
+
+        return velocity.magnitude >= 0.1F;
     }
 
     void FixedUpdate()
@@ -312,6 +330,8 @@ public class ThirdPersonMovement : MonoBehaviour
                 velocityChange.x = Mathf.Clamp(velocityChange.x, -maxSpeed, maxSpeed);
                 velocityChange.z = Mathf.Clamp(velocityChange.z, -maxSpeed, maxSpeed);
                 velocityChange.y = 0;
+                     
+                EventManager.Movement.Perform();
 
 
                 ////stair handling
@@ -391,17 +411,6 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
-    void LoadGameState()
-    {
-        _gameStateHandler.QuickLoadGameState();
-        Debug.Log("Quick loaded state");
-    }
-
-    void SaveGameState()
-    {
-        _gameStateHandler.SaveGameState();
-        Debug.Log("Quick saved state");
-    }
 
     void Jump()
     {
@@ -410,6 +419,7 @@ public class ThirdPersonMovement : MonoBehaviour
             PerformJump();
             isGrounded = false;
             canJumpGround = false;
+            EventManager.Jump.Perform();
             //these two probably not doing anything tbh. player is still too close to the ground
             //and in the next update the player will be set to isGrounded again, still: figure out better solution than timeout
         }
@@ -420,6 +430,7 @@ public class ThirdPersonMovement : MonoBehaviour
             isInFreeFall = true;
             freeFallVelocity = playerRigidbody.velocity;
             _audioManager.Play(SoundType.DoubleJump);
+            EventManager.DoubleJump.Perform();
         }
     }
 
@@ -440,6 +451,7 @@ public class ThirdPersonMovement : MonoBehaviour
             canDash = false;
             touchedGroundSinceLastDash = false;
             _audioManager.Play(SoundType.PlayerDash);
+            EventManager.Dash.Perform();
         }
     }
 
@@ -468,51 +480,13 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
-    void OnGUI() //Coin Gui
+    public String GetReadableKeyName(InputAction inputAction)
     {
-        GUI.Label(new Rect(10, 10, 100, 20), "Score : " + points);
+        return InputControlPath.ToHumanReadableString(
+            inputAction.bindings[inputAction.GetBindingIndexForControl(inputAction.controls[0])].effectivePath,
+            InputControlPath.HumanReadableStringOptions.OmitDevice);
     }
 
-
-    private Material GetMaterialAtHit(RaycastHit hit)
-    {
-        if (hit.collider.material)
-        {
-            if (hit.collider.gameObject.TryGetComponent(out MeshFilter mesh) && mesh.mesh.isReadable)
-            {
-                var index = hit.triangleIndex;
-                var count = mesh.mesh.subMeshCount;
-
-                //Debug.Log(index + " | " + count);
-
-                var meshRenderer = hit.collider.GetComponent<MeshRenderer>();
-                for (var x = 0; x < count; x++)
-                {
-                    var triangles = mesh.mesh.GetTriangles(x);
-
-                    for (var y = 0; y < triangles.Length; y++)
-                    {
-                        if (triangles[y] == index)
-                        {
-                            //Debug.Log(triangles[y] + " | " + y + " | Mat Index: " + x + " | " +  hit.collider.GetComponent<MeshRenderer>().materials[x + 1]);
-                            var materials = meshRenderer.materials;
-
-                            //No idea why the materials are shifted by one but for some reason they are
-                            var matIndex = x + 1 < materials.Length ? x + 1 : materials.Length - 1;
-
-                            return materials[matIndex];
-                        }
-                    }
-                }
-            }
-
-            //Debug.Log(hit.collider.gameObject.GetComponent<MeshRenderer>().materials.Length + " test");
-        }
-
-        return null;
-    }
-
-    
 
     void OnEnable()
     {
