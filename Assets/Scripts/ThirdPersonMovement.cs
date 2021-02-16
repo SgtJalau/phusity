@@ -74,7 +74,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool isGroundedOld;
     private bool isGrounded = false;
     private Collider footCollider = null;
-    private List<Collider> groundColliders = new List<Collider>();
+    private HashSet<Collider> groundColliders = new HashSet<Collider>();
     private Vector3 direction;
 
     //--------- AIR MOVEMENT VARIABLES ---------//
@@ -385,14 +385,11 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        //maybe need for each? not sure if testing just one point is enought (dont even know how often more than one point comes into contact)
+        //maybe for each contact needed? not sure if testing just one point is enough (dont even know how often more than one point comes into contact)
         if (collision.contacts[0].thisCollider == footCollider
-            && !groundColliders.Contains(collision.collider))
-        {
-            if (Vector3.Angle(collision.contacts[0].normal, Vector3.up) <= 45) //TODO: parameter for angle 
-            {
-                groundColliders.Add(collision.collider);
-            }
+            && Vector3.Angle(collision.contacts[0].normal, Vector3.up) <= 45)
+        { 
+            groundColliders.Add(collision.collider);
         }
     }
 
@@ -404,28 +401,19 @@ public class ThirdPersonMovement : MonoBehaviour
             float angle = Vector3.Angle(collision.contacts[0].normal, Vector3.up);
             if (angle <= 45) //TODO: parameter for angle 
             {
-                if (!groundColliders.Contains(collision.collider))
-                {
-                    groundColliders.Add(collision.collider);
-                }
+                groundColliders.Add(collision.collider);
             }
             else
             {
-                if (groundColliders.Contains(collision.collider))
-                {
-                    groundColliders.Remove(collision.collider);
-                }
+                groundColliders.Remove(collision.collider);
             }
         }
     }
 
     void OnCollisionExit(Collision collision)
     {
-        //also for each here? (dont even know if exit also gives multiple hits? Debug.Log!)
-        if (groundColliders.Contains(collision.collider))
-        {
-            groundColliders.Remove(collision.collider);
-        }
+        //also for each here? (dont even know if exit also gives multiple hits?)
+        groundColliders.Remove(collision.collider);
     }
 
     void Jump()
