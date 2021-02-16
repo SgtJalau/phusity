@@ -290,16 +290,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 canDash = true;
             }
 
-            velocity.y = playerRigidbody.velocity.y;
-
-            float gravity = gravityMultiplyer;
-
-            if (_gliding)
-            {
-                gravity /= 3;
-            }
-
-            playerRigidbody.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+            velocity = playerRigidbody.velocity;
 
             // Player movement is handeled here
             Vector2 move = _input.Player.Movement.ReadValue<Vector2>();
@@ -307,59 +298,95 @@ public class ThirdPersonMovement : MonoBehaviour
             Vector3 moveDir = new Vector3(0f, 0f, 0f);
 
             //Check if player movement should be applied
+            bool userGaveInput = false;
+            Vector3 velocityChange = Vector3.zero;
+            bool keepFreeFall = false;
             if (direction.magnitude >= 0.1F)
             {
+                userGaveInput = true;
                 float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camTransform.eulerAngles.y;
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity,
                     turnSmoothTime);
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
                 moveDir = (Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward).normalized;
-                float deltaAngle = Vector3.Angle(moveDir, new Vector3(freeFallVelocity.x,0,freeFallVelocity.z));
+                float deltaAngle = Vector3.Angle(moveDir, new Vector3(freeFallVelocity.x, 0, freeFallVelocity.z));
                 //Debug.DrawRay(transform.position, moveDir, Color.red);
                 //Debug.DrawRay(transform.position, new Vector3(freeFallVelocity.x, 0, freeFallVelocity.z), Color.blue);
-                                                                                   //player couldve entered freeFall by jumping straight up
-                bool keepFreeFall = isInFreeFall && (deltaAngle < freeFallAngleLimit && freeFallVelocity.xz().magnitude > 0.1f);
+                //player couldve entered freeFall by jumping straight up
+                keepFreeFall = isInFreeFall && (deltaAngle < freeFallAngleLimit && freeFallVelocity.xz().magnitude > 0.1f);
                 float maxSpeed = (isGrounded || keepFreeFall) ? speed : speedInAir;
                 moveDir *= maxSpeed;
 
 
-                var velocityChange = (moveDir - playerRigidbody.velocity);
+                velocityChange = (moveDir - velocity);
 
                 velocityChange.x = Mathf.Clamp(velocityChange.x, -maxSpeed, maxSpeed);
                 velocityChange.z = Mathf.Clamp(velocityChange.z, -maxSpeed, maxSpeed);
                 velocityChange.y = 0;
+            }
 
-
-                playerRigidbody.velocity += velocityChange;
-                //playerRigidbody.AddForce(velocityChange, ForceMode.VelocityChange); //Cant see any difference now, maybe in more complex scenarios
-                if (keepFreeFall)
+            if (isGrounded)
+            {
+                if (velocity.y < 0f)
                 {
-                    //stay in free fall, maybe change direction a tiny bit
-                    freeFallVelocity = playerRigidbody.velocity;
+                    velocity.y = 0f;
+                }
+                if (userGaveInput)
+                {
+                    velocity += velocityChange;
                 }
                 else
                 {
-                    isInFreeFall = false;
+                    if (velocity.xz().magnitude > 0.1f)
+                    {
+                        velocity = Vector3.zero;
+                    }
+                    //TODO: not needed in this branch im pretty sure
+                    else
+                    {
+                        velocity = new Vector3(0, velocity.y, 0);
+                    }
                 }
             }
             else
             {
-                if (isInFreeFall)
+                float gravity = gravityMultiplyer;
+
+                if (_gliding)
                 {
-                    playerRigidbody.velocity = new Vector3(freeFallVelocity.x, playerRigidbody.velocity.y, freeFallVelocity.z);
+                    gravity /= 3;
+                }
+
+                //playerRigidbody.AddForce(Physics.gravity * gravity, ForceMode.Acceleration);
+                velocity.y += Physics.gravity.y * gravity * Time.fixedDeltaTime;
+
+                if (userGaveInput)
+                {
+                    velocity += velocityChange;
+                    if (keepFreeFall)
+                    {
+                        //stay in free fall, maybe change direction a tiny bit
+                        freeFallVelocity = velocity;
+                    }
+                    else
+                    {
+                        isInFreeFall = false;
+                    }
                 }
                 else
                 {
-                    if (isGrounded && playerRigidbody.velocity.xz().magnitude > 0.1f)
+                    if (isInFreeFall)
                     {
-                        playerRigidbody.velocity = new Vector3(0, 0, 0);
+                        velocity = new Vector3(freeFallVelocity.x, velocity.y, freeFallVelocity.z);
                     }
                     else
-                    { 
-                        playerRigidbody.velocity = new Vector3(0, playerRigidbody.velocity.y, 0);
+                    {
+                        velocity = new Vector3(0, velocity.y, 0);
                     }
                 }
             }
+
+            playerRigidbody.velocity = velocity;
         }
     }
 
