@@ -150,7 +150,7 @@ public class ThirdPersonMovement : MonoBehaviour
         style.normal.textColor = Color.red;
         Handles.Label(transform.position + Vector3.up, "Grounded: " + isGrounded+
             "\nIn Free Fall: " + isInFreeFall+
-            "\nHorizontal Speed: " + new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude,
+            "\nHorizontal Speed: " + (playerRigidbody == null ? 0.0 : new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude),
             style);
     }
 
