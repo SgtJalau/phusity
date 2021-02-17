@@ -146,11 +146,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Handles.Label(transform.position + Vector3.up, "Grounded: " + isGrounded);
-        Handles.Label(transform.position + Vector3.up * 0.8f, "In Free Fall: " + isInFreeFall);
-        if (playerRigidbody != null)
-            Handles.Label(transform.position + Vector3.up * 0.65f,
-                "Horizontal Speed: " + new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude);
+        GUIStyle style = new GUIStyle();
+        style.normal.textColor = Color.red;
+        Handles.Label(transform.position + Vector3.up, "Grounded: " + isGrounded+
+            "\nIn Free Fall: " + isInFreeFall+
+            "\nHorizontal Speed: " + new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.z).magnitude,
+            style);
     }
 
     void Update() //not sure why this is done in update()? maybe FixedUpdate also enough
@@ -158,10 +159,10 @@ public class ThirdPersonMovement : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down),
             out hit); //just Vector3.down enough? Player cant rotate
-        const double hitDistance = 0.85;
+        const double hitDistance = 0.95;
         Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * (float) hitDistance, Color.red);
 
-        //TODO: this kind of sucks, doable with OnCollisionEnter and normal comparison?
+        //TODO: this can be very unreliable, doable with OnCollisionEnter and normal comparison?
         if (hit.distance > hitDistance || !hit.collider || hit.collider.isTrigger)
         {
             isGrounded = false;
@@ -334,50 +335,44 @@ public class ThirdPersonMovement : MonoBehaviour
                 EventManager.Movement.Perform();
 
 
-                ////stair handling
-                //bool isFirstCheck = false;
-                //bool canMove = true;
-                //for (int i = stairDetail; i >= 1; i--)
-                //{
-                //    Collider[] c = Physics.OverlapBox(
-                //        transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
-                //        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
-                //    if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
-                //    {
-                //        if (c.Length > 0 && i == stairDetail)
-                //        {
-                //            isFirstCheck = true;
-                //            if (!isGrounded)
-                //            {
-                //                canMove = false;
-                //            }
-                //        }
+                //stair handling
+                bool isFirstCheck = false;
+                bool canMove = true;
+                for (int i = stairDetail; i >= 1; i--)
+                {
+                    Collider[] c = Physics.OverlapBox(
+                        transform.position - new Vector3(0, i * maxStepHeight / stairDetail, 0),
+                        new Vector3(1.05f, maxStepHeight / stairDetail / 2, 1.05f), Quaternion.identity, stepMask);
+                    if (new Vector2(velocityChange.x, velocityChange.z) != Vector2.zero)
+                    {
+                        if (c.Length > 0 && i == stairDetail)
+                        {
+                            isFirstCheck = true;
+                            if (!isGrounded)
+                            {
+                                canMove = false;
+                            }
+                        }
 
-                //        if (c.Length > 0 && !isFirstCheck)
-                //        {
-                //            transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
-                //            break;
-                //        }
-                //    }
-                //}
+                        if (c.Length > 0 && !isFirstCheck)
+                        {
+                            transform.position += new Vector3(0, i * maxStepHeight / stairDetail, 0);
+                            break;
+                        }
+                    }
+                }
 
                 ////TODO: what does this actually do? -> needed in dash branch? -yes-> move outside of if-else
                 //// handeling walls
-                //RaycastHit hitWall;
-                //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
-                //if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
-                //{
-                //    if (hitWall.distance < 1.0f && !isGrounded)
-                //    {
-                //        canMove = false;
-                //        Debug.Log("Can Move " + canMove);
-                //    }
-                //}
+                if (wallCollisionAhead())
+                { 
+                    canMove = false;
+                }
 
-                //if (canMove)
-                //{
-                //    playerRigidbody.velocity += velocityChange;
-                //}
+                if (canMove)
+                {
+                    playerRigidbody.velocity += velocityChange;
+                }
 
                 //if (!isInFreeFall || actualVelocityChange > 0.5f )
                 ////if (!isInFreeFall || (actualSpeedChange > 0.5f || deltaAngle > 5))
@@ -385,7 +380,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 //    playerRigidbody.velocity += velocityChange;
                 //    isInFreeFall = false;
                 //}
-                playerRigidbody.velocity += velocityChange;
+                //playerRigidbody.velocity += velocityChange;
                 if (overwriteFreeFall)
                 {
                     //stay in free fall, maybe change direction a tiny bit
@@ -401,6 +396,8 @@ public class ThirdPersonMovement : MonoBehaviour
                 if (isInFreeFall)
                 {
                     playerRigidbody.velocity =
+                        wallCollisionAhead() ?
+                        new Vector3(0, playerRigidbody.velocity.y, 0) : 
                         new Vector3(freeFallVelocity.x, playerRigidbody.velocity.y, freeFallVelocity.z);
                 }
                 else
@@ -409,6 +406,22 @@ public class ThirdPersonMovement : MonoBehaviour
                 }
             }
         }
+    }
+
+    bool wallCollisionAhead()
+    {
+        bool ret = false;
+        RaycastHit hitWall;
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 5f, Color.red);
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hitWall))
+        {
+            if (hitWall.distance < 1.0f && !isGrounded)
+            {
+                ret = true;
+                Debug.Log("Can Move " + ret);
+            }
+        }
+        return ret;
     }
 
 
