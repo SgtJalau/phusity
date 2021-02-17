@@ -65,7 +65,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8029556, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -653,7 +653,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8029556, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -847,8 +847,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1020862469231444788}
-  m_LocalRotation: {x: 0.17121497, y: -0, z: -0, w: 0.9852337}
-  m_LocalPosition: {x: 0, y: 4.561, z: -10}
+  m_LocalRotation: {x: 0.17121495, y: 1.1579412e-16, z: -2.0122824e-17, w: 0.9852337}
+  m_LocalPosition: {x: -55.95394, y: 2.2395754, z: -83.67685}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1020862469925995347}
@@ -1128,7 +1128,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8029556, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -1171,7 +1171,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1020862469839595805}
   m_LocalRotation: {x: 0.1607176, y: -0, z: -0, w: 0.98700047}
-  m_LocalPosition: {x: 1.0135555, y: 2.5471249, z: -4.607937}
+  m_LocalPosition: {x: 0.9994011, y: 2.5471249, z: -4.607937}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1020862469121987000}
@@ -1207,7 +1207,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8029556, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -1329,7 +1329,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1020862470050429093}
-  m_LocalRotation: {x: 0.15331319, y: 0.000000008501481, z: -0.0000000013189826, w: 0.98817766}
+  m_LocalRotation: {x: 0.15331319, y: -0.000000008501481, z: 0.0000000013189826, w: 0.98817766}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1373,7 +1373,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 0
-    m_SensorSize: {x: 1.8029556, y: 1}
+    m_SensorSize: {x: 1.7777778, y: 1}
     Iso: 200
     ShutterSpeed: 0.005
     Aperture: 16
@@ -1406,6 +1406,8 @@ GameObject:
   - component: {fileID: 6786697140483236181}
   - component: {fileID: 7580099785546482550}
   - component: {fileID: 8700246233410052622}
+  - component: {fileID: 4934433844616771560}
+  - component: {fileID: 4486029852856404355}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1458,10 +1460,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 6
+  speedInAir: 3
+  freeFallAngleLimit: 45
   turnSmoothTime: 0.09
   gravityMultiplyer: 1
   jumpHeight: 1
-  canJumpGround: 0
   dashDistance: 2
   dashDuration: 0.2
   dashCooldown: 1
@@ -1472,7 +1475,6 @@ MonoBehaviour:
   stepMask:
     serializedVersion: 2
     m_Bits: 8192
-  _virtualCamera: {fileID: 0}
 --- !u!136 &1020862470095329567
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1556,6 +1558,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeAbility: 0
+--- !u!114 &4934433844616771560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020862470095329565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5581ce4811d04dad9cfa1762bf296ad7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4486029852856404355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020862470095329565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e49cc08b56f8493ea3a12a82c73f7533, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4627484646704939020
 PrefabInstance:
   m_ObjectHideFlags: 0
