@@ -1408,6 +1408,7 @@ GameObject:
   - component: {fileID: 8700246233410052622}
   - component: {fileID: 4934433844616771560}
   - component: {fileID: 4486029852856404355}
+  - component: {fileID: 8014874724087905954}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1465,7 +1466,7 @@ MonoBehaviour:
   turnSmoothTime: 0.09
   gravityMultiplyer: 1
   jumpHeight: 1
-  dashDistance: 2
+  dashDistance: 3
   dashDuration: 0.2
   dashCooldown: 1
   groundCheck: {fileID: 1020862468994246341}
@@ -1580,6 +1581,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e49cc08b56f8493ea3a12a82c73f7533, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8014874724087905954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020862470095329565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5732d372f2347cca9323080dd32d6f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &4627484646704939020
