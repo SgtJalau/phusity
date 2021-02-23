@@ -9,6 +9,8 @@ public class EventManager
     public static readonly Event DoubleJump = new Event();
     public static readonly Event Dash = new Event();
     public static readonly Event Movement = new Event();
+    public static readonly Event DragObject = new Event();
+    public static readonly Event SwitchAbility = new Event();
     
     public class Event
     {
