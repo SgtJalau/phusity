@@ -15,6 +15,8 @@ public class PlayerObject : MonoBehaviour
     private PlayerGUI _playerGUI;
 
     private Rigidbody _rigidbody;
+
+    private SwitchAbility _switchAbility;
     
     public Rigidbody Rigidbody
     {
@@ -35,6 +37,15 @@ public class PlayerObject : MonoBehaviour
         get => _thirdPersonMovement;
         set => _thirdPersonMovement = value;
     }
+
+    private DragObjects _dragObjects;
+    
+    public DragObjects DragObjects
+    {
+        get => _dragObjects;
+        set => _dragObjects = value;
+    }
+
     
     private int _points = 0;
 
@@ -60,7 +71,8 @@ public class PlayerObject : MonoBehaviour
 
     void Start()
     {
- 
+        _dragObjects = GetComponent<DragObjects>();
+        _switchAbility = GetComponent<SwitchAbility>();
     }
 
     public bool GetTargetCollider(float maxDistance, out Collider targetCollider)
@@ -107,7 +119,21 @@ public class PlayerObject : MonoBehaviour
         Debug.Log("Quick saved state");
     }
 
+    public bool IsDraggingObject()
+    {
+        return _dragObjects.IsDragging;
+    }
     
+    public void SetDraggingObject(bool dragging)
+    {
+        _dragObjects.IsDragging = dragging; 
+    }
+
+    public Ability GetActiveAbility()
+    {
+        return _switchAbility.activeAbility;
+    }
+
     public IEnumerator LookAtLocation(Transform vector3, long millis)
     {
         Transform previousFollow = _virtualCamera.ActiveVirtualCamera.Follow;

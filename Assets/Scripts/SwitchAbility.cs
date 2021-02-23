@@ -43,6 +43,7 @@ public class SwitchAbility : MonoBehaviour
             activeAbility = Ability.Rope;
         }
     
+        EventManager.SwitchAbility.Perform();
     }
 
     // Update is called once per frame

@@ -31,6 +31,8 @@ public class PlayerGUI : MonoBehaviour
     void OnGUI() 
     {
         GUI.Label(new Rect(10, 10, 100, 20), "Score : " + _playerObject.Points);
+        
+        GUI.Label(new Rect(10, 25, 200, 20), "Active Ability : " + _playerObject.GetActiveAbility());
     }
 
     public void SetTextbox(String headline, String body)

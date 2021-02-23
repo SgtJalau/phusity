@@ -32,10 +32,16 @@ public class GameStateComponent : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Respawn") && respawnOnCollide)
+        if ((other.gameObject.CompareTag("Respawn")) && respawnOnCollide)
         {
             //StartCoroutine(RespawnGameObject(0, 1));
             gameObjectState.RestoreState(_gameStateComponent);
+
+            if (gameObject.CompareTag("Player"))
+            {
+                //If we are respawning the player cancel all dragging interaction
+                GetComponent<PlayerObject>().SetDraggingObject(false);
+            }
         }
     }
     
